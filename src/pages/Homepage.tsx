@@ -94,6 +94,7 @@ export default function Homepage() {
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
                 </div>
                 
+                {/* header text */}
                 <div ref={heroRef} className="relative z-20 text-center px-8 w-full max-w-5xl">
                     <motion.div
                         initial={{ opacity: 0, y: 50 }}
@@ -103,7 +104,7 @@ export default function Homepage() {
                     >
                         <div className="bg-white/5 backdrop-blur-2xl rounded-3xl p-16 md:p-20 border border-white/10 shadow-2xl">
                             <h1 className="text-6xl md:text-8xl font-bold text-white mb-8">
-                                <span className="bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent drop-shadow-lg">
+                                <span className="bg-gradient-to-r from-violet-400 via-purple-700 to-pink-300 bg-clip-text text-transparent drop-shadow-lg animate-gradient">
                                     Nindroid Systems
                                 </span>
                             </h1>
@@ -116,7 +117,7 @@ export default function Homepage() {
             </section>
 
             {/* status section */}
-            <section ref={statusRef} className="relative py-20 px-8">
+            <section ref={statusRef} className="relative py-32 px-8">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-white/5 backdrop-blur-3xl"></div>
                 <ServiceStatus services={services} />
             </section>

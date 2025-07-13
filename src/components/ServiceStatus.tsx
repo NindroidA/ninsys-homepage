@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { CheckCircle, XCircle, AlertTriangle, Clock, Server, Database, Globe, Shield, Cpu, HardDrive } from 'lucide-react';
+import { CheckCircle, XCircle, AlertTriangle, Clock, Server, Database, Globe, Shield, Cpu, HardDrive, Cog } from 'lucide-react';
 import { Service, ServiceStatusType } from '../assets/services';
 
 interface StatusProps {
@@ -39,7 +39,8 @@ const iconMap = {
   globe: Globe,
   shield: Shield,
   cpu: Cpu,
-  storage: HardDrive
+  storage: HardDrive,
+  cog: Cog
 };
 
 // helper function to get status config (fallback to offline)
