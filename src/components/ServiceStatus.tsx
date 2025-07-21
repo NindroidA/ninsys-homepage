@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
-import { CheckCircle, XCircle, AlertTriangle, Clock, Server, Database, Globe, Shield, Cpu, HardDrive, Cog } from 'lucide-react';
+import { CheckCircle, XCircle, AlertTriangle, Clock, Server, Database, Globe, Shield, Cpu, HardDrive, Cog, RefreshCw } from 'lucide-react';
 import { Service, ServiceStatusType } from '../assets/services';
+import { useServiceStatus } from '../hooks/useServiceStatus';
 
 interface StatusProps {
   services: Service[]
@@ -45,16 +46,30 @@ const iconMap = {
 
 // helper function to get status config (fallback to offline)
 const getStatusConfig = (statusType: ServiceStatusType) => {
-    return statusConfig[statusType] || statusConfig.offline;
+  return statusConfig[statusType] || statusConfig.offline;
 }
 
 // helper function to get the correct icon (with redundency)
 const getServiceIcon = (iconName?: string) => {
-    if (!iconName) return Server;
-    return iconMap[iconName as keyof typeof iconMap] || Server;
+  if (!iconName) { return Server };
+  return iconMap[iconName as keyof typeof iconMap] || Server;
 }
 
-export default function ServiceStatus({ services }: StatusProps) {
+// format last checked time
+const formatLastChecked = (lastChecked?: Date) => {
+  if (!lastChecked) { return '' };
+  const now = new Date();
+  const diff = now.getTime() - lastChecked.getTime();
+  const minutes = Math.floor(diff / 60000);
+  const seconds = Math.floor((diff % 60000) / 1000);
+  
+  if (minutes > 0) { return `${minutes}m ago` };
+  return `${seconds}s ago`;
+};
+
+export default function ServiceStatus({ services: initialServices }: StatusProps) {
+  const { services, isLoading, refreshStatus, updateServiceStatuses } = useServiceStatus(initialServices);
+
   const getStatusSummary = () => {
     const summary = services.reduce((acc, service) => {
       acc[service.status] = (acc[service.status] || 0) + 1;
@@ -76,7 +91,17 @@ export default function ServiceStatus({ services }: StatusProps) {
         {/* status header and count */}
         <div className="text-center mb-12">
             <div className="bg-gradient-to-br from-white/8 via-gray-800/20 to-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl">
-            <h2 className="text-3xl font-bold text-white mb-4">System Status</h2>
+                <div className="flex items-center justify-center gap-4 mb-4">
+                    <h2 className="text-3xl font-bold text-white">System Status</h2>
+                    <button
+                        onClick={updateServiceStatuses}
+                        disabled={isLoading}
+                        className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors duration-200 disabled:opacity-50"
+                        title="Refresh all services"
+                    >
+                        <RefreshCw className={`w-5 h-5 text-white/80 ${isLoading ? 'animate-spin' : ''}`} />
+                    </button>
+                </div>
                 <div className="flex justify-center gap-8 text-sm flex-wrap">
                     <div className="flex items-center gap-2">
                         <div className="w-3 h-3 bg-emerald-400 rounded-full shadow-lg shadow-emerald-400/50"></div>
@@ -127,8 +152,19 @@ export default function ServiceStatus({ services }: StatusProps) {
                                     )}
                                 </div>
                             </div>
-                            <div className={`p-2 rounded-full ${status.bg} backdrop-blur-sm border border-white/20 ${status.pulse}`}>
-                                <StatusIcon className={`w-4 h-4 ${status.color}`} />
+                            <div className="flex items-center gap-2">
+                                {service.statusCheck?.enabled && (
+                                    <button
+                                        onClick={() => refreshStatus(service.id!)}
+                                        className="p-1 hover:bg-white/10 rounded transition-colors duration-200"
+                                        title="Refresh status"
+                                    >
+                                        <RefreshCw className="w-3 h-3 text-white/60 hover:text-white/80" />
+                                    </button>
+                                )}
+                                <div className={`p-2 rounded-full ${status.bg} backdrop-blur-sm border border-white/20 ${status.pulse}`}>
+                                    <StatusIcon className={`w-4 h-4 ${status.color}`} />
+                                </div>
                             </div>
                         </div>
                         
@@ -137,9 +173,16 @@ export default function ServiceStatus({ services }: StatusProps) {
                         )}
                         
                         <div className="flex items-center justify-between">
-                            <span className={`text-sm font-medium ${status.color}`}>
-                                {service.status.charAt(0).toUpperCase() + service.status.slice(1)}
-                            </span>
+                            <div className="flex flex-col">
+                                <span className={`text-sm font-medium ${status.color}`}>
+                                    {service.status.charAt(0).toUpperCase() + service.status.slice(1)}
+                                </span>
+                                {service.lastChecked && service.statusCheck?.enabled && (
+                                    <span className="text-xs text-white/50">
+                                        Last checked: {formatLastChecked(service.lastChecked)}
+                                    </span>
+                                )}
+                            </div>
                             {service.url && (
                             <a 
                                 href={service.url}

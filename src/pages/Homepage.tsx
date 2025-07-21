@@ -83,7 +83,7 @@ export default function Homepage() {
                 <div className="absolute inset-0 flex items-center opacity-70 z-0">
                     {
                     <Canvas style={{ width: '100%', height: '100%' }} gl={{ antialias: true }} >
-                        <OrbitControls enableZoom={false} enablePan={false} />
+                        {/* <OrbitControls enableZoom={false} enablePan={false} /> */}
                         <Scene />
                     </Canvas>
                     }
@@ -123,9 +123,11 @@ export default function Homepage() {
             </section>
 
             {/* nav cards section */}
+            {/*
             <section ref={cardsRef} className="relative py-20 px-8">
                 <NavigationCards cards={navigationCards} />
             </section>
+            */}
 
             {/* footer */}
             <FooterComponent />

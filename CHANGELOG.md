@@ -1,3 +1,10 @@
+# Dev Update 1.1.0
+- BIG MOVES MAN!
+- Added hook for Service Stats.
+- Added 404 Not Found page.
+- Added favicon lol.
+- Github Action for automatic deployment.
+
 # Dev Update 1.0.3
 - Small styling fixes for Nav Cards.
 - Animated gradient for welcome header.
