@@ -5,10 +5,6 @@
 [] 'current projects' tab
 [] 'notable projects' tab
 
-## Services
-- Cogworks
-- API ?
-
 ## Nav Cards
 - Github
 - Current Projects
