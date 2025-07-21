@@ -1,4 +1,5 @@
-name: Deploy NS Homepage to Server
+# .github/workflows/deploy.yml
+name: Deploy NS Homepage to Raspberry Pi
 
 on:
   push:
@@ -71,6 +72,11 @@ jobs:
           fi
           
           # install dependencies and build  
+          echo "📦 Setting up Node.js environment..."
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+          
           echo "📦 Installing dependencies with npm..."
           npm install
           
