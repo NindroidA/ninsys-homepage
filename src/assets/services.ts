@@ -45,7 +45,7 @@ export const services: Service[] = [
     url: "",
     statusCheck: {
       enabled: true,
-      endpoint: "http://localhost:3001/health", // bot api endpoint
+      endpoint: "/api/bot-status", // bot api endpoint
       interval: 30000, // check every 30 seconds
       method: "GET",
       timeout: 5000
