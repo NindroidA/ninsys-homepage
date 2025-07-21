@@ -1,8 +1,8 @@
-name: Deploy NS Homepage to Raspberry Pi
+name: Deploy NS Homepage to Server
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   workflow_dispatch: # Allows manual triggering
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
     - name: 📥 Install dependencies
       run: bun install
 
-    - name: 🧪 Run tests
+    - name: 🧪 Run tests (if any)
       run: bun test || true
       
     - name: 🔧 Build React app
@@ -48,7 +48,7 @@ jobs:
           echo "🏠 Connected to Raspberry Pi!"
           
           # navigate to deployment directory
-          cd /var/www/ns-home || { echo "❌ ns-home directory not found!"; exit 1; }
+          cd /var/www/ns-home || { echo "❌ NS Home directory not found!"; exit 1; }
           
           # backup current deployment
           if [ -d "dist" ]; then
@@ -74,15 +74,14 @@ jobs:
           echo "📦 Installing Bun (if not installed)..."
           if ! command -v bun &> /dev/null; then
             curl -fsSL https://bun.sh/install | bash
-            source ~/.bashrc
             export PATH="$HOME/.bun/bin:$PATH"
           fi
           
           echo "📦 Installing dependencies..."
-          bun install
+          $HOME/.bun/bin/bun install
           
           echo "🔧 Building React app..."
-          bun run build
+          $HOME/.bun/bin/bun run build
           
           # set proper permissions
           echo "🔐 Setting permissions..."
@@ -111,7 +110,6 @@ jobs:
       if: success()
       run: |
         echo "✅ NS Homepage deployed successfully!"
-        echo "✅ Visit: https://nindroidsystems.com"
 
     - name: 🔔 Notify on failure  
       if: failure()
