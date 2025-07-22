@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { CheckCircle, XCircle, AlertTriangle, Clock, Server, Database, Globe, Shield, Cpu, HardDrive, Cog, RefreshCw } from 'lucide-react';
 import { Service, ServiceStatusType } from '../assets/services';
 import { useServiceStatus } from '../hooks/useServiceStatus';
+import { useEffect, useState } from 'react';
 
 interface StatusProps {
   services: Service[]
@@ -55,20 +56,34 @@ const getServiceIcon = (iconName?: string) => {
   return iconMap[iconName as keyof typeof iconMap] || Server;
 }
 
-// format last checked time
-const formatLastChecked = (lastChecked?: Date) => {
-  if (!lastChecked) { return '' };
-  const now = new Date();
-  const diff = now.getTime() - lastChecked.getTime();
-  const minutes = Math.floor(diff / 60000);
-  const seconds = Math.floor((diff % 60000) / 1000);
-  
-  if (minutes > 0) { return `${minutes}m ago` };
-  return `${seconds}s ago`;
-};
+// Add this to your ServiceStatus component
+
+
+
 
 export default function ServiceStatus({ services: initialServices }: StatusProps) {
   const { services, isLoading, refreshStatus, updateServiceStatuses } = useServiceStatus(initialServices);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // update the current time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+        setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // function to use currentTime
+  const formatLastChecked = (lastChecked?: Date) => {
+    if (!lastChecked) return '';
+    const diff = currentTime.getTime() - lastChecked.getTime();
+    const minutes = Math.floor(diff / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+        
+    if (minutes > 0) return `${minutes}m ago`;
+    return `${seconds}s ago`;
+  };
 
   const getStatusSummary = () => {
     const summary = services.reduce((acc, service) => {

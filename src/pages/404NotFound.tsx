@@ -33,7 +33,7 @@ export default function NotFound() {
         animate="visible"
         className="text-center max-w-2xl mx-auto"
       >
-        {/* 404 Number with floating animation */}
+        {/* 404 number with floating animation */}
         <motion.div
           animate={{
             y: [-10, 10, -10],
@@ -45,12 +45,12 @@ export default function NotFound() {
           }}
           className="mb-8"
         >
-          <h1 className="text-9xl md:text-[12rem] font-bold text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-purple-600 bg-clip-text leading-none">
+          <h1 className="text-9xl md:text-[12rem] font-bold text-transparent bg-gradient-to-r from-violet-400 via-pink-400 to-purple-600 bg-clip-text leading-none">
             404
           </h1>
         </motion.div>
 
-        {/* Main content card */}
+        {/* main content card */}
         <motion.div
           variants={itemVariants}
           className="bg-gradient-to-br from-white/12 via-gray-800/20 to-white/8 backdrop-blur-xl rounded-2xl p-8 border border-white/20 shadow-2xl mb-8"
@@ -60,24 +60,23 @@ export default function NotFound() {
               Oops! Page Not Found
             </h2>
             <p className="text-white/70 text-lg leading-relaxed">
-              The page you're looking for seems to have wandered off into the digital void. 
-              Don't worry though - even the best explorers sometimes take a wrong turn.
+              The page you're looking for seems to have wandered off into the void.
             </p>
           </motion.div>
 
-          {/* Suggestion list */}
+          {/* suggestion list */}
           <motion.div variants={itemVariants} className="mb-8">
             <h3 className="text-white font-semibold mb-4">Here's what you can do:</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-              <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+              <div className="bg-white/5 p-3 rounded-xl border border-white/10">
                 <Search className="w-5 h-5 text-purple-300 mb-2" />
                 <p className="text-white/80">Check the URL for typos</p>
               </div>
-              <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+              <div className="bg-white/5 p-3 rounded-xl border border-white/10">
                 <RefreshCw className="w-5 h-5 text-purple-300 mb-2" />
                 <p className="text-white/80">Refresh the page</p>
               </div>
-              <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+              <div className="bg-white/5 p-3 rounded-xl border border-white/10">
                 <Bug className="w-5 h-5 text-purple-300 mb-2" />
                 <p className="text-white/80">Report if this is unexpected</p>
               </div>
@@ -85,7 +84,7 @@ export default function NotFound() {
           </motion.div>
         </motion.div>
 
-        {/* Action buttons */}
+        {/* action buttons */}
         <motion.div
           variants={itemVariants}
           className="flex flex-col sm:flex-row gap-4 justify-center"
@@ -107,17 +106,17 @@ export default function NotFound() {
           </button>
         </motion.div>
 
-        {/* Fun fact or quote */}
+        {/* quote */}
         <motion.div
           variants={itemVariants}
           className="mt-12 text-center"
         >
           <p className="text-white/50 text-sm italic">
-            "Not all who wander are lost... but this page definitely is." 🚀
+            "Not all who wander are lost... but this page definitely is."
           </p>
         </motion.div>
 
-        {/* Decorative elements */}
+        {/* decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
             animate={{

@@ -25,8 +25,8 @@ export interface Service {
 
 export const services: Service[] = [
   { 
-    id: "portfolio-site",
-    name: "Portfolio Website", 
+    id: "home-site",
+    name: "Home Website", 
     description: "This website you're currently viewing",
     category: "Web Service",
     icon: "globe",

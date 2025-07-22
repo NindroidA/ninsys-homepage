@@ -1,3 +1,7 @@
+# Dev Update 1.1.1
+- Small changes to 404 page.
+- Fixed seconds updating for services.
+
 # Dev Update 1.1.0
 - BIG MOVES MAN!
 - Added hook for Service Stats.
