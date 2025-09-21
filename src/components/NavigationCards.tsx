@@ -72,8 +72,8 @@ export default function NavigationCards({ cards }: NavigationCardsProps) {
                             <div className="flex items-center justify-between">
                                 <a
                                     href={card.url}
-                                    target={card.external ? "_blank" : "_self"}
-                                    rel={card.external ? "noopener noreferrer" : undefined}
+                                    target={card.external ? '_blank' : '_self'}
+                                    rel={card.external ? 'noopener noreferrer' : undefined}
                                     className="group/btn flex items-center gap-3 text-white font-medium transition-all duration-200 bg-gradient-to-r from-purple-500/20 via-gray-700/30 to-pink-500/20 hover:from-purple-500/30 hover:via-gray-600/40 hover:to-pink-500/30 px-6 py-3 rounded-2xl backdrop-blur-sm border border-white/20 hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/20"
                                 >
                                     <Zap className="w-4 h-4 text-purple-300 group-hover/btn:text-white transition-colors duration-200" />

@@ -41,7 +41,7 @@ export default function NotFound() {
           transition={{
             duration: 3,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: 'easeInOut'
           }}
           className="mb-8"
         >
@@ -127,7 +127,7 @@ export default function NotFound() {
             transition={{
               duration: 8,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut'
             }}
             className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"
           />
@@ -140,7 +140,7 @@ export default function NotFound() {
             transition={{
               duration: 10,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
               delay: 2
             }}
             className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-pink-500/10 rounded-full blur-3xl"

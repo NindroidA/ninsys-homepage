@@ -1,3 +1,28 @@
+# Dev Update 1.2.0
+- Fixed the whole API being wacco (by making and adding my own API lol).
+- Changed up the Service Status component.
+- Fixed up all the terminal logic to support new shtuff.
+- Updated Govee API file.
+- Added NinSys API file.
+- Cleaned up unused files.
+- Added auth for terminal login.
+
+# Dev Update 1.1.3
+- Renamed repository for naming consistency.
+- Organized more pages I wanna make.
+- Added Terminal page.
+- Started lang json.
+- Added Govee API support.
+- Cleaned up terminal commands.
+- Added terminal formats (for like the help pages).
+- Added terminal changelog (since I may be adding things specifically for the terminal and I don't want to clutter the main changelog).
+- Added presets file for govee devices.
+- Added types folder -- I plan on using it more for organization and cleanup overall.
+- Fixed ESLint
+
+# Dev Update 1.1.2
+- Added reusable components for easier page development.
+
 # Dev Update 1.1.1
 - Small changes to 404 page.
 - Fixed seconds updating for services.

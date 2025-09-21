@@ -1,13 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { Environment, OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
 import { motion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
+import FooterComponent from '../components/Footer';
 import { DataStream, NetworkNodes, ServerRack } from '../components/ServerRack';
 import ServiceStatus from '../components/ServiceStatus';
-import NavigationCards from '../components/NavigationCards';
-import { services } from '../assets/services';
-import { navigationCards } from '../assets/navigationCards';
-import { PerspectiveCamera, OrbitControls, Environment } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
-import FooterComponent from '../components/Footer';
 
 function Scene() {
     return (
@@ -119,7 +116,7 @@ export default function Homepage() {
             {/* status section */}
             <section ref={statusRef} className="relative py-32 px-8">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-white/5 backdrop-blur-3xl"></div>
-                <ServiceStatus services={services} />
+                <ServiceStatus />
             </section>
 
             {/* nav cards section */}

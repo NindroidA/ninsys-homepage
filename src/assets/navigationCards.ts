@@ -11,36 +11,36 @@ export interface NavigationCard {
 
 export const navigationCards: NavigationCard[] = [
   {
-    id: "proxmox-web",
-    title: "Proxmox VE",
-    description: "Virtualization management interface for managing VMs and containers",
-    url: "",
+    id: 'proxmox-web',
+    title: 'Proxmox VE',
+    description: 'Virtualization management interface for managing VMs and containers',
+    url: '',
     external: true,
-    icon: "server",
-    color: "orange",
-    category: "Infrastructure"
+    icon: 'server',
+    color: 'orange',
+    category: 'Infrastructure'
   },
   {
-    id: "pihole",
-    title: "Pi-hole",
-    description: "Network-wide ad blocking and DNS management interface",
-    url: "",
+    id: 'pihole',
+    title: 'Pi-hole',
+    description: 'Network-wide ad blocking and DNS management interface',
+    url: '',
     external: true,
-    icon: "shield",
-    color: "green",
-    category: "Security"
+    icon: 'shield',
+    color: 'green',
+    category: 'Security'
   },
   {
-    id: "nextcloud",
-    title: "Nextcloud",
-    description: "Self-hosted cloud storage and collaboration platform",
-    url: "",
+    id: 'nextcloud',
+    title: 'Nextcloud',
+    description: 'Self-hosted cloud storage and collaboration platform',
+    url: '',
     external: true,
-    icon: "cloud",
-    color: "indigo",
-    category: "Storage"
+    icon: 'cloud',
+    color: 'indigo',
+    category: 'Storage'
   }
-]
+];
 
 /*
 // organization by category (saving this for later)

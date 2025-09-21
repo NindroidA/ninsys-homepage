@@ -44,18 +44,18 @@ export function ServerRack() {
                             <sphereGeometry args={[0.025]} />
                             <meshStandardMaterial
                                 color={
-                                j % 5 === 0 ? "#10b981" : 
-                                j % 5 === 1 ? "#3b82f6" : 
-                                j % 5 === 2 ? "#f59e0b" : 
-                                j % 5 === 3 ? "#ef4444" : 
-                                "#8b5cf6"
+                                j % 5 === 0 ? '#10b981' : 
+                                j % 5 === 1 ? '#3b82f6' : 
+                                j % 5 === 2 ? '#f59e0b' : 
+                                j % 5 === 3 ? '#ef4444' : 
+                                '#8b5cf6'
                                 }
                                 emissive={
-                                j % 5 === 0 ? "#10b981" : 
-                                j % 5 === 1 ? "#3b82f6" : 
-                                j % 5 === 2 ? "#f59e0b" : 
-                                j % 5 === 3 ? "#ef4444" : 
-                                "#8b5cf6"
+                                j % 5 === 0 ? '#10b981' : 
+                                j % 5 === 1 ? '#3b82f6' : 
+                                j % 5 === 2 ? '#f59e0b' : 
+                                j % 5 === 3 ? '#ef4444' : 
+                                '#8b5cf6'
                                 }
                                 emissiveIntensity={0.6}
                             />
@@ -111,20 +111,20 @@ export function NetworkNodes() {
                             <octahedronGeometry args={[0.12 + Math.random() * 0.08]} />
                             <meshStandardMaterial
                                 color={
-                                i % 6 === 0 ? "#0ea5e9" : 
-                                i % 6 === 1 ? "#10b981" : 
-                                i % 6 === 2 ? "#f59e0b" : 
-                                i % 6 === 3 ? "#8b5cf6" :
-                                i % 6 === 4 ? "#ef4444" :
-                                "#06b6d4"
+                                i % 6 === 0 ? '#0ea5e9' : 
+                                i % 6 === 1 ? '#10b981' : 
+                                i % 6 === 2 ? '#f59e0b' : 
+                                i % 6 === 3 ? '#8b5cf6' :
+                                i % 6 === 4 ? '#ef4444' :
+                                '#06b6d4'
                                 }
                                 emissive={
-                                i % 6 === 0 ? "#0ea5e9" : 
-                                i % 6 === 1 ? "#10b981" : 
-                                i % 6 === 2 ? "#f59e0b" : 
-                                i % 6 === 3 ? "#8b5cf6" :
-                                i % 6 === 4 ? "#ef4444" :
-                                "#06b6d4"
+                                i % 6 === 0 ? '#0ea5e9' : 
+                                i % 6 === 1 ? '#10b981' : 
+                                i % 6 === 2 ? '#f59e0b' : 
+                                i % 6 === 3 ? '#8b5cf6' :
+                                i % 6 === 4 ? '#ef4444' :
+                                '#06b6d4'
                                 }
                                 emissiveIntensity={0.4}
                                 transparent

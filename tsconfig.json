@@ -29,6 +29,6 @@
     "noPropertyAccessFromIndexSignature": false,
     "noImplicitAny": false
   },
-  "include": ["src"],
+  "include": ["src", "private/deprecated/useServiceStatus.ts", "private/deprecated/services.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

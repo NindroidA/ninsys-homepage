@@ -1,5 +1,4 @@
-# .github/workflows/deploy.yml
-name: Deploy NS Homepage to Raspberry Pi
+name: Deploy NinSys Homepage to Homelab.
 
 on:
   push:
