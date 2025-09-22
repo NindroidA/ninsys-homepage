@@ -9,8 +9,5 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000
     },
-    define: {
-      'process.env.GOVEE_API_KEY': JSON.stringify(env.GOVEE_API_KEY)
-    }
   }
 });

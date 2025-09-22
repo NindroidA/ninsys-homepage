@@ -1,4 +1,5 @@
-import { GoveeDevice } from "../types/govee";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { GoveeDevice } from '../types/govee';
 
 const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://nindroidsystems.com';
 

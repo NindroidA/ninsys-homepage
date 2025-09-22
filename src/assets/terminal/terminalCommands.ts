@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable unused-imports/no-unused-vars */
 import GoveeAPI, { API_BASE } from '../../utils/goveeAPI';
 import term from './terminal.json';
 import { CommandHelp, formatDeviceGroups, formatDeviceList, formatHelp, formatPresetList, helpConfigs } from './terminalFormats';
@@ -235,15 +238,15 @@ Storage: 89% available
             const presetName = args[1]?.toLowerCase();
             if (!presetName) {
               return formatPresetList({
-                'gaming-mode': { description: 'Cool cyan-blue theme for gaming' },
-                'magenta-vibes': { description: 'Purple-pink magenta theme' },
-                'cozy-warm': { description: 'Warm orange tones for relaxation' },
-                'party-time': { description: 'Vibrant party lighting' },
-                'focus-mode': { description: 'Clean white light for productivity' }
+                'gaming': { description: 'Cool cyan-blue theme for gaming' },
+                'magenta': { description: 'Purple-pink magenta theme' },
+                'cozy': { description: 'Warm orange tones for relaxation' },
+                'party': { description: 'Vibrant party lighting' },
+                'focus': { description: 'Clean white light for productivity' }
               });
             }
 
-            const result = await govee.applyPreset(presetName);
+            await govee.applyPreset(presetName);
             return `🎨 Applied "${presetName}" preset successfully!`;
 
           case 'groups':
@@ -252,41 +255,36 @@ Storage: 89% available
 
           // Quick preset commands
           case 'gaming':
-          case 'gaming-mode':
-            await govee.applyPreset('gaming-mode');
+            await govee.applyPreset('gaming');
             return '🎮 Gaming mode activated!';
 
           case 'magenta':
-          case 'magenta-vibes':
-            await govee.applyPreset('magenta-vibes');
+            await govee.applyPreset('magenta');
             return '💜 Magenta vibes activated!';
 
           case 'cozy':
-          case 'cozy-warm':
-            await govee.applyPreset('cozy-warm');
+            await govee.applyPreset('cozy');
             return '🔥 Cozy warm lighting activated!';
 
           case 'party':
-          case 'party-time':
-            await govee.applyPreset('party-time');
+            await govee.applyPreset('party');
             return '🎉 Party mode activated!';
 
           case 'focus':
-          case 'focus-mode':
-            await govee.applyPreset('focus-mode');
+            await govee.applyPreset('focus');
             return '💡 Focus mode activated!';
 
           case 'on':
             await govee.controlGroup('light-bulbs', 'devices.capabilities.on_off', 1);
             await govee.controlGroup('light-bars', 'devices.capabilities.on_off', 1);
             await govee.controlGroup('light-strips', 'devices.capabilities.on_off', 1);
-            return `🔆 All lights turned ON`;
+            return '🔆 All lights turned ON';
 
           case 'off':
             await govee.controlGroup('light-bulbs', 'devices.capabilities.on_off', 0);
             await govee.controlGroup('light-bars', 'devices.capabilities.on_off', 0);
             await govee.controlGroup('light-strips', 'devices.capabilities.on_off', 0);
-            return `🌙 All lights turned OFF`;
+            return '🌙 All lights turned OFF';
 
           /*  
           case 'fan':

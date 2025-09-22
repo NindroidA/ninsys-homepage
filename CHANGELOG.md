@@ -1,3 +1,6 @@
+# Dev Update 1.2.1
+- Small fix with light presets.
+
 # Dev Update 1.2.0
 - Fixed the whole API being wacco (by making and adding my own API lol).
 - Changed up the Service Status component.
