@@ -1,3 +1,6 @@
+# NinSys Terminal v1.1.1
+- Switched API key auth to TOTP authentication.
+
 # NinSys Terminal v1.1.0
 - Fixed the whole API not working by making my OWN API MWAHAHA
 - Added API key authentication.

@@ -26,24 +26,15 @@ export default function Terminal() {
   const inputRef = useRef<HTMLInputElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
 
-  // auto-scroll to bottom when new lines are added
-    useEffect(() => {
-    if (terminalRef.current) {
-        requestAnimationFrame(() => {
-        if (terminalRef.current) {
-            terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-        }
-        });
-    }
-    }, [lines]);
-
-  // focus input when terminal is clicked
-  useEffect(() => {
-    const handleClick = () => inputRef.current?.focus();
-    const terminal = terminalRef.current;
-    terminal?.addEventListener('click', handleClick);
-    return () => terminal?.removeEventListener('click', handleClick);
-  }, []);
+  // helper function to check if session is valid
+  const isSessionValid = (): boolean => {
+    const token = sessionStorage.getItem('ninsys_auth_token');
+    const expires = sessionStorage.getItem('ninsys_auth_expires');
+    
+    if (!token || !expires) return false;
+    
+    return new Date(expires).getTime() > Date.now();
+  };
 
   const addLine = useCallback((line: TerminalLine) => {
     setLines(prev => [...prev, { ...line, timestamp: new Date().toLocaleTimeString() }]);
@@ -70,24 +61,29 @@ export default function Terminal() {
       return;
     }
 
-    // check authentication
-    if (command.requiresAuth && !isAuthenticated) {
-      addLine({
-        type: 'error',
-        content: TERMINAL_MESSAGES.ACCESS_DENIED(commandName!)
-      });
-      return;
-    }
+    // check authentication for protected commands
+    if (command.requiresAuth) {
+      if (!isAuthenticated) {
+        addLine({
+          type: 'error',
+          content: TERMINAL_MESSAGES.ACCESS_DENIED(commandName!)
+        });
+        return;
+      }
 
-    // additional API key validation for auth-required commands
-    if (command.requiresAuth && !sessionStorage.getItem('ninsys_api_key')) {
-      addLine({
-        type: 'error',
-        content: 'Session expired. Please login again.'
-      });
-      setIsAuthenticated(false);
-      setCurrentUser('guest');
-      return;
+      // additional session validation for auth-required commands
+      if (!isSessionValid()) {
+        addLine({
+          type: 'error',
+          content: 'Session expired. Please login again.'
+        });
+        // reset auth state
+        setIsAuthenticated(false);
+        setCurrentUser('guest');
+        sessionStorage.removeItem('ninsys_auth_token');
+        sessionStorage.removeItem('ninsys_auth_expires');
+        return;
+      }
     }
 
     setIsProcessing(true);
@@ -110,10 +106,23 @@ export default function Terminal() {
         });
       }
     } catch (error: any) {
-      addLine({
-        type: 'error',
-        content: TERMINAL_MESSAGES.COMMAND_ERROR(error.message)
-      });
+      // handle authentication errors specifically
+      if (error.message?.includes('Session expired') || error.message?.includes('Authentication')) {
+        addLine({
+          type: 'error',
+          content: error.message
+        });
+        // reset auth state on auth errors
+        setIsAuthenticated(false);
+        setCurrentUser('guest');
+        sessionStorage.removeItem('ninsys_auth_token');
+        sessionStorage.removeItem('ninsys_auth_expires');
+      } else {
+        addLine({
+          type: 'error',
+          content: TERMINAL_MESSAGES.COMMAND_ERROR(error.message)
+        });
+      }
     } finally {
       setIsProcessing(false);
       setTimeout(() => {
@@ -122,6 +131,42 @@ export default function Terminal() {
       }, 0);
     }
   }, [currentUser, isAuthenticated, commandHistory, addLine]);
+
+  // add authentication check on component mount
+  useEffect(() => {
+    // check if user has valid session on load
+    const checkAuthStatus = () => {
+      if (isSessionValid()) {
+        setIsAuthenticated(true);
+        setCurrentUser('admin'); // or get from token if you store username
+      } else {
+        // clear any stale tokens
+        sessionStorage.removeItem('ninsys_auth_token');
+        sessionStorage.removeItem('ninsys_auth_expires');
+      }
+    };
+
+    checkAuthStatus();
+  }, []);
+
+  // auto-scroll to bottom when new lines are added
+    useEffect(() => {
+    if (terminalRef.current) {
+        requestAnimationFrame(() => {
+        if (terminalRef.current) {
+            terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+        }
+        });
+    }
+    }, [lines]);
+
+  // focus input when terminal is clicked
+  useEffect(() => {
+    const handleClick = () => inputRef.current?.focus();
+    const terminal = terminalRef.current;
+    terminal?.addEventListener('click', handleClick);
+    return () => terminal?.removeEventListener('click', handleClick);
+  }, []);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (isProcessing) return;

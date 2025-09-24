@@ -1,3 +1,7 @@
+# Dev Update 1.2.2
+- Updated goveeAPI util to handle TOTP auth.
+- Updated Terminal page to handle TOTP auth.
+
 # Dev Update 1.2.1
 - Small fix with light presets.
 

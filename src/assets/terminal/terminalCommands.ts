@@ -24,7 +24,6 @@ export interface Command {
   execute: (args: string[], terminal: TerminalState, setters?: CommandSetters) => string | Promise<string> | void;
 }
 
-// terminal responses and messages
 export const TERMINAL_MESSAGES = {
   WELCOME: [
     `NINDROID SYSTEMS TERMINAL v${term.version}`,
@@ -32,13 +31,14 @@ export const TERMINAL_MESSAGES = {
     'Connection established.',
     '',
     'Welcome to Nindroid Systems! Type "help" for available commands.',
+    'Use "login <6-digit-code>" to authenticate with your authenticator app.',
     ''
   ],
-  AUTH_SUCCESS: 'Authentication successful! Welcome back, Andrew.',
-  AUTH_FAILED: 'Authentication failed. Usage: login <password>',
-  AUTH_ALREADY: 'Already authenticated!',
-  LOGOUT_SUCCESS: 'Logged out successfully.',
-  ACCESS_DENIED: (cmd: string) => `Access denied: '${cmd}' requires authentication. Use 'login' first.`,
+  AUTH_SUCCESS: 'Authentication successful! Session active for 24 hours.',
+  AUTH_FAILED: 'Authentication failed. Usage: login <6-digit-code>',
+  AUTH_ALREADY: 'Already authenticated! Use "logout" to end session.',
+  LOGOUT_SUCCESS: 'Session ended. Logged out successfully.',
+  ACCESS_DENIED: (cmd: string) => `Access denied: '${cmd}' requires authentication. Use 'login <6-digit-code>' first.`,
   COMMAND_NOT_FOUND: (cmd: string) => `Command not found: ${cmd}. Type 'help' for available commands.`,
   COMMAND_ERROR: (error: any) => `Error executing command: ${error}`,
 } as const;
@@ -110,25 +110,6 @@ Domain: nindroidsystems.com
     }
   },
 
-  // placeholder status
-  status: {
-    name: 'status',
-    description: 'Check system status',
-    requiresAuth: false,
-    execute: async (): Promise<string> => {
-      return `
-SYSTEM STATUS
-=============
-Status: ONLINE
-Uptime: 42 days, 13 hours
-Services: 3/3 running
-Temperature: 67°C
-Memory: 1.2GB / 4.0GB
-Storage: 89% available
-      `;
-    }
-  },
-
   whoami: {
     name: 'whoami',
     description: 'Display current user',
@@ -171,38 +152,48 @@ Storage: 89% available
 
   login: {
     name: 'login',
-    description: 'Authenticate with API key',
+    description: 'Authenticate with TOTP code',
     requiresAuth: false,
     execute: async (args: string[], state: TerminalState, setters?: CommandSetters): Promise<string> => {
       if (state.isAuthenticated) {
         return TERMINAL_MESSAGES.AUTH_ALREADY;
       }
       
-      const apiKey = args[0];
-      if (!apiKey) {
-        return 'Usage: login <api-key>';
+      const totpCode = args[0];
+      if (!totpCode) {
+        return 'Usage: login <6-digit-code>\nGet the code from your authenticator app.';
+      }
+
+      // validate TOTP code format
+      if (!/^\d{6}$/.test(totpCode)) {
+        return 'Invalid code format. Please enter a 6-digit code from your authenticator app.';
       }
       
       try {
-        // test the key by making a request to a protected endpoint
-        const response = await fetch(`${API_BASE}/api/govee/devices`, {
+        const response = await fetch(`${API_BASE}/api/auth/login`, {
+          method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'X-API-Key': apiKey
-          }
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ code: totpCode })
         });
         
-        if (response.ok) {
-          // store API key in sessionStorage (clears when browser closes)
-          sessionStorage.setItem('ninsys_api_key', apiKey);
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+          // store JWT token in sessionStorage
+          sessionStorage.setItem('ninsys_auth_token', result.data.token);
+          sessionStorage.setItem('ninsys_auth_expires', result.data.expires);
+          
           setters?.setIsAuthenticated?.(true);
-          setters?.setCurrentUser?.('admin');
+          setters?.setCurrentUser?.(result.data.user || 'admin');
+          
           return TERMINAL_MESSAGES.AUTH_SUCCESS;
         } else {
-          return 'Invalid API key. Access denied.';
+          return `Authentication failed: ${result.error || 'Invalid code'}`;
         }
       } catch (error) {
-        return 'Authentication error. Please check your connection.';
+        return 'Authentication error. Please check your connection and try again.';
       }
     }
   },
@@ -211,11 +202,96 @@ Storage: 89% available
     name: 'logout',
     description: 'Clear authentication and end session',
     requiresAuth: false,
-    execute: (args: string[], state: TerminalState, setters?: CommandSetters): string => {
-      sessionStorage.removeItem('ninsys_api_key');
+    execute: async (args: string[], state: TerminalState, setters?: CommandSetters): Promise<string> => {
+      // call logout endpoint
+      try {
+        const token = sessionStorage.getItem('ninsys_auth_token');
+        if (token) {
+          await fetch(`${API_BASE}/api/auth/logout`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+        }
+      } catch (error) {
+        // ignore logout API errors, clear session anyway
+      }
+
+      // clear stored tokens
+      sessionStorage.removeItem('ninsys_auth_token');
+      sessionStorage.removeItem('ninsys_auth_expires');
+      
       setters?.setIsAuthenticated?.(false);
       setters?.setCurrentUser?.('guest');
       return TERMINAL_MESSAGES.LOGOUT_SUCCESS;
+    }
+  },
+
+  status: {
+    name: 'status',
+    description: 'Check system and authentication status',
+    requiresAuth: false,
+    execute: async (args: string[]): Promise<string> => {
+      try {
+        // check auth status
+        const token = sessionStorage.getItem('ninsys_auth_token');
+        const expires = sessionStorage.getItem('ninsys_auth_expires');
+        
+        let authStatus = 'Not authenticated';
+        if (token) {
+          try {
+            const response = await fetch(`${API_BASE}/api/auth/status`, {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            });
+            
+            if (response.ok) {
+              const result = await response.json();
+              if (result.success && result.data.authenticated) {
+                const remainingHours = Math.floor(result.data.remaining / (1000 * 60 * 60));
+                const remainingMinutes = Math.floor((result.data.remaining % (1000 * 60 * 60)) / (1000 * 60));
+                authStatus = `Authenticated (${remainingHours}h ${remainingMinutes}m remaining)`;
+              }
+            }
+          } catch (error) {
+            authStatus = 'Authentication expired';
+          }
+        }
+
+        return `
+  SYSTEM STATUS
+  =============
+  Authentication: ${authStatus}
+  Services: API Connected
+  Terminal: Online
+        `;
+      } catch (error) {
+        return `Error checking status: ${error}`;
+      }
+    }
+  },
+
+  debug: {
+    name: 'debug',
+    description: 'Debug authentication status',
+    requiresAuth: false,
+    execute: (): string => {
+      const token = sessionStorage.getItem('ninsys_auth_token');
+      const expires = sessionStorage.getItem('ninsys_auth_expires');
+      
+      return `
+  DEBUG INFO:
+  Token exists: ${!!token}
+  Token length: ${token?.length || 0}
+  Token starts: ${token?.substring(0, 10)}...
+  Expires: ${expires}
+  Valid until: ${expires ? new Date(expires).toLocaleString() : 'N/A'}
+  Current time: ${new Date().toLocaleString()}
+  Still valid: ${expires ? new Date(expires).getTime() > Date.now() : false}
+      `;
     }
   },
 
