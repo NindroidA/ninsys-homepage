@@ -11,59 +11,69 @@ export interface NavigationCard {
 
 export const navigationCards: NavigationCard[] = [
   {
-    id: 'proxmox-web',
-    title: 'Proxmox VE',
-    description: 'Virtualization management interface for managing VMs and containers',
-    url: '',
-    external: true,
-    icon: 'server',
-    color: 'orange',
-    category: 'Infrastructure'
+    id: 'projects',
+    title: 'Projects',
+    description: 'Explore my current and completed projects',
+    url: '/projects',
+    external: false,
+    icon: 'folder',
+    color: 'blue',
+    category: 'Portfolio'
   },
   {
-    id: 'pihole',
-    title: 'Pi-hole',
-    description: 'Network-wide ad blocking and DNS management interface',
-    url: '',
-    external: true,
-    icon: 'shield',
-    color: 'green',
-    category: 'Security'
+    id: 'railways',
+    title: 'Railways',
+    description: 'Interactive minecart experience - swipe and drag!',
+    url: '/railways',
+    external: false,
+    icon: 'terminal',
+    color: 'teal',
+    category: 'Fun'
   },
   {
-    id: 'nextcloud',
-    title: 'Nextcloud',
-    description: 'Self-hosted cloud storage and collaboration platform',
-    url: '',
-    external: true,
-    icon: 'cloud',
-    color: 'indigo',
-    category: 'Storage'
-  }
+    id: 'about-me',
+    title: 'About Me',
+    description: 'Learn more about me and my journey',
+    url: '/about',
+    external: false,
+    icon: 'settings',
+    color: 'purple',
+    category: 'Portfolio'
+  },
 ];
 
-/*
 // organization by category (saving this for later)
 export const navigationCardsByCategory = {
-  infrastructure: navigationCards.filter(card => card.category === "Infrastructure"),
-  containers: navigationCards.filter(card => card.category === "Containers"),
-  monitoring: navigationCards.filter(card => card.category === "Monitoring"),
-  security: navigationCards.filter(card => card.category === "Security"),
-  storage: navigationCards.filter(card => card.category === "Storage"),
-  automation: navigationCards.filter(card => card.category === "Automation"),
-  devops: navigationCards.filter(card => card.category === "DevOps"),
-  media: navigationCards.filter(card => card.category === "Media"),
-  management: navigationCards.filter(card => card.category === "Management"),
-  network: navigationCards.filter(card => card.category === "Network")
-}
+  portfolio: navigationCards.filter(card => card.category === 'Portfolio'),
+  fun: navigationCards.filter(card => card.category === 'Fun'),
+  infrastructure: navigationCards.filter(card => card.category === 'Infrastructure'),
+  containers: navigationCards.filter(card => card.category === 'Containers'),
+  monitoring: navigationCards.filter(card => card.category === 'Monitoring'),
+  security: navigationCards.filter(card => card.category === 'Security'),
+  storage: navigationCards.filter(card => card.category === 'Storage'),
+  automation: navigationCards.filter(card => card.category === 'Automation'),
+  devops: navigationCards.filter(card => card.category === 'DevOps'),
+  media: navigationCards.filter(card => card.category === 'Media'),
+  management: navigationCards.filter(card => card.category === 'Management'),
+  network: navigationCards.filter(card => card.category === 'Network')
+};
 
 // helper function to get cards by category
 export const getCardsByCategory = (category: string): NavigationCard[] => {
-  return navigationCards.filter(card => card.category === category)
-}
+  return navigationCards.filter(card => card.category === category);
+};
+
+// helper function to get internal cards (non-external)
+export const getInternalCards = (): NavigationCard[] => {
+  return navigationCards.filter(card => !card.external);
+};
+
+// helper function to get external cards
+export const getExternalCards = (): NavigationCard[] => {
+  return navigationCards.filter(card => card.external);
+};
 
 // helper function to get featured cards (first 6 for main display)
 export const getFeaturedCards = (): NavigationCard[] => {
-  return navigationCards.slice(0, 6)
-}
-*/
+  return navigationCards.slice(0, 6);
+};

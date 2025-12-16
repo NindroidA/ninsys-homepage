@@ -1,3 +1,14 @@
+# NinSys-Homepage v1.3.0
+- Added boilerplate for About Me page.
+- Added boilerplate for Projects page.
+- Added boilerplate for Railways page.
+- Organized pages in types directory.
+- Updated Layout component for an updated formatting.
+- Updated Navigation Cards component and asset for the new pages.
+- Added new Navbar component for the new pages.
+- Updated bun dependencies.
+- Update GitHub deploy.
+
 # Dev Update 1.2.2
 - Updated goveeAPI util to handle TOTP auth.
 - Updated Terminal page to handle TOTP auth.

@@ -2,46 +2,48 @@ import { Environment, OrbitControls, PerspectiveCamera } from '@react-three/drei
 import { Canvas } from '@react-three/fiber';
 import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
+import { navigationCards } from '../assets/navigationCards';
 import FooterComponent from '../components/Footer';
+import NavigationCards from '../components/NavigationCards';
 import { DataStream, NetworkNodes, ServerRack } from '../components/ServerRack';
 import ServiceStatus from '../components/ServiceStatus';
 
 function Scene() {
     return (
         <>
-        <PerspectiveCamera makeDefault position={[0, 10, 5]} fov={75} />
-        <OrbitControls
-            enableZoom={false}
-            enablePan={false}
-            maxPolarAngle={Math.PI / 2}
-            minPolarAngle={Math.PI / 2}
-            autoRotate={false}
-        />
-        
-        {/* lighting for the  r a c k */}
-        <ambientLight intensity={0.5} color="#4f46e5" />
-        <directionalLight 
-            position={[30, 30, 20]} 
-            intensity={2.0}
-            color="#ffffff"
-            castShadow
-        />
-        <pointLight position={[-15, -15, -10]} intensity={1.0} color="#0ea5e9" />
-        <pointLight position={[15, -15, 10]} intensity={0.9} color="#10b981" />
-        <pointLight position={[0, 15, 0]} intensity={0.8} color="#f59e0b" />
-        <spotLight 
-            position={[-12, 12, 12]} 
-            intensity={1.2} 
-            color="#8b5cf6"
-            angle={Math.PI / 3}
-            penumbra={0.5}
-        />
-        
-        <ServerRack />
-        <NetworkNodes />
-        <DataStream />
-        
-        <Environment preset="studio" />
+            <PerspectiveCamera makeDefault position={[0, 10, 5]} fov={75} />
+            <OrbitControls
+                enableZoom={false}
+                enablePan={false}
+                maxPolarAngle={Math.PI / 2}
+                minPolarAngle={Math.PI / 2}
+                autoRotate={false}
+            />
+            
+            {/* lighting for the  r a c k */}
+            <ambientLight intensity={0.5} color="#4f46e5" />
+            <directionalLight 
+                position={[30, 30, 20]} 
+                intensity={2.0}
+                color="#ffffff"
+                castShadow
+            />
+            <pointLight position={[-15, -15, -10]} intensity={1.0} color="#0ea5e9" />
+            <pointLight position={[15, -15, 10]} intensity={0.9} color="#10b981" />
+            <pointLight position={[0, 15, 0]} intensity={0.8} color="#f59e0b" />
+            <spotLight 
+                position={[-12, 12, 12]} 
+                intensity={1.2} 
+                color="#8b5cf6"
+                angle={Math.PI / 3}
+                penumbra={0.5}
+            />
+            
+            <ServerRack />
+            <NetworkNodes />
+            <DataStream />
+            
+            <Environment preset="studio" />
         </>
     );
 }
@@ -120,11 +122,10 @@ export default function Homepage() {
             </section>
 
             {/* nav cards section */}
-            {/*
             <section ref={cardsRef} className="relative py-20 px-8">
                 <NavigationCards cards={navigationCards} />
             </section>
-            */}
+            
 
             {/* footer */}
             <FooterComponent />

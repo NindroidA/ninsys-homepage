@@ -1,9 +1,9 @@
-name: Deploy NinSys Homepage to Homelab.
+name: Deploy NinSys Homepage to Homelab
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # allows manual triggering
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -33,28 +33,28 @@ jobs:
     - name: 📊 Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ns-homepage-build
+        name: ninsys-homepage-build
         path: dist/
         retention-days: 30
 
-    - name: 🚀 Deploy to Raspberry Pi
+    - name: 🚀 Deploy to Host Server
       uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.PI_HOST }}
-        username: ${{ secrets.PI_USERNAME }}
-        key: ${{ secrets.PI_SSH_KEY }}
-        port: 22
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        port: ${{ secrets.SERVER_PORT }}
         script: |
-          echo "🏠 Connected to Raspberry Pi!"
+          echo "🏠 Connected to Host Server!"
           
           # navigate to deployment directory
-          cd /var/www/ns-home || { echo "❌ ns-home directory not found!"; exit 1; }
+          cd ~/services/ninsys-homepage || { echo "❌ ninsys-homepage directory not found!"; exit 1; }
           
           # backup current deployment
           if [ -d "dist" ]; then
             echo "📦 Backing up current deployment..."
-            sudo rm -rf dist.backup || true
-            sudo mv dist dist.backup || true
+            rm -rf dist.backup || true
+            mv dist dist.backup || true
           fi
           
           # clone/pull latest code
@@ -65,27 +65,21 @@ jobs:
             git clean -fd
           else
             echo "📥 Cloning repository..."
-            sudo rm -rf ./* ./.* 2>/dev/null || true
-            git clone https://github.com/NindroidA/ns-homepage.git .
+            rm -rf ./* ./.* 2>/dev/null || true
+            git clone https://github.com/NindroidA/ninsys-homepage.git .
             git checkout main
           fi
           
-          # install dependencies and build  
-          echo "📦 Setting up Node.js environment..."
-          export NVM_DIR="$HOME/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-          [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+          # install dependencies and build with Bun
+          echo "📦 Installing dependencies with Bun..."
+          export BUN_INSTALL="$HOME/.bun"
+          export PATH="$BUN_INSTALL/bin:$PATH"
           
-          echo "📦 Installing dependencies with npm..."
-          npm install
+          bun install
           
-          echo "🔧 Building React app..."
-          npm run build
-          
-          # set proper permissions
-          echo "🔐 Setting permissions..."
-          sudo chown -R www-data:www-data /var/www/ns-home/dist
-          sudo chmod -R 755 /var/www/ns-home/dist
+          echo "🔧 Building React app with Bun..."
+          bun run build
+          echo "✅ Build complete in ~/services/ninsys-homepage/dist"
           
           # test nginx configuration
           echo "🧪 Testing nginx configuration..."
@@ -108,7 +102,7 @@ jobs:
     - name: 🔔 Notify on success
       if: success()
       run: |
-        echo "✅ NS Homepage deployed successfully!"
+        echo "✅ NinSys Homepage deployed successfully!"
 
     - name: 🔔 Notify on failure  
       if: failure()
