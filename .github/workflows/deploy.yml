@@ -62,7 +62,7 @@ jobs:
 
             echo "Restarting container..."
             cd /opt/docker
-            docker compose up -d ninsys-homepage
+            docker-compose up -d ninsys-homepage
 
             echo "Cleaning up old images..."
             docker image prune -f
