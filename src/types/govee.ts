@@ -1,6 +1,6 @@
 export interface GoveeCapability {
   instance: string;
-  parameters: any;
+  parameters: Record<string, unknown>;
   type: string;
 }
 
@@ -9,7 +9,7 @@ export interface GoveeDevice {
   model: string;
   deviceName: string;
   controllable: boolean;
-  properties: any;
+  properties: Record<string, unknown>;
   retrievable: boolean;
   supportCmds: string[];
 }
@@ -30,12 +30,14 @@ export interface DeviceGroup {
   all: GoveeDevice[];
 }
 
+export type ColorPresetValue = number | string | { r: number; g: number; b: number };
+
 export interface ColorPreset {
   name: string;
   description: string;
   commands: {
     deviceType?: 'lightStrip' | 'bulbs' | 'all';
     action: 'color' | 'scene' | 'brightness' | 'powerSwitch';
-    value: any;
+    value: ColorPresetValue;
   }[];
 }

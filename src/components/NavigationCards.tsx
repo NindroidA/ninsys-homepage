@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import { ExternalLink, Server, Database, Globe, Shield, Settings, Monitor, Cloud, Terminal, Folder, ArrowRight, Zap } from 'lucide-react';
+import { ArrowRight, ExternalLink, Folder, Server, Settings, Terminal, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { NavigationCard } from '../assets/navigationCards';
 
 interface NavigationCardsProps {
@@ -7,13 +8,10 @@ interface NavigationCardsProps {
 }
 
 const iconMap = {
-  server: Server,
-  database: Database,
-  globe: Globe,
-  shield: Shield,
+  //server: Server,
+  //database: Database,
   settings: Settings,
-  monitor: Monitor,
-  cloud: Cloud,
+  //monitor: Monitor,
   terminal: Terminal,
   folder: Folder
 };
@@ -47,7 +45,7 @@ export default function NavigationCards({ cards }: NavigationCardsProps) {
 
         {/* nav cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {cards.map((card, index) => {
+            {cards.map((card) => {
                 const CardIcon = iconMap[card.icon as keyof typeof iconMap] || Server;
                 const gradientColor = colorMap[card.color as keyof typeof colorMap] || colorMap.purple;
 
@@ -60,8 +58,8 @@ export default function NavigationCards({ cards }: NavigationCardsProps) {
                     whileHover={{ scale: 1.02, y: -5 }}
                     className="group relative"
                     >
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-200 transition-opacity duration-500 rounded-3xl blur-xl"></div>
-                        <div className="relative bg-gradient-to-br from-white/12 via-gray-800/20 to-white/8 backdrop-blur-xl rounded-3xl p-8 border border-white/20 hover:border-white/30 transition-all duration-200 hover:shadow-2xl hover:shadow-purple-500/20 hover:bg-gradient-to-br hover:from-white/15 hover:via-gray-700/25 hover:to-white/10">
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl blur-xl"></div>
+                        <div className="relative bg-gradient-to-br from-white/12 via-gray-800/20 to-white/8 backdrop-blur-xl rounded-3xl p-8 border border-white/20 hover:border-white/30 transition-all duration-200 hover:shadow-2xl hover:shadow-purple-500/20 hover:bg-gradient-to-br hover:from-white/15 hover:via-gray-700/25 hover:to-white/10 h-full flex flex-col">
                             <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${gradientColor} backdrop-blur-sm flex items-center justify-center mb-6 shadow-lg border border-white/20`}>
                                 <CardIcon className="w-8 h-8 text-white drop-shadow-lg" />
                             </div>
@@ -70,17 +68,28 @@ export default function NavigationCards({ cards }: NavigationCardsProps) {
                             <p className="text-white/70 mb-6 leading-relaxed">{card.description}</p>
                             
                             <div className="flex items-center justify-between">
-                                <a
-                                    href={card.url}
-                                    target={card.external ? '_blank' : '_self'}
-                                    rel={card.external ? 'noopener noreferrer' : undefined}
-                                    className="group/btn flex items-center gap-3 text-white font-medium transition-all duration-200 bg-gradient-to-r from-purple-500/20 via-gray-700/30 to-pink-500/20 hover:from-purple-500/30 hover:via-gray-600/40 hover:to-pink-500/30 px-6 py-3 rounded-2xl backdrop-blur-sm border border-white/20 hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/20"
-                                >
-                                    <Zap className="w-4 h-4 text-purple-300 group-hover/btn:text-white transition-colors duration-200" />
-                                    <span className="text-purple-200 group-hover/btn:text-white transition-colors duration-200">Launch</span>
-                                    <ArrowRight className="w-4 h-4 text-purple-300 group-hover/btn:text-white group-hover/btn:translate-x-1 transition-all duration-200" />
-                                    {card.external && <ExternalLink className="w-3 h-3 text-purple-400 group-hover/btn:text-white transition-colors duration-200" />}
-                                </a>
+                                {card.external ? (
+                                    <a
+                                        href={card.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="group/btn flex items-center gap-3 text-white font-medium transition-all duration-200 bg-gradient-to-r from-purple-500/20 via-gray-700/30 to-pink-500/20 hover:from-purple-500/30 hover:via-gray-600/40 hover:to-pink-500/30 px-6 py-3 rounded-2xl backdrop-blur-sm border border-white/20 hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/20"
+                                    >
+                                        <Zap className="w-4 h-4 text-purple-300 group-hover/btn:text-white transition-colors duration-200" />
+                                        <span className="text-purple-200 group-hover/btn:text-white transition-colors duration-200">Launch</span>
+                                        <ArrowRight className="w-4 h-4 text-purple-300 group-hover/btn:text-white group-hover/btn:translate-x-1 transition-all duration-200" />
+                                        <ExternalLink className="w-3 h-3 text-purple-400 group-hover/btn:text-white transition-colors duration-200" />
+                                    </a>
+                                ) : (
+                                    <Link
+                                        to={card.url}
+                                        className="group/btn flex items-center gap-3 text-white font-medium transition-all duration-200 bg-gradient-to-r from-purple-500/20 via-gray-700/30 to-pink-500/20 hover:from-purple-500/30 hover:via-gray-600/40 hover:to-pink-500/30 px-6 py-3 rounded-2xl backdrop-blur-sm border border-white/20 hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/20"
+                                    >
+                                        <Zap className="w-4 h-4 text-purple-300 group-hover/btn:text-white transition-colors duration-200" />
+                                        <span className="text-purple-200 group-hover/btn:text-white transition-colors duration-200">Visit</span>
+                                        <ArrowRight className="w-4 h-4 text-purple-300 group-hover/btn:text-white group-hover/btn:translate-x-1 transition-all duration-200" />
+                                    </Link>
+                                )}
                             
                                 <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${gradientColor} shadow-lg`}></div>
                             </div>

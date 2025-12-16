@@ -1,12 +1,8 @@
 import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { commands, TERMINAL_CONFIG, TERMINAL_MESSAGES } from '../assets/terminal/terminalCommands';
-
-interface TerminalLine {
-  type: 'input' | 'output' | 'error' | 'system';
-  content: string;
-  timestamp?: string;
-}
+import Navbar from '../components/Navbar';
+import { TerminalLine } from '../types/pages';
 
 export default function Terminal() {
   const [lines, setLines] = useState<TerminalLine[]>(
@@ -105,12 +101,13 @@ export default function Terminal() {
           content: result
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // handle authentication errors specifically
-      if (error.message?.includes('Session expired') || error.message?.includes('Authentication')) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('Session expired') || errorMessage.includes('Authentication')) {
         addLine({
           type: 'error',
-          content: error.message
+          content: errorMessage
         });
         // reset auth state on auth errors
         setIsAuthenticated(false);
@@ -120,7 +117,7 @@ export default function Terminal() {
       } else {
         addLine({
           type: 'error',
-          content: TERMINAL_MESSAGES.COMMAND_ERROR(error.message)
+          content: TERMINAL_MESSAGES.COMMAND_ERROR(errorMessage)
         });
       }
     } finally {
@@ -200,6 +197,7 @@ export default function Terminal() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-indigo-950 relative overflow-hidden">
+      <Navbar variant="minimal" />
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-r from-cyan-400/10 to-blue-500/10 rounded-full blur-3xl animate-pulse"></div>

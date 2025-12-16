@@ -54,11 +54,12 @@ const getServiceIcon = (iconName?: string) => {
 
 export default function ServiceStatus() {
   const { services, loading, error, refresh } = useLiveServices();
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [, setTick] = useState(0);
 
+  // Trigger re-render every second for "last checked" time updates
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentTime(new Date());
+      setTick(t => t + 1);
     }, 1000);
     return () => clearInterval(timer);
   }, []);

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Float } from '@react-three/drei';
 import * as THREE from 'three';
@@ -6,10 +6,9 @@ import * as THREE from 'three';
 // THE server rack component
 export function ServerRack() {
     const groupRef = useRef<THREE.Group>(null);
-    const [isUserInteracting, setIsUserInteracting] = useState(false);
-    
-    useFrame((state) => {
-        if (groupRef.current && !isUserInteracting) {
+
+    useFrame(() => {
+        if (groupRef.current) {
             groupRef.current.rotation.y += 0.008;
         }
     });
