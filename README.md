@@ -66,8 +66,8 @@ API URLs are automatically detected based on environment (localhost for dev, pro
 
 ## Recent Changes
 
-See [CHANGELOG.md](CHANGELOG.md) for version history.
+See [CHANGELOG.md](./CHANGELOG.md) for version history.
 
 ## License
 
-[MIT](LICENSE)
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
