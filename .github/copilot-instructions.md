@@ -85,7 +85,7 @@ src/
 **Component Style**:
 - Use function components with hooks (no class components)
 - Define props interfaces above the component
-- Pages use default exports; components use named exports
+- Route pages and page-level components use default exports; shared UI components in `src/components/shared` use named exports
 
 **File Naming**:
 - PascalCase for component files (e.g., `ProjectCard.tsx`, `SkillVial.tsx`)
@@ -98,7 +98,7 @@ interface ProjectCardProps {
   description: string;
 }
 
-export default function ProjectCard({ title, description }: ProjectCardProps) {
+export function ProjectCard({ title, description }: ProjectCardProps) {
   return <div>...</div>;
 }
 ```
@@ -202,8 +202,6 @@ export function getUser(id: string): Promise<User> {
 ```tsx
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Settings } from 'lucide-react';
-import Button from '../shared/Button';
 import type { Project } from '../../types/projects';
 import { api } from '../../utils/ninsysAPI';
 ```
@@ -374,9 +372,13 @@ export function useProjects() {
 
 **❌ Don't update state without rollback**:
 ```tsx
-// BAD - state stays incorrect on API failure
-setItems(newItems);
-await api.update(newItems);
+// BAD - state stays incorrect on API failure and error is swallowed
+try {
+  setItems(newItems);
+  await api.update(newItems);
+} catch (error) {
+  // No rollback or user-facing error handling
+}
 ```
 
 **✅ Store previous state for rollback**:
@@ -497,9 +499,9 @@ if (repo.full_name === existingProject.repoPath)
 - `src/pages/Homepage.tsx` - Landing page with 3D server rack
 
 ### Reusable Components
-- `src/components/shared/Button.tsx` - Button component
-- `src/components/shared/Card.tsx` - Card component
-- `src/components/shared/Section.tsx` - Section wrapper
+- `src/components/shared/ui/Button.tsx` - Button component
+- `src/components/shared/ui/Card.tsx` - Card component
+- `src/components/shared/ui/Section.tsx` - Section wrapper
 - `src/components/Layout.tsx` - Page layout wrapper
 - `src/components/Navbar.tsx` - Navigation bar
 
