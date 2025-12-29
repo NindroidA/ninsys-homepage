@@ -7,7 +7,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  # Docker image names must be lowercase - using lowercase version of github.repository
+  IMAGE_NAME: nindroida/ninsys-homepage
 
 jobs:
   build-and-push:
@@ -58,7 +59,7 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script: |
             echo "Pulling latest image..."
-            docker pull ghcr.io/nindroida/ninsys-homepage:latest
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
             echo "Restarting container..."
             cd /opt/docker
