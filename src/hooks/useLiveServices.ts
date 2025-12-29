@@ -10,7 +10,6 @@ interface LiveService {
   stats?: {
     guilds?: number;
     users?: number;
-    ping?: number;
     devices?: number;
   };
   lastUpdated?: string;
@@ -80,9 +79,6 @@ export const useLiveServices = () => {
           icon: 'cog',
           status: cogworksStatus.status === 'fulfilled' && cogworksStatus.value.online ? 'online' : 'offline',
           uptime: cogworksStatus.status === 'fulfilled' ? formatUptime(cogworksStatus.value.uptime) : undefined,
-          stats: cogworksStatus.status === 'fulfilled' ? {
-            ping: cogworksStatus.value.ping,
-          } : undefined,
           lastUpdated: now,
         },
         {

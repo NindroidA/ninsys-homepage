@@ -3,22 +3,26 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { commands, TERMINAL_CONFIG, TERMINAL_MESSAGES } from '../assets/terminal/terminalCommands';
 import Navbar from '../components/Navbar';
 import { TerminalLine } from '../types/pages';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Terminal() {
+  const { isAuthenticated: isSiteAuthenticated, isGuestViewMode, user, toggleGuestView } = useAuth();
+
   const [lines, setLines] = useState<TerminalLine[]>(
     TERMINAL_MESSAGES.WELCOME.map(content => ({
       type: content === '' ? 'output' : content.includes('TERMINAL') || content.includes('Initializing') || content.includes('Connection') ? 'system' : 'output',
       content
     }))
   );
-  
+
   const [currentInput, setCurrentInput] = useState('');
+  // Terminal auth syncs with site auth, but can be overridden in guest view mode
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState('guest');
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [isProcessing, setIsProcessing] = useState(false);
-  
+
   const inputRef = useRef<HTMLInputElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
 
@@ -26,11 +30,24 @@ export default function Terminal() {
   const isSessionValid = (): boolean => {
     const token = sessionStorage.getItem('ninsys_auth_token');
     const expires = sessionStorage.getItem('ninsys_auth_expires');
-    
+
     if (!token || !expires) return false;
-    
+
     return new Date(expires).getTime() > Date.now();
   };
+
+  // Sync terminal auth with site-wide auth
+  useEffect(() => {
+    if (isSiteAuthenticated && !isGuestViewMode) {
+      // Auto-authenticate terminal when site is authenticated (and not in guest view)
+      setIsAuthenticated(true);
+      setCurrentUser(user || 'admin');
+    } else if (isGuestViewMode) {
+      // In guest view mode, terminal acts as guest but can still login manually
+      setIsAuthenticated(false);
+      setCurrentUser('guest');
+    }
+  }, [isSiteAuthenticated, isGuestViewMode, user]);
 
   const addLine = useCallback((line: TerminalLine) => {
     setLines(prev => [...prev, { ...line, timestamp: new Date().toLocaleTimeString() }]);
@@ -88,11 +105,14 @@ export default function Terminal() {
       const result = await command.execute(args, {
         isAuthenticated,
         currentUser,
-        history: commandHistory
+        history: commandHistory,
+        isSiteAuthenticated,
+        isGuestViewMode
       }, {
         setLines,
         setIsAuthenticated,
-        setCurrentUser
+        setCurrentUser,
+        toggleGuestView
       });
 
       if (result) {
@@ -206,9 +226,9 @@ export default function Terminal() {
 
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
           className="w-full max-w-6xl"
         >
           {/* CRT Monitor Frame */}

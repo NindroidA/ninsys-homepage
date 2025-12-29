@@ -85,10 +85,36 @@ export function ServerRack() {
     );
 }
 
+// Precompute stable random values for nodes (seeded by index)
+function seededRandom(seed: number): number {
+    const x = Math.sin(seed * 9999) * 10000;
+    return x - Math.floor(x);
+}
+
 // lil nodes floating
 export function NetworkNodes() {
     const nodesRef = useRef<THREE.Group>(null);
-    
+
+    // Memoize node data to prevent recreation on re-renders (reduced count for performance)
+    const nodeData = React.useMemo(() => {
+        return Array.from({ length: 10 }, (_, i) => {
+            const angle = (i / 10) * Math.PI * 2;
+            const radius = 6 + Math.sin(i) * 2;
+            const x = Math.cos(angle) * radius;
+            const z = Math.sin(angle) * radius;
+            const y = (seededRandom(i + 1) - 0.5) * 4;
+            const speed = 1 + seededRandom(i + 100) * 0.5;
+            const size = 0.12 + seededRandom(i + 200) * 0.08;
+            const colorIndex = i % 6;
+            const color = colorIndex === 0 ? '#0ea5e9' :
+                          colorIndex === 1 ? '#10b981' :
+                          colorIndex === 2 ? '#f59e0b' :
+                          colorIndex === 3 ? '#8b5cf6' :
+                          colorIndex === 4 ? '#ef4444' : '#06b6d4';
+            return { x, y, z, speed, size, color };
+        });
+    }, []);
+
     useFrame((state) => {
         if (nodesRef.current) {
             nodesRef.current.rotation.y = state.clock.getElapsedTime() * 0.08;
@@ -97,42 +123,20 @@ export function NetworkNodes() {
 
     return (
         <group ref={nodesRef}>
-            {Array.from({ length: 18 }, (_, i) => {
-                const angle = (i / 18) * Math.PI * 2;
-                const radius = 6 + Math.sin(i) * 2;
-                const x = Math.cos(angle) * radius;
-                const z = Math.sin(angle) * radius;
-                const y = (Math.random() - 0.5) * 4;
-                
-                return (
-                    <Float key={i} speed={1 + Math.random()} rotationIntensity={0.4} floatIntensity={0.7}>
-                        <mesh position={[x, y, z]}>
-                            <octahedronGeometry args={[0.12 + Math.random() * 0.08]} />
-                            <meshStandardMaterial
-                                color={
-                                i % 6 === 0 ? '#0ea5e9' : 
-                                i % 6 === 1 ? '#10b981' : 
-                                i % 6 === 2 ? '#f59e0b' : 
-                                i % 6 === 3 ? '#8b5cf6' :
-                                i % 6 === 4 ? '#ef4444' :
-                                '#06b6d4'
-                                }
-                                emissive={
-                                i % 6 === 0 ? '#0ea5e9' : 
-                                i % 6 === 1 ? '#10b981' : 
-                                i % 6 === 2 ? '#f59e0b' : 
-                                i % 6 === 3 ? '#8b5cf6' :
-                                i % 6 === 4 ? '#ef4444' :
-                                '#06b6d4'
-                                }
-                                emissiveIntensity={0.4}
-                                transparent
-                                opacity={0.9}
-                            />
-                        </mesh>
-                    </Float>
-                );
-            })}
+            {nodeData.map((node, i) => (
+                <Float key={i} speed={node.speed} rotationIntensity={0.4} floatIntensity={0.7}>
+                    <mesh position={[node.x, node.y, node.z]}>
+                        <octahedronGeometry args={[node.size]} />
+                        <meshStandardMaterial
+                            color={node.color}
+                            emissive={node.color}
+                            emissiveIntensity={0.4}
+                            transparent
+                            opacity={0.9}
+                        />
+                    </mesh>
+                </Float>
+            ))}
         </group>
     );
 }
@@ -142,9 +146,9 @@ export function DataStream() {
     const pointsRef = useRef<THREE.Points>(null);
   
     const particlesPosition = React.useMemo(() => {
-        const positions = new Float32Array(400 * 3);
-        
-        for (let i = 0; i < 400; i++) {
+        const positions = new Float32Array(150 * 3);
+
+        for (let i = 0; i < 150; i++) {
             positions[i * 3] = (Math.random() - 0.5) * 30;
             positions[i * 3 + 1] = (Math.random() - 0.5) * 30;  
             positions[i * 3 + 2] = (Math.random() - 0.5) * 30;

@@ -9,12 +9,16 @@ export interface TerminalState {
   isAuthenticated: boolean;
   currentUser: string;
   history: string[];
+  // Site-wide auth context
+  isSiteAuthenticated?: boolean;
+  isGuestViewMode?: boolean;
 }
 
 export interface CommandSetters {
   setLines?: (callback: (prev: any[]) => any[]) => void;
   setIsAuthenticated?: (auth: boolean) => void;
   setCurrentUser?: (user: string) => void;
+  toggleGuestView?: () => void;
 }
 
 export interface Command {
@@ -155,10 +159,15 @@ Domain: nindroidsystems.com
     description: 'Authenticate with TOTP code',
     requiresAuth: false,
     execute: async (args: string[], state: TerminalState, setters?: CommandSetters): Promise<string> => {
+      // Check if already authenticated via site login
+      if (state.isSiteAuthenticated && !state.isGuestViewMode) {
+        return 'Already authenticated via site login! Admin features are active.';
+      }
+
       if (state.isAuthenticated) {
         return TERMINAL_MESSAGES.AUTH_ALREADY;
       }
-      
+
       const totpCode = args[0];
       if (!totpCode) {
         return 'Usage: login <6-digit-code>\nGet the code from your authenticator app.';
@@ -203,7 +212,20 @@ Domain: nindroidsystems.com
     description: 'Clear authentication and end session',
     requiresAuth: false,
     execute: async (args: string[], state: TerminalState, setters?: CommandSetters): Promise<string> => {
-      // call logout endpoint
+      // If site-authenticated (and not in guest view), logout is disabled
+      // User should use the site logout button instead
+      if (state.isSiteAuthenticated && !state.isGuestViewMode) {
+        return 'Cannot logout from terminal while site-authenticated.\nUse the admin logout button or toggle "View as Guest" mode.';
+      }
+
+      // If in guest view mode and authenticated via terminal, just clear terminal auth
+      if (state.isGuestViewMode && state.isAuthenticated) {
+        setters?.setIsAuthenticated?.(false);
+        setters?.setCurrentUser?.('guest');
+        return 'Terminal session cleared. You are still site-authenticated in guest view mode.';
+      }
+
+      // Normal logout flow
       try {
         const token = sessionStorage.getItem('ninsys_auth_token');
         if (token) {
@@ -222,7 +244,7 @@ Domain: nindroidsystems.com
       // clear stored tokens
       sessionStorage.removeItem('ninsys_auth_token');
       sessionStorage.removeItem('ninsys_auth_expires');
-      
+
       setters?.setIsAuthenticated?.(false);
       setters?.setCurrentUser?.('guest');
       return TERMINAL_MESSAGES.LOGOUT_SUCCESS;
@@ -454,8 +476,27 @@ Domain: nindroidsystems.com
     name: 'ping',
     description: 'Test network connectivity',
     requiresAuth: false,
-    execute: async (args: string[]): Promise<string> => {
+    execute: async (): Promise<string> => {
       return 'pong';
+    }
+  },
+
+  viewguest: {
+    name: 'viewguest',
+    description: 'Toggle guest view mode (view site as guest)',
+    requiresAuth: false,
+    execute: (_args: string[], state: TerminalState, setters?: CommandSetters): string => {
+      if (!state.isSiteAuthenticated) {
+        return 'Guest view mode is only available when site-authenticated.\nLogin via the admin button first.';
+      }
+
+      setters?.toggleGuestView?.();
+
+      if (state.isGuestViewMode) {
+        return 'Exiting guest view mode. Admin features restored.';
+      } else {
+        return 'Entering guest view mode. Viewing site as a guest would see it.\nTerminal auth reset to guest. Use "viewguest" again to exit.';
+      }
     }
   },
 };
