@@ -39,8 +39,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Get the latest commit message for PR title
-          COMMIT_MSG=$(git log -1 --pretty=%s)
+          # Get the latest commit message and clean it up for PR title
+          RAW_COMMIT=$(git log -1 --pretty=%s)
+          # Strip conventional commit prefix (feat:, fix:, ci:, etc.) and capitalize
+          COMMIT_MSG=$(echo "$RAW_COMMIT" | sed 's/^[a-z]*: //' | sed 's/^./\U&/')
+
+          # Get version from package.json
+          VERSION=$(jq -r '.version' package.json)
 
           # Get commit count
           COMMIT_COUNT=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo "0")
@@ -48,12 +53,13 @@ jobs:
           # Get recent commits for body (max 15)
           RECENT_COMMITS=$(git log origin/main..HEAD --oneline --no-merges 2>/dev/null | head -15 || echo "Initial commits")
 
-          # Create the draft PR
+          # Create the draft PR with Copilot as reviewer
           gh pr create \
             --draft \
             --base main \
             --head dev \
-            --title "Dev: $COMMIT_MSG" \
+            --title "v$VERSION: $COMMIT_MSG" \
+            --reviewer copilot \
             --body "## Summary
 
           Auto-generated draft PR for changes on \`dev\` branch.
@@ -69,7 +75,16 @@ jobs:
           *This PR was automatically created by GitHub Actions.*
           *Mark as \"Ready for review\" when changes are complete.*"
 
-          echo "✅ Draft PR created successfully"
+          echo "✅ Draft PR created successfully with Copilot reviewer"
+
+      - name: Request Copilot review on existing PR
+        if: steps.check-pr.outputs.pr_count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Request Copilot review on the existing PR
+          gh pr edit ${{ steps.check-pr.outputs.pr_number }} --add-reviewer copilot
+          echo "✅ Requested Copilot review on PR #${{ steps.check-pr.outputs.pr_number }}"
 
       - name: Output result
         run: |
