@@ -1,11 +1,11 @@
-name: Auto Create PR
+name: Auto Create Draft PR
 
 on:
   push:
     branches: [dev]
 
 jobs:
-  create-pr:
+  create-draft-pr:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -31,10 +31,10 @@ jobs:
             PR_NUMBER=$(gh pr list --head dev --base main --state open --json number --jq '.[0].number')
             echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
           else
-            echo "📝 No open PR found, will create new PR"
+            echo "📝 No open PR found, will create new draft PR"
           fi
 
-      - name: Create PR
+      - name: Create Draft PR
         if: steps.check-pr.outputs.pr_count == '0'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -53,14 +53,15 @@ jobs:
           # Get recent commits for body (max 15)
           RECENT_COMMITS=$(git log origin/main..HEAD --oneline --no-merges 2>/dev/null | head -15 || echo "Initial commits")
 
-          # Create the PR (Copilot auto-review triggers via repository ruleset)
+          # Create draft PR (mark as "Ready for review" to trigger Copilot)
           gh pr create \
+            --draft \
             --base main \
             --head dev \
             --title "v$VERSION: $COMMIT_MSG" \
             --body "## Summary
 
-          Auto-generated PR for changes on \`dev\` branch.
+          Auto-generated draft PR for changes on \`dev\` branch.
 
           ### Commits ($COMMIT_COUNT total)
 
@@ -70,14 +71,15 @@ jobs:
 
           ---
 
-          *This PR was automatically created by GitHub Actions.*"
+          *This PR was automatically created by GitHub Actions.*
+          *Mark as \"Ready for review\" to trigger Copilot review.*"
 
-          echo "✅ PR created successfully"
+          echo "✅ Draft PR created successfully"
 
       - name: Output result
         run: |
           if [ "${{ steps.check-pr.outputs.pr_count }}" -gt 0 ]; then
             echo "::notice::PR #${{ steps.check-pr.outputs.pr_number }} already exists and will be updated with new commits"
           else
-            echo "::notice::New PR created for dev → main"
+            echo "::notice::New draft PR created for dev → main"
           fi
