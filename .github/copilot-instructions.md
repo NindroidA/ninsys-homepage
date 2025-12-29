@@ -9,7 +9,7 @@
 ## Tech Stack
 
 - **Frontend**: React 19, TypeScript, Vite 5
-- **Package Manager**: Bun (npm/npm-compatible)
+- **Package Manager**: Bun (npm-compatible)
 - **Styling**: Tailwind CSS 3, Tailwind Merge, Tailwind Animate
 - **Animation**: Framer Motion
 - **3D Graphics**: Three.js, React Three Fiber, Drei
@@ -85,7 +85,7 @@ src/
 **Component Style**:
 - Use function components with hooks (no class components)
 - Define props interfaces above the component
-- Export components as default exports
+- Pages use default exports; components use named exports
 
 **File Naming**:
 - PascalCase for component files (e.g., `ProjectCard.tsx`, `SkillVial.tsx`)
@@ -175,7 +175,7 @@ const handleToggle = useCallback(() => setIsOpen(prev => !prev), []);
 - Explicit return types on exported functions
 - Prefer `interface` over `type` for object shapes
 - Use `const` for immutable values
-- Avoid `any` unless necessary (eslint warning)
+- Avoid `any` unless necessary (allowed but discouraged by convention; not enforced by ESLint)
 
 **Example**:
 ```tsx
@@ -191,7 +191,7 @@ export function getUser(id: string): Promise<User> {
 
 ### Imports
 
-**Import Order** (enforced by unused-imports plugin):
+**Import Order** (convention; unused-imports only removes unused imports/variables):
 - React imports first
 - External libraries
 - Internal components/hooks
@@ -486,7 +486,7 @@ if (repo.full_name === existingProject.repoPath)
 
 ### Core Application Files
 - `src/main.tsx` - Application entry point
-- `src/App.tsx` - Root component with routing
+- `src/pages/index.tsx` - Root component with routing (`Pages` component)
 - `src/context/AuthContext.tsx` - Authentication state provider
 - `src/utils/ninsysAPI.ts` - API client wrapper
 
