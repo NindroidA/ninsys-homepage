@@ -53,12 +53,11 @@ jobs:
           # Get recent commits for body (max 15)
           RECENT_COMMITS=$(git log origin/main..HEAD --oneline --no-merges 2>/dev/null | head -15 || echo "Initial commits")
 
-          # Create the PR with Copilot as reviewer
+          # Create the PR (Copilot auto-review triggers via repository ruleset)
           gh pr create \
             --base main \
             --head dev \
             --title "v$VERSION: $COMMIT_MSG" \
-            --reviewer copilot \
             --body "## Summary
 
           Auto-generated PR for changes on \`dev\` branch.
@@ -73,18 +72,7 @@ jobs:
 
           *This PR was automatically created by GitHub Actions.*"
 
-          echo "✅ PR created successfully with Copilot reviewer"
-
-      - name: Request Copilot review on existing PR
-        if: steps.check-pr.outputs.pr_count != '0'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Re-request Copilot review using GitHub API
-          gh api repos/${{ github.repository }}/pulls/${{ steps.check-pr.outputs.pr_number }}/requested_reviewers \
-            --method POST \
-            -f "reviewers[]=copilot" || echo "Note: Could not request Copilot review"
-          echo "✅ Requested Copilot review on PR #${{ steps.check-pr.outputs.pr_number }}"
+          echo "✅ PR created successfully"
 
       - name: Output result
         run: |
