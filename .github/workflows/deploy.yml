@@ -58,7 +58,7 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script: |
             echo "Pulling latest image..."
-            docker pull ghcr.io/${{ github.repository }}:latest
+            docker pull ghcr.io/nindroida/ninsys-homepage:latest
 
             echo "Restarting container..."
             cd /opt/docker
