@@ -10,18 +10,19 @@ export default function NotFound() {
     visible: {
       opacity: 1,
       transition: {
-        duration: 0.6,
-        staggerChildren: 0.2
+        duration: 0.4,
+        delay: 0.15,
+        staggerChildren: 0.15
       }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { 
-      opacity: 1, 
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
       y: 0,
-      transition: { duration: 0.6 }
+      transition: { duration: 0.4 }
     }
   };
 

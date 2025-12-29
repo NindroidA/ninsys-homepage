@@ -1,14 +1,31 @@
 import { Environment, OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { motion } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { navigationCards } from '../assets/navigationCards';
 import FooterComponent from '../components/Footer';
 import NavigationCards from '../components/NavigationCards';
 import { DataStream, NetworkNodes, ServerRack } from '../components/ServerRack';
+import { ServerRackLoader } from '../components/ServerRackLoader';
 import ServiceStatus from '../components/ServiceStatus';
+import { ErrorBoundary } from '../components/shared/ErrorBoundary';
 
-function Scene() {
+// No upfront WebGL check - let the Canvas try to render and handle errors gracefully
+// This avoids creating/destroying a test context that could interfere with the actual Canvas
+
+interface SceneProps {
+    onReady?: () => void;
+}
+
+function Scene({ onReady }: SceneProps) {
+    useEffect(() => {
+        // Signal that the scene is ready after a short delay
+        const timer = setTimeout(() => {
+            onReady?.();
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [onReady]);
+
     return (
         <>
             <PerspectiveCamera makeDefault position={[0, 10, 5]} fov={75} />
@@ -19,30 +36,20 @@ function Scene() {
                 minPolarAngle={Math.PI / 2}
                 autoRotate={false}
             />
-            
-            {/* lighting for the  r a c k */}
-            <ambientLight intensity={0.5} color="#4f46e5" />
-            <directionalLight 
-                position={[30, 30, 20]} 
-                intensity={2.0}
+
+            {/* Simplified lighting - fewer lights for better GPU performance */}
+            <ambientLight intensity={0.6} color="#4f46e5" />
+            <directionalLight
+                position={[30, 30, 20]}
+                intensity={1.5}
                 color="#ffffff"
-                castShadow
             />
-            <pointLight position={[-15, -15, -10]} intensity={1.0} color="#0ea5e9" />
-            <pointLight position={[15, -15, 10]} intensity={0.9} color="#10b981" />
-            <pointLight position={[0, 15, 0]} intensity={0.8} color="#f59e0b" />
-            <spotLight 
-                position={[-12, 12, 12]} 
-                intensity={1.2} 
-                color="#8b5cf6"
-                angle={Math.PI / 3}
-                penumbra={0.5}
-            />
-            
+            <pointLight position={[0, 10, 10]} intensity={0.8} color="#8b5cf6" />
+
             <ServerRack />
             <NetworkNodes />
             <DataStream />
-            
+
             <Environment preset="studio" />
         </>
     );
@@ -52,11 +59,41 @@ export default function Homepage() {
     const heroRef = useRef<HTMLDivElement>(null);
     const statusRef = useRef<HTMLElement>(null);
     const cardsRef = useRef<HTMLElement>(null);
+    const [isSceneReady, setIsSceneReady] = useState(false);
+    const [sceneError, setSceneError] = useState(false);
+    const hasLoggedError = useRef(false);
+
+    const handleSceneReady = useCallback(() => {
+        setIsSceneReady(true);
+    }, []);
+
+    const handleSceneError = useCallback((error?: Error) => {
+        // Log only once (StrictMode can cause double calls)
+        if (!hasLoggedError.current) {
+            hasLoggedError.current = true;
+            console.warn('3D scene error - hiding canvas', error?.message || '');
+        }
+        setSceneError(true);
+        setIsSceneReady(true);
+    }, []);
+
+    // Fallback timeout - dismiss loader after 5 seconds even if 3D fails
+    useEffect(() => {
+        if (sceneError) return; // Skip if already errored
+
+        const timeout = setTimeout(() => {
+            if (!isSceneReady) {
+                console.warn('3D scene load timeout - showing page without 3D');
+                handleSceneError();
+            }
+        }, 5000);
+        return () => clearTimeout(timeout);
+    }, [isSceneReady, sceneError, handleSceneError]);
 
     useEffect(() => {
         const handleScroll = () => {
             const scrollY = window.scrollY;
-            
+
             // parallax effect for welcome section
             if (heroRef.current) {
                 heroRef.current.style.transform = `translateY(${scrollY * 0.5}px)`;
@@ -78,14 +115,52 @@ export default function Homepage() {
 
             {/* welcome section */}
             <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-                {/* background server rack */}
-                <div className="absolute inset-0 flex items-center opacity-70 z-0">
-                    {
-                    <Canvas style={{ width: '100%', height: '100%' }} gl={{ antialias: true }} >
-                        {/* <OrbitControls enableZoom={false} enablePan={false} /> */}
-                        <Scene />
-                    </Canvas>
-                    }
+                {/* background server rack with loading state */}
+                <div className="absolute inset-0 flex items-center z-0">
+                    <AnimatePresence mode="wait">
+                        {!isSceneReady && (
+                            <motion.div
+                                key="loader"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 0.7 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="absolute inset-0 flex items-center justify-center"
+                            >
+                                <ServerRackLoader />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                    {!sceneError && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: isSceneReady ? 0.7 : 0 }}
+                            transition={{ duration: 0.8 }}
+                            className="w-full h-full"
+                        >
+                            <ErrorBoundary fallback={null} onError={handleSceneError}>
+                                <Suspense fallback={null}>
+                                    <Canvas
+                                        style={{ width: '100%', height: '100%' }}
+                                        gl={{
+                                            antialias: true,
+                                            powerPreference: 'default',
+                                            failIfMajorPerformanceCaveat: false,
+                                        }}
+                                        dpr={[1, 1.5]}
+                                        onCreated={({ gl }) => {
+                                            gl.domElement.addEventListener('webglcontextlost', (e: Event) => {
+                                                e.preventDefault();
+                                                handleSceneError();
+                                            });
+                                        }}
+                                    >
+                                        <Scene onReady={handleSceneReady} />
+                                    </Canvas>
+                                </Suspense>
+                            </ErrorBoundary>
+                        </motion.div>
+                    )}
                 </div>
                 
                 {/* animated background grid */}
@@ -125,7 +200,6 @@ export default function Homepage() {
             <section ref={cardsRef} className="relative py-20 px-8">
                 <NavigationCards cards={navigationCards} />
             </section>
-            
 
             {/* footer */}
             <FooterComponent />

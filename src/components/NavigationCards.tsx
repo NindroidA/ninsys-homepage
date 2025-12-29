@@ -29,9 +29,9 @@ const colorMap = {
 
 export default function NavigationCards({ cards }: NavigationCardsProps) {
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
       className="w-full max-w-6xl mx-auto p-8"
     >
@@ -53,7 +53,7 @@ export default function NavigationCards({ cards }: NavigationCardsProps) {
                     <motion.div
                     key={card.id}
                     initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: 0.1 }}
                     whileHover={{ scale: 1.02, y: -5 }}
                     className="group relative"

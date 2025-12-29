@@ -85,10 +85,10 @@ export default function ServiceStatus() {
   const statusSummary = getStatusSummary();
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.1 }}
       className="w-full max-w-8xl mx-auto p-8"
     >
       {/* Status header and count */}
@@ -145,9 +145,9 @@ export default function ServiceStatus() {
           return (
             <motion.div
               key={service.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.15 + index * 0.1 }}
               className="bg-gradient-to-br from-white/12 via-gray-800/20 to-white/8 backdrop-blur-xl rounded-2xl p-6 border border-white/20 hover:border-white/30 transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/10 hover:bg-gradient-to-br hover:from-white/15 hover:via-gray-700/25 hover:to-white/10 min-h-[300px]"
             >
               <div className="flex items-start justify-between mb-6">
@@ -171,7 +171,7 @@ export default function ServiceStatus() {
                 <p className="text-white/70 text-base mb-6 leading-relaxed">{service.description}</p>
               )}
 
-              {service.stats && (
+              {service.stats && (service.stats.guilds || service.stats.users || service.stats.devices) && (
                 <div className="mb-6 space-y-3 bg-white/5 rounded-xl p-4 border border-white/10">
                     {service.stats.guilds && (
                     <div className="flex justify-between text-base">
@@ -183,12 +183,6 @@ export default function ServiceStatus() {
                     <div className="flex justify-between text-base">
                         <span className="text-white/60">Users:</span>
                         <span className="text-white/80 font-medium">{service.stats.users.toLocaleString()}</span>
-                    </div>
-                    )}
-                    {service.stats.ping && (
-                    <div className="flex justify-between text-base">
-                        <span className="text-white/60">Ping:</span>
-                        <span className="text-white/80 font-medium">{service.stats.ping}ms</span>
                     </div>
                     )}
                     {service.stats.devices && (

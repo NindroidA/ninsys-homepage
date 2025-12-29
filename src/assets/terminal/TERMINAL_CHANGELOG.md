@@ -1,3 +1,11 @@
+# NinSys Terminal v1.2.0
+- Integrated with site-wide authentication system
+- Terminal auto-authenticates when site is logged in
+- Added `viewguest` command to toggle guest view mode
+- Modified `login` command to detect site authentication
+- Modified `logout` command behavior based on auth context
+- Guest view mode allows viewing site as a guest would see it
+
 # NinSys Terminal v1.1.1
 - Switched API key auth to TOTP authentication.
 

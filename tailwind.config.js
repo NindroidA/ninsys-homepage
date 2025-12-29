@@ -4,8 +4,7 @@ export default {
   darkMode: ['class'],
   content: [
     './index.html',
-    './src/**/*.{ts,tsx,js,jsx}',
-    './node_modules/@nindroidsystems/ui/**/*.{js,ts,jsx,tsx}'
+    './src/**/*.{ts,tsx,js,jsx}'
   ],
   theme: {
     extend: {

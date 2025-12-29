@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
+import { GuestViewBanner } from './admin/GuestViewBanner';
 
 export default function Layout() {
     const location = useLocation();
@@ -11,6 +12,7 @@ export default function Layout() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-indigo-950">
+            <GuestViewBanner />
             <Outlet />
         </div>
     );

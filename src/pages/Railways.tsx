@@ -1,4 +1,4 @@
-import { Badge, Button, Card, FloatingElements } from '@nindroidsystems/ui';
+import { Badge, Button, Card, FloatingElements } from '../components/shared/ui';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Info, RotateCcw, ZoomIn, ZoomOut } from 'lucide-react';
 import { useState } from 'react';
@@ -38,9 +38,9 @@ export default function Railways() {
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-20">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -30 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
           className="text-center mb-12"
         >
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
@@ -198,9 +198,9 @@ export default function Railways() {
 
         {/* Fun facts section */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-12 max-w-2xl mx-auto"
         >
           <Card padding="md" variant="minimal">
