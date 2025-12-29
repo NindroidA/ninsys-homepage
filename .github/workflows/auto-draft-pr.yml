@@ -82,8 +82,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Request Copilot review on the existing PR
-          gh pr edit ${{ steps.check-pr.outputs.pr_number }} --add-reviewer copilot
+          # Re-request Copilot review using GitHub API
+          gh api repos/${{ github.repository }}/pulls/${{ steps.check-pr.outputs.pr_number }}/requested_reviewers \
+            --method POST \
+            -f "reviewers[]=copilot" || echo "Note: Could not request Copilot review"
           echo "✅ Requested Copilot review on PR #${{ steps.check-pr.outputs.pr_number }}"
 
       - name: Output result
