@@ -66,7 +66,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Login with TOTP code
   const login = useCallback(async (totpCode: string): Promise<{ success: boolean; error?: string }> => {
     try {
-      const response = await fetch(`${API_BASE}/api/auth/login`, {
+      const response = await fetch(`${API_BASE}/v2/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: totpCode }),
@@ -110,7 +110,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const token = sessionStorage.getItem(STORAGE_KEYS.TOKEN);
       if (token) {
-        await fetch(`${API_BASE}/api/auth/logout`, {
+        await fetch(`${API_BASE}/v2/auth/logout`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

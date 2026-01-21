@@ -5,7 +5,6 @@ import { useState } from 'react';
 import Navbar from '../components/Navbar';
 
 export default function Railways() {
-  const [showInstructions, setShowInstructions] = useState(true);
   const [zoom, setZoom] = useState(1);
   const x = useMotionValue(0);
   const background = useTransform(
@@ -52,37 +51,6 @@ export default function Railways() {
             Swipe or drag the minecart along the rails!
           </p>
         </motion.div>
-
-        {/* Instructions card */}
-        {showInstructions && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="mb-8 max-w-md mx-auto"
-          >
-            <Card padding="md">
-              <div className="flex items-start gap-3">
-                <Info className="w-5 h-5 text-purple-300 flex-shrink-0 mt-1" />
-                <div className="flex-1">
-                  <h3 className="text-white font-semibold mb-2">How to play</h3>
-                  <p className="text-white/70 text-sm mb-3">
-                    On mobile: Swipe the minecart left or right
-                    <br />
-                    On desktop: Click and drag the minecart
-                  </p>
-                  <Button
-                    onClick={() => setShowInstructions(false)}
-                    variant="ghost"
-                    size="sm"
-                  >
-                    Got it!
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          </motion.div>
-        )}
 
         {/* Railway track container */}
         <div className="w-full max-w-6xl mx-auto">
@@ -196,19 +164,25 @@ export default function Railways() {
           </Card>
         </div>
 
-        {/* Fun facts section */}
+        {/* Instructions card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-12 max-w-2xl mx-auto"
+          className="mt-12 max-w-md mx-auto"
         >
           <Card padding="md" variant="minimal">
-            <h3 className="text-lg font-semibold text-white mb-3">🎮 Easter Egg</h3>
-            <p className="text-white/60 text-sm leading-relaxed">
-              This is just a silly little interactive page because why not? Sometimes the best projects
-              are the ones that make you smile. Try dragging the minecart all the way to the edges!
-            </p>
+            <div className="flex items-start gap-3">
+              <Info className="w-5 h-5 text-purple-300 flex-shrink-0 mt-1" />
+              <div className="flex-1">
+                <h3 className="text-white font-semibold mb-2">How to play</h3>
+                <p className="text-white/70 text-sm leading-relaxed">
+                  On mobile: Swipe the minecart left or right
+                  <br />
+                  On desktop: Click and drag the minecart
+                </p>
+              </div>
+            </div>
           </Card>
         </motion.div>
       </div>

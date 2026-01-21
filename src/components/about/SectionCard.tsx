@@ -57,7 +57,7 @@ export function SectionCard({ section, index, isEditing, onEdit, onDelete, onMov
 
   return (
     <div ref={setNodeRef} style={style} className={SIZE_CLASSES[section.size]}>
-      <Card delay={index * 0.1} padding="lg" className={isDragging ? 'ring-2 ring-purple-500' : ''}>
+      <Card delay={index * 0.1} padding="lg" animate={!isEditing} className={isDragging ? 'ring-2 ring-purple-500' : ''}>
         {/* Edit controls */}
         {isEditing && (
           <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/10 gap-2">

@@ -1,33 +1,84 @@
-import * as LucideIcons from 'lucide-react';
-import { LucideIcon } from 'lucide-react';
+import {
+  Folder,
+  Code2,
+  Terminal,
+  Globe,
+  Smartphone,
+  Server,
+  Database,
+  Bot,
+  Gamepad2,
+  Palette,
+  Package,
+  Puzzle,
+  Cpu,
+  Wrench,
+  FileCode,
+  LayoutDashboard,
+  Blocks,
+  Rocket,
+  Layers,
+  Boxes,
+  Heart,
+  Briefcase,
+  GraduationCap,
+  Sparkles,
+  Star,
+  Zap,
+  Trophy,
+  Target,
+  Lightbulb,
+  Music,
+  Camera,
+  Book,
+  Coffee,
+  Users,
+  Award,
+  LucideIcon,
+} from 'lucide-react';
+
+// Direct icon map for reliable lookups
+const ICON_MAP: Record<string, LucideIcon> = {
+  Folder,
+  Code2,
+  Terminal,
+  Globe,
+  Smartphone,
+  Server,
+  Database,
+  Bot,
+  Gamepad2,
+  Palette,
+  Package,
+  Puzzle,
+  Cpu,
+  Wrench,
+  FileCode,
+  LayoutDashboard,
+  Blocks,
+  Rocket,
+  Layers,
+  Boxes,
+  Heart,
+  Briefcase,
+  GraduationCap,
+  Sparkles,
+  Star,
+  Zap,
+  Trophy,
+  Target,
+  Lightbulb,
+  Music,
+  Camera,
+  Book,
+  Coffee,
+  Users,
+  Award,
+};
 
 // Get a Lucide icon component by name
 export function getLucideIcon(name: string): LucideIcon | null {
-  // Convert various formats to PascalCase
-  const iconName = name
-    .split(/[-_\s]/)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join('');
-
-  // Try to find the icon
-  const icon = (LucideIcons as Record<string, unknown>)[iconName];
-
-  if (typeof icon === 'function') {
-    return icon as LucideIcon;
-  }
-
-  // Try with "Icon" suffix removed or added
-  const iconWithoutSuffix = iconName.replace(/Icon$/, '');
-  const iconWithSuffix = iconName + 'Icon';
-
-  const altIcon = (LucideIcons as Record<string, unknown>)[iconWithoutSuffix] ||
-                  (LucideIcons as Record<string, unknown>)[iconWithSuffix];
-
-  if (typeof altIcon === 'function') {
-    return altIcon as LucideIcon;
-  }
-
-  return null;
+  return ICON_MAP[name] || null;
 }
 
 // Common icons for sections
@@ -52,4 +103,28 @@ export const SECTION_ICONS = [
   { name: 'Globe', label: 'Globe' },
   { name: 'Users', label: 'Users' },
   { name: 'Award', label: 'Award' },
+] as const;
+
+// Common icons for projects
+export const PROJECT_ICONS = [
+  { name: 'Folder', label: 'Folder' },
+  { name: 'Code2', label: 'Code' },
+  { name: 'Terminal', label: 'Terminal' },
+  { name: 'Globe', label: 'Web' },
+  { name: 'Smartphone', label: 'Mobile' },
+  { name: 'Server', label: 'Server' },
+  { name: 'Database', label: 'Database' },
+  { name: 'Bot', label: 'Bot' },
+  { name: 'Gamepad2', label: 'Game' },
+  { name: 'Palette', label: 'Design' },
+  { name: 'Package', label: 'Package' },
+  { name: 'Puzzle', label: 'Plugin' },
+  { name: 'Cpu', label: 'Hardware' },
+  { name: 'Wrench', label: 'Tool' },
+  { name: 'FileCode', label: 'Script' },
+  { name: 'LayoutDashboard', label: 'Dashboard' },
+  { name: 'Blocks', label: 'Blocks' },
+  { name: 'Rocket', label: 'Startup' },
+  { name: 'Layers', label: 'Layers' },
+  { name: 'Boxes', label: 'Container' },
 ] as const;

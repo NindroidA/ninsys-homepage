@@ -13,9 +13,9 @@ import {
   sortableKeyboardCoordinates,
   rectSortingStrategy,
 } from '@dnd-kit/sortable';
-import { Badge, Button, Card, FloatingElements, GradientText } from '../components/shared/ui';
+import { Button, Card, FloatingElements, GradientText } from '../components/shared/ui';
 import { motion } from 'framer-motion';
-import { Coffee, Edit2, Github, Linkedin, Loader2, Mail, MapPin, Plus, X } from 'lucide-react';
+import { Edit2, Github, Linkedin, Loader2, Mail, MapPin, Plus, X } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { ProfileEditModal, SectionCard, SectionEditModal } from '../components/about';
 import { DeleteConfirmModal } from '../components/projects';
@@ -363,18 +363,6 @@ export default function AboutMe() {
             </Card>
           )}
 
-          {/* Fun footer */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-12 text-center"
-          >
-            <Badge variant="purple" size="md">
-              <Coffee className="w-4 h-4" />
-              Powered by coffee and curiosity
-            </Badge>
-          </motion.div>
         </div>
       </div>
 

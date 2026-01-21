@@ -6,6 +6,7 @@ export interface Project {
   technologies: string[];
   category: 'current' | 'completed';
   image?: string;
+  icon?: string;
   githubUrl?: string;
   liveUrl?: string;
   date: string;
@@ -22,6 +23,7 @@ export interface CreateProjectInput {
   technologies: string[];
   category: 'current' | 'completed';
   image?: string;
+  icon?: string;
   githubUrl?: string;
   liveUrl?: string;
   date: string;
@@ -35,6 +37,7 @@ export interface UpdateProjectInput {
   technologies?: string[];
   category?: 'current' | 'completed';
   image?: string;
+  icon?: string;
   githubUrl?: string;
   liveUrl?: string;
   date?: string;

@@ -11,7 +11,7 @@ import {
   UpdateProjectInput,
 } from '../types/projects';
 
-const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://nindroidsystems.com';
+const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://api.nindroidsystems.com';
 
 export interface CogworksStats {
   guilds: number;
@@ -102,27 +102,27 @@ class NinSysAPI {
 
   // Cogworks endpoints
   async getCogworksStats(): Promise<CogworksStats> {
-    return this.request<CogworksStats>('/api/cogworks/stats');
+    return this.request<CogworksStats>('/v2/cogworks/stats');
   }
 
   async getCogworksStatus(): Promise<CogworksStatus> {
-    return this.request<CogworksStatus>('/api/cogworks/status');
+    return this.request<CogworksStatus>('/v2/cogworks/status');
   }
 
   // Govee endpoints
   async getGoveeDevices(): Promise<GoveeDevicesResponse> {
-    return this.request<GoveeDevicesResponse>('/api/govee/devices');
+    return this.request<GoveeDevicesResponse>('/v2/govee/devices');
   }
 
   async controlGoveeDevice(device: string, model: string, command: any): Promise<any> {
-    return this.request('/api/govee/control', {
+    return this.request('/v2/govee/control', {
       method: 'PUT',
       body: JSON.stringify({ device, model, command }),
     });
   }
 
   async applyGoveePreset(presetId: string): Promise<any> {
-    return this.request(`/api/govee/preset/${presetId}`, {
+    return this.request(`/v2/govee/preset/${presetId}`, {
       method: 'PUT',
     });
   }
@@ -136,13 +136,13 @@ class NinSysAPI {
 
   /** Fetch all projects sorted by order field */
   async getProjects(): Promise<Project[]> {
-    const response = await this.request<ProjectsResponse>('/api/projects');
+    const response = await this.request<ProjectsResponse>('/v2/projects');
     return response.data.projects;
   }
 
   /** Create a new project (requires auth) */
   async createProject(input: CreateProjectInput): Promise<Project> {
-    const response = await this.authRequest<ProjectResponse>('/api/projects', {
+    const response = await this.authRequest<ProjectResponse>('/v2/projects', {
       method: 'POST',
       body: JSON.stringify(input),
     });
@@ -151,7 +151,7 @@ class NinSysAPI {
 
   /** Update an existing project by ID (requires auth) */
   async updateProject(id: string, input: UpdateProjectInput): Promise<Project> {
-    const response = await this.authRequest<ProjectResponse>(`/api/projects/${id}`, {
+    const response = await this.authRequest<ProjectResponse>(`/v2/projects/${id}`, {
       method: 'PUT',
       body: JSON.stringify(input),
     });
@@ -160,14 +160,14 @@ class NinSysAPI {
 
   /** Delete a project by ID (requires auth) */
   async deleteProject(id: string): Promise<void> {
-    await this.authRequest<{ success: boolean }>(`/api/projects/${id}`, {
+    await this.authRequest<{ success: boolean }>(`/v2/projects/${id}`, {
       method: 'DELETE',
     });
   }
 
   /** Reorder projects by passing array of IDs in desired order (requires auth) */
   async reorderProjects(projectIds: string[]): Promise<void> {
-    await this.authRequest<{ success: boolean }>('/api/projects/reorder', {
+    await this.authRequest<{ success: boolean }>('/v2/projects/reorder', {
       method: 'PUT',
       body: JSON.stringify({ projectIds }),
     });
@@ -187,7 +187,7 @@ class NinSysAPI {
     if (options?.sort) params.set('sort', options.sort);
 
     const queryString = params.toString();
-    const endpoint = `/api/github/repos${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `/v2/github/repos${queryString ? `?${queryString}` : ''}`;
 
     const response = await this.request<GitHubReposResponse>(endpoint);
     return response.data.repos;
@@ -199,7 +199,7 @@ class NinSysAPI {
    * @param repoName - The repository name (not full path, just the name)
    */
   async importGitHubRepo(repoName: string): Promise<Project> {
-    const response = await this.authRequest<GitHubImportResponse>(`/api/github/import/${repoName}`, {
+    const response = await this.authRequest<GitHubImportResponse>(`/v2/github/import/${repoName}`, {
       method: 'POST',
     });
     return response.data.project;
@@ -208,12 +208,12 @@ class NinSysAPI {
   // ===== About API ===== //
 
   async getAboutData(): Promise<AboutData> {
-    const response = await this.request<AboutDataResponse>('/api/about');
+    const response = await this.request<AboutDataResponse>('/v2/about');
     return response.data;
   }
 
   async updateAboutData(data: Partial<AboutData>): Promise<AboutData> {
-    const response = await this.authRequest<AboutDataResponse>('/api/about', {
+    const response = await this.authRequest<AboutDataResponse>('/v2/about', {
       method: 'PUT',
       body: JSON.stringify(data),
     });
@@ -221,7 +221,7 @@ class NinSysAPI {
   }
 
   async updateAboutSections(sections: Pick<AboutSection, 'id' | 'order'>[]): Promise<AboutData> {
-    const response = await this.authRequest<AboutDataResponse>('/api/about/sections', {
+    const response = await this.authRequest<AboutDataResponse>('/v2/about/sections', {
       method: 'PUT',
       body: JSON.stringify({ sections }),
     });

@@ -179,7 +179,7 @@ Domain: nindroidsystems.com
       }
       
       try {
-        const response = await fetch(`${API_BASE}/api/auth/login`, {
+        const response = await fetch(`${API_BASE}/v2/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -229,7 +229,7 @@ Domain: nindroidsystems.com
       try {
         const token = sessionStorage.getItem('ninsys_auth_token');
         if (token) {
-          await fetch(`${API_BASE}/api/auth/logout`, {
+          await fetch(`${API_BASE}/v2/auth/logout`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -264,7 +264,7 @@ Domain: nindroidsystems.com
         let authStatus = 'Not authenticated';
         if (token) {
           try {
-            const response = await fetch(`${API_BASE}/api/auth/status`, {
+            const response = await fetch(`${API_BASE}/v2/auth/status`, {
               headers: {
                 'Authorization': `Bearer ${token}`
               }
