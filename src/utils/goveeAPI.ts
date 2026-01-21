@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { GoveeDevice } from '../types/govee';
 
-export const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://nindroidsystems.com';
+export const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://api.nindroidsystems.com';
 
 class GoveeAPI {
   private getAuthHeaders(): Record<string, string> {
@@ -38,28 +38,28 @@ class GoveeAPI {
   }
 
   async getDevices(): Promise<GoveeDevice[]> {
-    const response = await this.makeRequest('/api/govee/devices');
+    const response = await this.makeRequest('/v2/govee/devices');
     return response.data?.devices || [];
   }
 
   async getDeviceGroups(): Promise<any> {
-    const response = await this.makeRequest('/api/govee/devices');
+    const response = await this.makeRequest('/v2/govee/devices');
     return response.data?.groups || {};
   }
 
   async getPresets(): Promise<any[]> {
-    const result = await this.makeRequest('/api/govee/presets');
+    const result = await this.makeRequest('/v2/govee/presets');
     return result.data || [];
   }
 
   async applyPreset(presetId: string): Promise<any> {
-    return this.makeRequest(`/api/govee/preset/${presetId}`, {
+    return this.makeRequest(`/v2/govee/preset/${presetId}`, {
       method: 'PUT'
     });
   }
 
   async controlDevice(deviceId: string, model: string, command: string, value: any): Promise<void> {
-    await this.makeRequest('/api/govee/control', {
+    await this.makeRequest('/v2/govee/control', {
       method: 'PUT',
       body: JSON.stringify({
         device: deviceId,
@@ -73,7 +73,7 @@ class GoveeAPI {
   }
 
   async controlGroup(groupId: string, commandName: string, value: any): Promise<any> {
-    return this.makeRequest('/api/govee/control/group', {
+    return this.makeRequest('/v2/govee/control/group', {
       method: 'PUT',
       body: JSON.stringify({
         groupId: groupId,
@@ -86,7 +86,7 @@ class GoveeAPI {
   }
 
   async controlAllDevices(command: string, value: any): Promise<void> {
-    await this.makeRequest('/api/govee/control/all', {
+    await this.makeRequest('/v2/govee/control/all', {
       method: 'PUT',
       body: JSON.stringify({
         command: {

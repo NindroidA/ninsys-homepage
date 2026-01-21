@@ -11,7 +11,7 @@ import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
+  rectSortingStrategy,
 } from '@dnd-kit/sortable';
 import { Grid } from '../shared/ui';
 import { Project } from '../../types/projects';
@@ -116,9 +116,9 @@ export function ProjectDragList({
     >
       <SortableContext
         items={projects.map((p) => p.id)}
-        strategy={verticalListSortingStrategy}
+        strategy={rectSortingStrategy}
       >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {projects.map((project, index) => (
             <ProjectCard
               key={project.id}

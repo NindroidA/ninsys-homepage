@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Plus, Trash2, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { ImagePlus, Link2, Plus, Trash2, Upload, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { AboutProfile } from '../../types/about';
 
 interface ProfileEditModalProps {
@@ -17,9 +17,12 @@ export function ProfileEditModal({ isOpen, onClose, onSave, profile, saving }: P
   const [location, setLocation] = useState('');
   const [bio, setBio] = useState<string[]>([]);
   const [avatarUrl, setAvatarUrl] = useState('');
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [avatarInputMode, setAvatarInputMode] = useState<'url' | 'file'>('url');
   const [github, setGithub] = useState('');
   const [linkedin, setLinkedin] = useState('');
   const [email, setEmail] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Reset form when modal opens
   useEffect(() => {
@@ -29,11 +32,44 @@ export function ProfileEditModal({ isOpen, onClose, onSave, profile, saving }: P
       setLocation(profile.location);
       setBio(profile.bio);
       setAvatarUrl(profile.avatarUrl || '');
+      setAvatarPreview(profile.avatarUrl || null);
+      setAvatarInputMode('url');
       setGithub(profile.social.github || '');
       setLinkedin(profile.social.linkedin || '');
       setEmail(profile.social.email || '');
     }
   }, [isOpen, profile]);
+
+  // Update preview when URL changes
+  useEffect(() => {
+    if (avatarInputMode === 'url' && avatarUrl) {
+      setAvatarPreview(avatarUrl);
+    }
+  }, [avatarUrl, avatarInputMode]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        console.error('Please select an image file');
+        return;
+      }
+      // Validate file size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        console.error('Image must be smaller than 2MB');
+        return;
+      }
+      // Create preview using FileReader
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setAvatarPreview(base64);
+        setAvatarUrl(base64); // Store base64 as the URL
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleAddBioParagraph = () => {
     setBio([...bio, '']);
@@ -142,18 +178,106 @@ export function ProfileEditModal({ isOpen, onClose, onSave, profile, saving }: P
                 />
               </div>
 
-              {/* Avatar URL */}
+              {/* Avatar with Preview */}
               <div>
                 <label className="block text-sm font-medium text-white/70 mb-2">
-                  Avatar URL (optional)
+                  Avatar
                 </label>
-                <input
-                  type="url"
-                  value={avatarUrl}
-                  onChange={(e) => setAvatarUrl(e.target.value)}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-                  placeholder="https://example.com/avatar.jpg"
-                />
+                <div className="flex gap-4">
+                  {/* Preview */}
+                  <div className="shrink-0">
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 border-2 border-white/20 overflow-hidden flex items-center justify-center">
+                      {avatarPreview ? (
+                        <img
+                          src={avatarPreview}
+                          alt="Avatar preview"
+                          className="w-full h-full object-cover"
+                          onError={() => setAvatarPreview(null)}
+                        />
+                      ) : (
+                        <ImagePlus className="w-8 h-8 text-white/30" />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Input controls */}
+                  <div className="flex-1 space-y-3">
+                    {/* Mode toggle */}
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setAvatarInputMode('url')}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                          avatarInputMode === 'url'
+                            ? 'bg-purple-500/20 text-purple-300 border border-purple-500'
+                            : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/20'
+                        }`}
+                      >
+                        <Link2 className="w-4 h-4" />
+                        URL
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAvatarInputMode('file')}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                          avatarInputMode === 'file'
+                            ? 'bg-purple-500/20 text-purple-300 border border-purple-500'
+                            : 'bg-white/5 text-white/60 border border-white/10 hover:border-white/20'
+                        }`}
+                      >
+                        <Upload className="w-4 h-4" />
+                        Upload
+                      </button>
+                    </div>
+
+                    {/* URL input */}
+                    {avatarInputMode === 'url' && (
+                      <input
+                        type="url"
+                        value={avatarUrl.startsWith('data:') ? '' : avatarUrl}
+                        onChange={(e) => setAvatarUrl(e.target.value)}
+                        className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
+                        placeholder="https://example.com/avatar.jpg"
+                      />
+                    )}
+
+                    {/* File input */}
+                    {avatarInputMode === 'file' && (
+                      <div>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          className="hidden"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="w-full px-4 py-2 bg-white/5 border border-dashed border-white/20 rounded-lg text-white/60 hover:border-purple-500/50 hover:text-purple-300 transition-colors text-sm flex items-center justify-center gap-2"
+                        >
+                          <Upload className="w-4 h-4" />
+                          Choose image (max 2MB)
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Clear button */}
+                    {avatarPreview && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAvatarUrl('');
+                          setAvatarPreview(null);
+                          if (fileInputRef.current) fileInputRef.current.value = '';
+                        }}
+                        className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                      >
+                        Remove avatar
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Bio paragraphs */}

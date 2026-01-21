@@ -5,7 +5,7 @@ interface LiveService {
   id: string;
   name: string;
   description: string;
-  status: 'online' | 'offline' | 'loading';
+  status: 'online' | 'offline' | 'loading' | 'coming_soon';
   uptime?: string;
   stats?: {
     guilds?: number;
@@ -13,7 +13,7 @@ interface LiveService {
     devices?: number;
   };
   lastUpdated?: string;
-  category?: string; 
+  category?: string;
   icon?: string;
 }
 
@@ -36,12 +36,20 @@ export const useLiveServices = () => {
       status: 'loading',
     },
     {
-      id: 'govee',
-      name: 'Smart Lights',
-      description: 'Govee Lighting System',
-      category: 'IoT Control',
-      icon: 'lightbulb',
-      status: 'loading',
+      id: 'cogworks-web',
+      name: 'Cogworks',
+      description: 'Web dashboard for Cogworks Bot management',
+      category: 'Web Application',
+      icon: 'globe',
+      status: 'coming_soon',
+    },
+    {
+      id: 'pluginator',
+      name: 'Pluginator',
+      description: 'Plugin management and automation platform',
+      category: 'Developer Tools',
+      icon: 'zap',
+      status: 'coming_soon',
     },
   ]);
 
@@ -53,9 +61,8 @@ export const useLiveServices = () => {
       setLoading(true);
       setError(null);
 
-      const [cogworksStatus, goveeDevices, systemHealth] = await Promise.allSettled([
+      const [cogworksStatus, systemHealth] = await Promise.allSettled([
         ninsysAPI.getCogworksStatus(),
-        ninsysAPI.getGoveeDevices(),
         ninsysAPI.getSystemHealth(),
       ]);
 
@@ -82,16 +89,20 @@ export const useLiveServices = () => {
           lastUpdated: now,
         },
         {
-          id: 'govee',
-          name: 'Smart Lights',
-          description: 'Govee lighting system integration',
-          category: 'IoT Control',
-          icon: 'lightbulb',
-          status: goveeDevices.status === 'fulfilled' && goveeDevices.value.success ? 'online' : 'offline',
-          stats: goveeDevices.status === 'fulfilled' && goveeDevices.value.data?.devices ? {
-            devices: goveeDevices.value.data.devices.length,
-          } : undefined,
-          lastUpdated: now,
+          id: 'cogworks-web',
+          name: 'Cogworks',
+          description: 'Web dashboard for Cogworks Bot management',
+          category: 'Web Application',
+          icon: 'globe',
+          status: 'coming_soon',
+        },
+        {
+          id: 'pluginator',
+          name: 'Pluginator',
+          description: 'Plugin management and automation platform',
+          category: 'Developer Tools',
+          icon: 'zap',
+          status: 'coming_soon',
         },
       ]);
     } catch (err) {

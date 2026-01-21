@@ -1,8 +1,23 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Badge, Button, Card } from '../shared/ui';
-import { Calendar, ChevronDown, ChevronUp, Edit2, ExternalLink, Github, Globe, GripVertical, Star, Tag, Trash2 } from 'lucide-react';
+import { Calendar, ChevronDown, ChevronUp, Edit2, ExternalLink, Folder, Github, Globe, GripVertical, Star, Tag, Trash2 } from 'lucide-react';
 import { Project } from '../../types/projects';
+import { getLucideIcon } from '../../utils/iconUtils';
+
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+// Format "YYYY-MM" or "YYYY" to "Month Year"
+function formatDate(date: string): string {
+  const parts = date.split('-');
+  const year = parts[0] || '';
+  const monthIndex = parts[1] ? parseInt(parts[1], 10) - 1 : 0;
+  const month = MONTHS[monthIndex] || 'January';
+  return `${month} ${year}`;
+}
 
 interface ProjectCardProps {
   project: Project;
@@ -33,9 +48,12 @@ export function ProjectCard({ project, index, isEditing, onEdit, onDelete, onMov
     zIndex: isDragging ? 1000 : 'auto',
   };
 
+  // Get project icon or default to Folder
+  const ProjectIcon = project.icon ? getLucideIcon(project.icon) || Folder : Folder;
+
   return (
     <div ref={setNodeRef} style={style}>
-      <Card delay={index * 0.1} padding="lg" className={isDragging ? 'ring-2 ring-purple-500' : ''}>
+      <Card delay={index * 0.1} padding="lg" animate={!isEditing} className={isDragging ? 'ring-2 ring-purple-500' : ''}>
         {/* Drag handle and edit controls */}
         {isEditing && (
           <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/10 gap-2">
@@ -89,16 +107,21 @@ export function ProjectCard({ project, index, isEditing, onEdit, onDelete, onMov
 
         {/* Project header */}
         <div className="flex items-start justify-between mb-4">
-          <div className="flex-1">
-            <h3 className="text-2xl font-bold text-white mb-2">{project.title}</h3>
-            <div className="flex items-center gap-3 text-sm text-white/60">
-              <div className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
-                {project.date}
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-gradient-to-br from-purple-500/20 via-purple-600/20 to-purple-700/20 rounded-xl border border-purple-500/20 shrink-0">
+              <ProjectIcon className="w-6 h-6 text-purple-300" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-2xl font-bold text-white mb-2">{project.title}</h3>
+              <div className="flex items-center gap-3 text-sm text-white/60">
+                <div className="flex items-center gap-1">
+                  <Calendar className="w-4 h-4" />
+                  {formatDate(project.date)}
+                </div>
+                <Badge variant={project.category === 'current' ? 'success' : 'info'} className="capitalize">
+                  {project.category}
+                </Badge>
               </div>
-              <Badge variant={project.category === 'current' ? 'success' : 'info'}>
-                {project.category}
-              </Badge>
             </div>
           </div>
           {project.featured && (

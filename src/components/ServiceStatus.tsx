@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Activity, AlertTriangle, CheckCircle, Clock, Cog, Cpu, Database, Globe, HardDrive, Lightbulb, RefreshCw, Server, Shield, Users, XCircle } from 'lucide-react';
+import { Activity, AlertTriangle, CheckCircle, Clock, Cog, Cpu, Database, Globe, HardDrive, Lightbulb, RefreshCw, Rocket, Server, Shield, Users, XCircle, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLiveServices } from '../hooks/useLiveServices';
 
@@ -8,25 +8,36 @@ const statusConfig = {
     icon: CheckCircle,
     color: 'text-emerald-400',
     bg: 'bg-emerald-400/20',
-    pulse: ''
+    pulse: '',
+    label: 'Online',
   },
   offline: {
     icon: XCircle,
     color: 'text-red-400',
     bg: 'bg-red-400/20',
-    pulse: 'animate-pulse'
+    pulse: 'animate-pulse',
+    label: 'Offline',
   },
   maintenance: {
     icon: Clock,
     color: 'text-amber-400',
     bg: 'bg-amber-400/20',
-    pulse: 'animate-pulse'
+    pulse: 'animate-pulse',
+    label: 'Maintenance',
   },
   loading: {
     icon: AlertTriangle,
     color: 'text-yellow-400',
     bg: 'bg-yellow-400/20',
-    pulse: 'animate-pulse'
+    pulse: 'animate-pulse',
+    label: 'Loading',
+  },
+  coming_soon: {
+    icon: Rocket,
+    color: 'text-purple-400',
+    bg: 'bg-purple-400/20',
+    pulse: '',
+    label: 'Coming Soon',
   },
 };
 
@@ -40,7 +51,9 @@ const iconMap = {
   cog: Cog,
   users: Users,
   lightbulb: Lightbulb,
-  activity: Activity
+  activity: Activity,
+  zap: Zap,
+  rocket: Rocket,
 };
 
 const getStatusConfig = (statusType: string) => {
@@ -131,6 +144,12 @@ export default function ServiceStatus() {
                 <span className="text-white/80">{statusSummary.loading} Loading</span>
               </div>
             )}
+            {statusSummary.coming_soon && statusSummary.coming_soon > 0 && (
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-purple-400 rounded-full shadow-lg shadow-purple-400/50"></div>
+                <span className="text-white/80">{statusSummary.coming_soon} Coming Soon</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -197,7 +216,7 @@ export default function ServiceStatus() {
                 <div className="flex items-center justify-between mt-auto">
                     <div className="flex flex-col">
                         <span className={`text-base font-medium ${status.color} mb-1`}>
-                            {service.status.charAt(0).toUpperCase() + service.status.slice(1)}
+                            {status.label}
                         </span>
                         {service.lastUpdated && (
                             <span className="text-m text-white/50">

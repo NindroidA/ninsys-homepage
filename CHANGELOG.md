@@ -5,6 +5,57 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-01-20
+
+### Added
+
+**API Migration**
+- Updated production API base URL from `nindroidsystems.com` to `api.nindroidsystems.com`
+- Migrated all API endpoint paths from `/api/*` to `/v2/*` for the new API version
+
+**Systems Status Page**
+- Added "Cogworks" web dashboard as a "Coming Soon" service card
+- Added "Pluginator" plugin management platform as a "Coming Soon" service card
+- Added purple "Coming Soon" status badge to status config
+- Removed Govee smart lights integration from service status
+
+**Project Cards - Icon Selection**
+- Added optional `icon` field to Project type for custom icons
+- Project cards now display selected icon or default folder icon
+- Icons displayed with purple gradient background
+
+**Project Edit Modal Improvements**
+- Added technology dropdown with 40+ common tech options (React, TypeScript, Node.js, etc.)
+- Changed date format from YYYY-MM to "Month Year" with separate dropdowns
+- Added "Use repo created date" toggle when importing from GitHub
+- Technologies can be searched and selected from dropdown or typed manually
+- Category badges now display with capitalization
+
+**Avatar Upload with Preview**
+- Added file upload option for avatars (supports images up to 2MB)
+- Added real-time preview of avatar (URL or uploaded file)
+- Toggle between URL input and file upload modes
+- Base64 encoding for uploaded images
+- Clear/remove avatar button
+
+**Skills Section (SkillVial) Improvements**
+- Removed percentage text display from skill vials
+- Added gradient fill to liquid (bottom-to-top color gradient per level)
+- Improved wave animation with smoother sine wave motion
+- Enhanced cork styling with realistic wood texture and grain lines
+- Added bubble pop effect animation on hover (5 bubbles with pop effect)
+- Improved glass reflection and highlight effects
+
+### Changed
+- All modals now use consistent styling (backdrop blur, borders, padding, z-index hierarchy)
+- Status cards show proper labels for all statuses including "Coming Soon"
+
+### Fixed
+- Modal styling consistency across all modal components
+- Technology dropdown closes on selection or escape key
+
+---
+
 ## [1.4.2] - 2025-12-29
 
 ### Added
