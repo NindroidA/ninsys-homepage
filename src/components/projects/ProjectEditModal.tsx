@@ -384,7 +384,7 @@ export function ProjectEditModal({ isOpen, onClose, onSave, project, initialData
                         placeholder="Search or add technology..."
                       />
                       {showTechDropdown && filteredTechOptions.length > 0 && (
-                        <div className="absolute z-10 mt-1 w-full max-h-48 overflow-y-auto bg-slate-800 border border-white/10 rounded-lg shadow-xl">
+                        <div className="absolute z-[100] mt-1 w-full max-h-48 overflow-y-auto bg-slate-800 border border-white/10 rounded-lg shadow-xl">
                           {filteredTechOptions.slice(0, 10).map((tech) => (
                             <button
                               key={tech}
