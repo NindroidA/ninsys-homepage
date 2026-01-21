@@ -52,12 +52,12 @@ export function ProfileEditModal({ isOpen, onClose, onSave, profile, saving }: P
     if (file) {
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        alert('Please select an image file');
+        console.error('Please select an image file');
         return;
       }
       // Validate file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
-        alert('Image must be smaller than 2MB');
+        console.error('Image must be smaller than 2MB');
         return;
       }
       // Create preview using FileReader
