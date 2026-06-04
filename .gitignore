@@ -43,5 +43,15 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # local files
 *.local
 
+# lockfiles (Bun is the single source of truth)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
 # project shtuff
-private
+private/
+privateCLAUDE.md
+
+# agent/MCP scratch artifacts
+entities.json
+mempalace.yaml
