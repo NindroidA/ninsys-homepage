@@ -1,32 +1,32 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import { Plus, Trash2, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from "framer-motion";
+import { Plus, Trash2, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import {
-  AboutSection,
-  EducationContent,
-  EducationItem,
-  ExperienceContent,
-  ExperienceItem,
-  Interest,
-  InterestsContent,
+  type AboutSection,
+  type EducationContent,
+  type EducationItem,
+  type ExperienceContent,
+  type ExperienceItem,
+  type Interest,
+  type InterestsContent,
   isEducationContent,
   isExperienceContent,
   isInterestsContent,
   isSkillsContent,
-  SectionSize,
-  SectionType,
-  Skill,
-  SkillLevel,
-  SkillsContent,
+  type SectionSize,
+  type SectionType,
   SKILL_LEVEL_LABELS,
   SKILL_LEVEL_PERCENT,
-} from '../../types/about';
-import { getLucideIcon, SECTION_ICONS } from '../../utils/iconUtils';
+  type Skill,
+  type SkillLevel,
+  type SkillsContent,
+} from "../../types/about";
+import { getLucideIcon, SECTION_ICONS } from "../../utils/iconUtils";
 
 interface SectionEditModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (section: Omit<AboutSection, 'id' | 'order'> & { id?: string }) => Promise<void>;
+  onSave: (section: Omit<AboutSection, "id" | "order"> & { id?: string }) => Promise<void>;
   section?: AboutSection | null;
   saving?: boolean;
 }
@@ -40,25 +40,31 @@ type PartialSection = {
 };
 
 const DEFAULT_SECTION: PartialSection = {
-  type: 'skills',
-  title: '',
-  icon: 'Code2',
-  size: 'medium',
+  type: "skills",
+  title: "",
+  icon: "Code2",
+  size: "medium",
   content: { skills: [] },
 };
 
-export function SectionEditModal({ isOpen, onClose, onSave, section, saving }: SectionEditModalProps) {
+export function SectionEditModal({
+  isOpen,
+  onClose,
+  onSave,
+  section,
+  saving,
+}: SectionEditModalProps) {
   const [formData, setFormData] = useState<PartialSection>(DEFAULT_SECTION);
 
   // Skills specific state
   const [skills, setSkills] = useState<Skill[]>([]);
-  const [newSkillName, setNewSkillName] = useState('');
-  const [newSkillLevel, setNewSkillLevel] = useState<SkillLevel>('intermediate');
+  const [newSkillName, setNewSkillName] = useState("");
+  const [newSkillLevel, setNewSkillLevel] = useState<SkillLevel>("intermediate");
 
   // Interests specific state
   const [interests, setInterests] = useState<Interest[]>([]);
-  const [newInterestEmoji, setNewInterestEmoji] = useState('');
-  const [newInterestLabel, setNewInterestLabel] = useState('');
+  const [newInterestEmoji, setNewInterestEmoji] = useState("");
+  const [newInterestLabel, setNewInterestLabel] = useState("");
 
   // Experience specific state
   const [experienceItems, setExperienceItems] = useState<ExperienceItem[]>([]);
@@ -72,7 +78,7 @@ export function SectionEditModal({ isOpen, onClose, onSave, section, saving }: S
       setFormData({
         type: section.type,
         title: section.title,
-        icon: section.icon || 'Code2',
+        icon: section.icon || "Code2",
         size: section.size,
         content: section.content,
       });
@@ -108,52 +114,49 @@ export function SectionEditModal({ isOpen, onClose, onSave, section, saving }: S
   const handleAddSkill = () => {
     if (newSkillName.trim()) {
       setSkills([...skills, { name: newSkillName.trim(), level: newSkillLevel }]);
-      setNewSkillName('');
-      setNewSkillLevel('intermediate');
+      setNewSkillName("");
+      setNewSkillLevel("intermediate");
     }
   };
 
   const handleAddInterest = () => {
     if (newInterestEmoji && newInterestLabel.trim()) {
       setInterests([...interests, { emoji: newInterestEmoji, label: newInterestLabel.trim() }]);
-      setNewInterestEmoji('');
-      setNewInterestLabel('');
+      setNewInterestEmoji("");
+      setNewInterestLabel("");
     }
   };
 
   const handleAddExperience = () => {
     setExperienceItems([
       ...experienceItems,
-      { title: '', company: '', period: '', description: '' },
+      { title: "", company: "", period: "", description: "" },
     ]);
   };
 
   const handleAddEducation = () => {
-    setEducationItems([
-      ...educationItems,
-      { degree: '', school: '', period: '', description: '' },
-    ]);
+    setEducationItems([...educationItems, { degree: "", school: "", period: "", description: "" }]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    let content: AboutSection['content'];
+    let content: AboutSection["content"];
     switch (formData.type) {
-      case 'skills':
+      case "skills":
         content = { skills } as SkillsContent;
         break;
-      case 'interests':
+      case "interests":
         content = { interests } as InterestsContent;
         break;
-      case 'experience':
+      case "experience":
         content = { items: experienceItems } as ExperienceContent;
         break;
-      case 'education':
+      case "education":
         content = { items: educationItems } as EducationContent;
         break;
       default:
-        content = { html: '' };
+        content = { html: "" };
     }
 
     await onSave({
@@ -189,159 +192,161 @@ export function SectionEditModal({ isOpen, onClose, onSave, section, saving }: S
               className="w-full max-w-2xl max-h-[90vh] overflow-auto bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-white/10">
-              <h2 className="text-2xl font-bold text-white">
-                {section ? 'Edit Section' : 'New Section'}
-              </h2>
-              <button
-                onClick={onClose}
-                className="p-2 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
-              {/* Section Type */}
-              <div>
-                <label className="block text-sm font-medium text-white/70 mb-2">
-                  Section Type
-                </label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                  {(['skills', 'interests', 'experience', 'education'] as const).map((type) => (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => handleTypeChange(type)}
-                      className={`px-4 py-2 rounded-lg border transition-colors capitalize ${
-                        formData.type === type
-                          ? 'bg-purple-500/20 border-purple-500 text-purple-300'
-                          : 'bg-white/5 border-white/10 text-white/60 hover:border-white/20'
-                      }`}
-                    >
-                      {type}
-                    </button>
-                  ))}
-                </div>
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-white/10">
+                <h2 className="text-2xl font-bold text-white">
+                  {section ? "Edit Section" : "New Section"}
+                </h2>
+                <button
+                  onClick={onClose}
+                  className="p-2 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
 
-              {/* Title */}
-              <div>
-                <label className="block text-sm font-medium text-white/70 mb-2">
-                  Title
-                </label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-                  required
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-                  placeholder="Section Title"
-                />
-              </div>
-
-              {/* Icon and Size */}
-              <div className="grid grid-cols-2 gap-4">
+              <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                {/* Section Type */}
                 <div>
                   <label className="block text-sm font-medium text-white/70 mb-2">
-                    Icon
+                    Section Type
                   </label>
-                  <div className="flex flex-wrap gap-2">
-                    {SECTION_ICONS.slice(0, 10).map(({ name }) => {
-                      const Icon = getLucideIcon(name);
-                      return Icon ? (
-                        <button
-                          key={name}
-                          type="button"
-                          onClick={() => setFormData((prev) => ({ ...prev, icon: name }))}
-                          className={`p-2 rounded-lg border transition-colors ${
-                            formData.icon === name
-                              ? 'bg-purple-500/20 border-purple-500'
-                              : 'bg-white/5 border-white/10 hover:border-white/20'
-                          }`}
-                        >
-                          <Icon className="w-5 h-5 text-white/70" />
-                        </button>
-                      ) : null;
-                    })}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    {(["skills", "interests", "experience", "education"] as const).map((type) => (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => handleTypeChange(type)}
+                        className={`px-4 py-2 rounded-lg border transition-colors capitalize ${
+                          formData.type === type
+                            ? "bg-purple-500/20 border-purple-500 text-purple-300"
+                            : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+                        }`}
+                      >
+                        {type}
+                      </button>
+                    ))}
                   </div>
                 </div>
+
+                {/* Title */}
                 <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">
-                    Size
-                  </label>
-                  <select
-                    value={formData.size}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, size: e.target.value as SectionSize }))}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-                  >
-                    <option value="small" className="bg-slate-900">Small</option>
-                    <option value="medium" className="bg-slate-900">Medium</option>
-                    <option value="large" className="bg-slate-900">Large (Full Width)</option>
-                  </select>
+                  <label className="block text-sm font-medium text-white/70 mb-2">Title</label>
+                  <input
+                    type="text"
+                    value={formData.title}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
+                    required
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                    placeholder="Section Title"
+                  />
                 </div>
-              </div>
 
-              {/* Type-specific content editors */}
-              {formData.type === 'skills' && (
-                <SkillsEditor
-                  skills={skills}
-                  setSkills={setSkills}
-                  newSkillName={newSkillName}
-                  setNewSkillName={setNewSkillName}
-                  newSkillLevel={newSkillLevel}
-                  setNewSkillLevel={setNewSkillLevel}
-                  onAdd={handleAddSkill}
-                />
-              )}
+                {/* Icon and Size */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-white/70 mb-2">Icon</label>
+                    <div className="flex flex-wrap gap-2">
+                      {SECTION_ICONS.slice(0, 10).map(({ name }) => {
+                        const Icon = getLucideIcon(name);
+                        return Icon ? (
+                          <button
+                            key={name}
+                            type="button"
+                            onClick={() => setFormData((prev) => ({ ...prev, icon: name }))}
+                            className={`p-2 rounded-lg border transition-colors ${
+                              formData.icon === name
+                                ? "bg-purple-500/20 border-purple-500"
+                                : "bg-white/5 border-white/10 hover:border-white/20"
+                            }`}
+                          >
+                            <Icon className="w-5 h-5 text-white/70" />
+                          </button>
+                        ) : null;
+                      })}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-white/70 mb-2">Size</label>
+                    <select
+                      value={formData.size}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, size: e.target.value as SectionSize }))
+                      }
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                    >
+                      <option value="small" className="bg-slate-900">
+                        Small
+                      </option>
+                      <option value="medium" className="bg-slate-900">
+                        Medium
+                      </option>
+                      <option value="large" className="bg-slate-900">
+                        Large (Full Width)
+                      </option>
+                    </select>
+                  </div>
+                </div>
 
-              {formData.type === 'interests' && (
-                <InterestsEditor
-                  interests={interests}
-                  setInterests={setInterests}
-                  newEmoji={newInterestEmoji}
-                  setNewEmoji={setNewInterestEmoji}
-                  newLabel={newInterestLabel}
-                  setNewLabel={setNewInterestLabel}
-                  onAdd={handleAddInterest}
-                />
-              )}
+                {/* Type-specific content editors */}
+                {formData.type === "skills" && (
+                  <SkillsEditor
+                    skills={skills}
+                    setSkills={setSkills}
+                    newSkillName={newSkillName}
+                    setNewSkillName={setNewSkillName}
+                    newSkillLevel={newSkillLevel}
+                    setNewSkillLevel={setNewSkillLevel}
+                    onAdd={handleAddSkill}
+                  />
+                )}
 
-              {formData.type === 'experience' && (
-                <ExperienceEditor
-                  items={experienceItems}
-                  setItems={setExperienceItems}
-                  onAdd={handleAddExperience}
-                />
-              )}
+                {formData.type === "interests" && (
+                  <InterestsEditor
+                    interests={interests}
+                    setInterests={setInterests}
+                    newEmoji={newInterestEmoji}
+                    setNewEmoji={setNewInterestEmoji}
+                    newLabel={newInterestLabel}
+                    setNewLabel={setNewInterestLabel}
+                    onAdd={handleAddInterest}
+                  />
+                )}
 
-              {formData.type === 'education' && (
-                <EducationEditor
-                  items={educationItems}
-                  setItems={setEducationItems}
-                  onAdd={handleAddEducation}
-                />
-              )}
+                {formData.type === "experience" && (
+                  <ExperienceEditor
+                    items={experienceItems}
+                    setItems={setExperienceItems}
+                    onAdd={handleAddExperience}
+                  />
+                )}
 
-              {/* Actions */}
-              <div className="flex gap-4 pt-4">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="flex-1 px-6 py-3 bg-white/5 hover:bg-white/10 text-white/70 rounded-lg transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving || !formData.title}
-                  className="flex-1 px-6 py-3 bg-purple-500 hover:bg-purple-600 disabled:bg-purple-500/30 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
-                >
-                  {saving ? 'Saving...' : section ? 'Save Changes' : 'Create Section'}
-                </button>
-              </div>
-            </form>
+                {formData.type === "education" && (
+                  <EducationEditor
+                    items={educationItems}
+                    setItems={setEducationItems}
+                    onAdd={handleAddEducation}
+                  />
+                )}
+
+                {/* Actions */}
+                <div className="flex gap-4 pt-4">
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="flex-1 px-6 py-3 bg-white/5 hover:bg-white/10 text-white/70 rounded-lg transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving || !formData.title}
+                    className="flex-1 px-6 py-3 bg-purple-500 hover:bg-purple-600 disabled:bg-purple-500/30 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
+                  >
+                    {saving ? "Saving..." : section ? "Save Changes" : "Create Section"}
+                  </button>
+                </div>
+              </form>
             </div>
           </motion.div>
         </>
@@ -353,36 +358,36 @@ export function SectionEditModal({ isOpen, onClose, onSave, section, saving }: S
 // Helper functions
 function getDefaultTitle(type: SectionType): string {
   const titles: Record<SectionType, string> = {
-    skills: 'Skills',
-    interests: 'Interests',
-    experience: 'Experience',
-    education: 'Education',
-    custom: 'Custom Section',
+    skills: "Skills",
+    interests: "Interests",
+    experience: "Experience",
+    education: "Education",
+    custom: "Custom Section",
   };
   return titles[type];
 }
 
 function getDefaultIcon(type: SectionType): string {
   const icons: Record<SectionType, string> = {
-    skills: 'Code2',
-    interests: 'Heart',
-    experience: 'Briefcase',
-    education: 'GraduationCap',
-    custom: 'Sparkles',
+    skills: "Code2",
+    interests: "Heart",
+    experience: "Briefcase",
+    education: "GraduationCap",
+    custom: "Sparkles",
   };
   return icons[type];
 }
 
 // Skill level order for slider mapping
-const SKILL_LEVELS: SkillLevel[] = ['novice', 'beginner', 'intermediate', 'advanced', 'expert'];
+const SKILL_LEVELS: SkillLevel[] = ["novice", "beginner", "intermediate", "advanced", "expert"];
 
 // Color gradient based on level
 const LEVEL_COLORS: Record<SkillLevel, string> = {
-  novice: '#ef4444',      // red
-  beginner: '#f97316',    // orange
-  intermediate: '#eab308', // yellow
-  advanced: '#84cc16',     // lime
-  expert: '#22c55e',       // green
+  novice: "#ef4444", // red
+  beginner: "#f97316", // orange
+  intermediate: "#eab308", // yellow
+  advanced: "#84cc16", // lime
+  expert: "#22c55e", // green
 };
 
 function SkillSlider({
@@ -414,7 +419,9 @@ function SkillSlider({
         }}
       />
       <div className="flex items-center gap-2 min-w-[100px]">
-        <span className="text-sm font-medium" style={{ color }}>{SKILL_LEVEL_LABELS[level]}</span>
+        <span className="text-sm font-medium" style={{ color }}>
+          {SKILL_LEVEL_LABELS[level]}
+        </span>
         <span className="text-xs text-white/40">{percent}%</span>
       </div>
     </div>
@@ -440,7 +447,7 @@ function SkillsEditor({
   onAdd: () => void;
 }) {
   const updateSkillLevel = (index: number, newLevel: SkillLevel) => {
-    setSkills(skills.map((skill, i) => i === index ? { ...skill, level: newLevel } : skill));
+    setSkills(skills.map((skill, i) => (i === index ? { ...skill, level: newLevel } : skill)));
   };
 
   return (
@@ -476,7 +483,7 @@ function SkillsEditor({
             onChange={(e) => setNewSkillName(e.target.value)}
             placeholder="New skill name..."
             className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
-            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), onAdd())}
+            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), onAdd())}
           />
           <button
             type="button"
@@ -487,10 +494,7 @@ function SkillsEditor({
             <Plus className="w-5 h-5" />
           </button>
         </div>
-        <SkillSlider
-          level={newSkillLevel}
-          onChange={setNewSkillLevel}
-        />
+        <SkillSlider level={newSkillLevel} onChange={setNewSkillLevel} />
       </div>
     </div>
   );
@@ -546,7 +550,7 @@ function InterestsEditor({
           onChange={(e) => setNewLabel(e.target.value)}
           placeholder="Interest label"
           className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
-          onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), onAdd())}
+          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), onAdd())}
         />
         <button
           type="button"
@@ -592,7 +596,7 @@ function ExperienceEditor({
             <input
               type="text"
               value={item.title}
-              onChange={(e) => updateItem(i, 'title', e.target.value)}
+              onChange={(e) => updateItem(i, "title", e.target.value)}
               placeholder="Job Title"
               className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm"
             />
@@ -600,21 +604,21 @@ function ExperienceEditor({
               <input
                 type="text"
                 value={item.company}
-                onChange={(e) => updateItem(i, 'company', e.target.value)}
+                onChange={(e) => updateItem(i, "company", e.target.value)}
                 placeholder="Company"
                 className="px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm"
               />
               <input
                 type="text"
                 value={item.period}
-                onChange={(e) => updateItem(i, 'period', e.target.value)}
+                onChange={(e) => updateItem(i, "period", e.target.value)}
                 placeholder="Period (e.g., 2020 - Present)"
                 className="px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm"
               />
             </div>
             <textarea
               value={item.description}
-              onChange={(e) => updateItem(i, 'description', e.target.value)}
+              onChange={(e) => updateItem(i, "description", e.target.value)}
               placeholder="Description"
               rows={2}
               className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm resize-none"
@@ -666,7 +670,7 @@ function EducationEditor({
             <input
               type="text"
               value={item.degree}
-              onChange={(e) => updateItem(i, 'degree', e.target.value)}
+              onChange={(e) => updateItem(i, "degree", e.target.value)}
               placeholder="Degree"
               className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm"
             />
@@ -674,21 +678,21 @@ function EducationEditor({
               <input
                 type="text"
                 value={item.school}
-                onChange={(e) => updateItem(i, 'school', e.target.value)}
+                onChange={(e) => updateItem(i, "school", e.target.value)}
                 placeholder="School"
                 className="px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm"
               />
               <input
                 type="text"
                 value={item.period}
-                onChange={(e) => updateItem(i, 'period', e.target.value)}
+                onChange={(e) => updateItem(i, "period", e.target.value)}
                 placeholder="Period (e.g., 2018 - 2022)"
                 className="px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm"
               />
             </div>
             <textarea
               value={item.description}
-              onChange={(e) => updateItem(i, 'description', e.target.value)}
+              onChange={(e) => updateItem(i, "description", e.target.value)}
               placeholder="Description"
               rows={2}
               className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm resize-none"

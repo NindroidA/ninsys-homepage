@@ -1,6 +1,6 @@
-import { motion } from 'framer-motion';
-import { Eye, X } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+import { motion } from "framer-motion";
+import { Eye, X } from "lucide-react";
+import { useAuth } from "../../hooks/useAuth";
 
 export function GuestViewBanner() {
   const { isAuthenticated, isGuestViewMode, toggleGuestView } = useAuth();

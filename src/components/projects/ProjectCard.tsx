@@ -1,21 +1,44 @@
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { Badge, Button, Card } from '../shared/ui';
-import { Calendar, ChevronDown, ChevronUp, Edit2, ExternalLink, Folder, Github, Globe, GripVertical, Star, Tag, Trash2 } from 'lucide-react';
-import { Project } from '../../types/projects';
-import { getLucideIcon } from '../../utils/iconUtils';
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import {
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  Edit2,
+  ExternalLink,
+  Folder,
+  Github,
+  Globe,
+  GripVertical,
+  Star,
+  Tag,
+  Trash2,
+} from "lucide-react";
+import type { Project } from "../../types/projects";
+import { getLucideIcon } from "../../utils/iconUtils";
+import { Badge, Button, Card } from "../shared/ui";
 
 const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 // Format "YYYY-MM" or "YYYY" to "Month Year"
 function formatDate(date: string): string {
-  const parts = date.split('-');
-  const year = parts[0] || '';
+  const parts = date.split("-");
+  const year = parts[0] || "";
   const monthIndex = parts[1] ? parseInt(parts[1], 10) - 1 : 0;
-  const month = MONTHS[monthIndex] || 'January';
+  const month = MONTHS[monthIndex] || "January";
   return `${month} ${year}`;
 }
 
@@ -31,21 +54,27 @@ interface ProjectCardProps {
   isLast?: boolean;
 }
 
-export function ProjectCard({ project, index, isEditing, onEdit, onDelete, onMoveUp, onMoveDown, isFirst, isLast }: ProjectCardProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: project.id, disabled: !isEditing });
+export function ProjectCard({
+  project,
+  index,
+  isEditing,
+  onEdit,
+  onDelete,
+  onMoveUp,
+  onMoveDown,
+  isFirst,
+  isLast,
+}: ProjectCardProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: project.id,
+    disabled: !isEditing,
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 1000 : 'auto',
+    zIndex: isDragging ? 1000 : "auto",
   };
 
   // Get project icon or default to Folder
@@ -53,7 +82,12 @@ export function ProjectCard({ project, index, isEditing, onEdit, onDelete, onMov
 
   return (
     <div ref={setNodeRef} style={style}>
-      <Card delay={index * 0.1} padding="lg" animate={!isEditing} className={isDragging ? 'ring-2 ring-purple-500' : ''}>
+      <Card
+        delay={index * 0.1}
+        padding="lg"
+        animate={!isEditing}
+        className={isDragging ? "ring-2 ring-purple-500" : ""}
+      >
         {/* Drag handle and edit controls */}
         {isEditing && (
           <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/10 gap-2">
@@ -118,7 +152,10 @@ export function ProjectCard({ project, index, isEditing, onEdit, onDelete, onMov
                   <Calendar className="w-4 h-4" />
                   {formatDate(project.date)}
                 </div>
-                <Badge variant={project.category === 'current' ? 'success' : 'info'} className="capitalize">
+                <Badge
+                  variant={project.category === "current" ? "success" : "info"}
+                  className="capitalize"
+                >
                   {project.category}
                 </Badge>
               </div>

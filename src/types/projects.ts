@@ -4,7 +4,7 @@ export interface Project {
   title: string;
   description: string;
   technologies: string[];
-  category: 'current' | 'completed';
+  category: "current" | "completed";
   image?: string;
   icon?: string;
   githubUrl?: string;
@@ -21,7 +21,7 @@ export interface CreateProjectInput {
   title: string;
   description: string;
   technologies: string[];
-  category: 'current' | 'completed';
+  category: "current" | "completed";
   image?: string;
   icon?: string;
   githubUrl?: string;
@@ -35,7 +35,7 @@ export interface UpdateProjectInput {
   title?: string;
   description?: string;
   technologies?: string[];
-  category?: 'current' | 'completed';
+  category?: "current" | "completed";
   image?: string;
   icon?: string;
   githubUrl?: string;

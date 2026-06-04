@@ -1,10 +1,10 @@
 {
-    "version": "1.2.0",
-    "config": {
-        "prompt": {
-            "guest": "guest@ninsys:~$",
-            "auth": "admin@ninsys:~$"
-        }
-    },
-    "msg": {}
+  "version": "1.2.0",
+  "config": {
+    "prompt": {
+      "guest": "guest@ninsys:~$",
+      "auth": "admin@ninsys:~$"
+    }
+  },
+  "msg": {}
 }

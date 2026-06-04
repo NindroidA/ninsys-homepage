@@ -1,13 +1,9 @@
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 
 export function ServerRackLoader() {
   return (
     <div className="w-full h-full flex items-center justify-center">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="relative"
-      >
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative">
         {/* Stylized loading rack silhouette */}
         <div className="w-48 h-72 relative">
           {/* Main frame outline */}
@@ -18,7 +14,7 @@ export function ServerRackLoader() {
                 key={i}
                 className="mx-3 my-2 h-8 rounded bg-gradient-to-r from-purple-500/10 via-purple-400/20 to-purple-500/10"
                 animate={{
-                  backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
                 }}
                 transition={{
                   duration: 2,
@@ -26,7 +22,7 @@ export function ServerRackLoader() {
                   delay: i * 0.1,
                 }}
                 style={{
-                  backgroundSize: '200% 100%',
+                  backgroundSize: "200% 100%",
                 }}
               />
             ))}
@@ -52,15 +48,15 @@ export function ServerRackLoader() {
           <motion.div
             className="absolute -inset-8"
             animate={{ rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           >
             {[0, 72, 144, 216, 288].map((angle, i) => (
               <motion.div
                 key={i}
                 className="absolute w-3 h-3 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500"
                 style={{
-                  top: '50%',
-                  left: '50%',
+                  top: "50%",
+                  left: "50%",
                   transform: `rotate(${angle}deg) translateX(80px) translateY(-50%)`,
                 }}
                 animate={{ opacity: [0.4, 1, 0.4] }}

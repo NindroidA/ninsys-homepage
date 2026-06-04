@@ -1,20 +1,25 @@
-import { Button, Card, Section } from '../components/shared/ui';
-import { motion } from 'framer-motion';
-import { Edit2, Github, Loader2, Plus, X } from 'lucide-react';
-import { useCallback, useState } from 'react';
-import FooterComponent from '../components/Footer';
-import Navbar from '../components/Navbar';
+import { motion } from "framer-motion";
+import { Edit2, Github, Loader2, Plus, X } from "lucide-react";
+import { useCallback, useState } from "react";
+import FooterComponent from "../components/Footer";
+import Navbar from "../components/Navbar";
 import {
   DeleteConfirmModal,
   GitHubImportModal,
   ProjectDragList,
   ProjectEditModal,
-} from '../components/projects';
-import { ProjectInitialData } from '../components/projects/ProjectEditModal';
-import { useAdminVisible } from '../hooks/useAuth';
-import { useGitHubRepos } from '../hooks/useGithubRepos';
-import { useProjects } from '../hooks/useProjects';
-import { CreateProjectInput, GitHubRepo, Project, UpdateProjectInput } from '../types/projects';
+} from "../components/projects";
+import type { ProjectInitialData } from "../components/projects/ProjectEditModal";
+import { Button, Card, Section } from "../components/shared/ui";
+import { useAdminVisible } from "../hooks/useAuth";
+import { useGitHubRepos } from "../hooks/useGithubRepos";
+import { useProjects } from "../hooks/useProjects";
+import type {
+  CreateProjectInput,
+  GitHubRepo,
+  Project,
+  UpdateProjectInput,
+} from "../types/projects";
 
 export default function Projects() {
   const isAdminVisible = useAdminVisible();
@@ -37,7 +42,7 @@ export default function Projects() {
   } = useGitHubRepos();
 
   // UI State
-  const [filter, setFilter] = useState<'all' | 'current' | 'completed'>('all');
+  const [filter, setFilter] = useState<"all" | "current" | "completed">("all");
   const [isEditing, setIsEditing] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -50,7 +55,7 @@ export default function Projects() {
 
   // Filter projects
   const filteredProjects = projects.filter((project) =>
-    filter === 'all' ? true : project.category === filter
+    filter === "all" ? true : project.category === filter,
   );
 
   // Handlers
@@ -86,7 +91,7 @@ export default function Projects() {
         setSaving(false);
       }
     },
-    [editingProject, updateProject, createProject]
+    [editingProject, updateProject, createProject],
   );
 
   const handleConfirmDelete = useCallback(async () => {
@@ -103,9 +108,11 @@ export default function Projects() {
   const handleImportRepo = useCallback((repo: GitHubRepo) => {
     // Convert repo data to initial form data (project is NOT created until save)
     const initialData: ProjectInitialData = {
-      title: repo.name.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()), // Convert kebab-case to Title Case
-      description: repo.description || '',
-      technologies: repo.language ? [repo.language, ...repo.topics.slice(0, 4)] : repo.topics.slice(0, 5),
+      title: repo.name.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()), // Convert kebab-case to Title Case
+      description: repo.description || "",
+      technologies: repo.language
+        ? [repo.language, ...repo.topics.slice(0, 4)]
+        : repo.topics.slice(0, 5),
       githubUrl: repo.html_url,
       date: new Date(repo.pushed_at).toISOString().slice(0, 7), // YYYY-MM
     };
@@ -117,9 +124,7 @@ export default function Projects() {
     setEditModalOpen(true);
   }, []);
 
-  const existingProjectUrls = projects
-    .map((p) => p.githubUrl)
-    .filter(Boolean) as string[];
+  const existingProjectUrls = projects.map((p) => p.githubUrl).filter(Boolean) as string[];
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -141,11 +146,11 @@ export default function Projects() {
           >
             <Button
               onClick={handleToggleEdit}
-              variant={isEditing ? 'primary' : 'secondary'}
+              variant={isEditing ? "primary" : "secondary"}
               size="sm"
               icon={isEditing ? <X className="w-4 h-4" /> : <Edit2 className="w-4 h-4" />}
             >
-              {isEditing ? 'Done Editing' : 'Edit Projects'}
+              {isEditing ? "Done Editing" : "Edit Projects"}
             </Button>
             {isEditing && (
               <>
@@ -177,11 +182,11 @@ export default function Projects() {
           transition={{ duration: 0.4, delay: 0.15 }}
           className="flex gap-4 justify-center flex-wrap mb-12"
         >
-          {(['all', 'current', 'completed'] as const).map((category) => (
+          {(["all", "current", "completed"] as const).map((category) => (
             <Button
               key={category}
               onClick={() => setFilter(category)}
-              variant={filter === category ? 'primary' : 'secondary'}
+              variant={filter === category ? "primary" : "secondary"}
               size="md"
             >
               {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -252,7 +257,7 @@ export default function Projects() {
           setDeletingProject(null);
         }}
         onConfirm={handleConfirmDelete}
-        title={deletingProject?.title || ''}
+        title={deletingProject?.title || ""}
         deleting={deleting}
       />
 

@@ -1,18 +1,18 @@
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { Badge, Card, Grid } from '../shared/ui';
-import { ChevronDown, ChevronUp, Edit2, GripVertical, Trash2 } from 'lucide-react';
-import { useMemo } from 'react';
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { ChevronDown, ChevronUp, Edit2, GripVertical, Trash2 } from "lucide-react";
+import { useMemo } from "react";
 import {
-  AboutSection,
+  type AboutSection,
   isEducationContent,
   isExperienceContent,
   isInterestsContent,
   isSkillsContent,
-  SectionSize,
-} from '../../types/about';
-import { getLucideIcon } from '../../utils/iconUtils';
-import { SkillVial } from './SkillVial';
+  type SectionSize,
+} from "../../types/about";
+import { getLucideIcon } from "../../utils/iconUtils";
+import { Badge, Card, Grid } from "../shared/ui";
+import { SkillVial } from "./SkillVial";
 
 interface SectionCardProps {
   section: AboutSection;
@@ -28,26 +28,32 @@ interface SectionCardProps {
 
 // Size to grid span mapping
 const SIZE_CLASSES: Record<SectionSize, string> = {
-  small: 'col-span-1',
-  medium: 'col-span-1 lg:col-span-1',
-  large: 'col-span-1 lg:col-span-2',
+  small: "col-span-1",
+  medium: "col-span-1 lg:col-span-1",
+  large: "col-span-1 lg:col-span-2",
 };
 
-export function SectionCard({ section, index, isEditing, onEdit, onDelete, onMoveUp, onMoveDown, isFirst, isLast }: SectionCardProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: section.id, disabled: !isEditing });
+export function SectionCard({
+  section,
+  index,
+  isEditing,
+  onEdit,
+  onDelete,
+  onMoveUp,
+  onMoveDown,
+  isFirst,
+  isLast,
+}: SectionCardProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: section.id,
+    disabled: !isEditing,
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 1000 : 'auto',
+    zIndex: isDragging ? 1000 : "auto",
   };
 
   const IconComponent = useMemo(() => {
@@ -57,7 +63,12 @@ export function SectionCard({ section, index, isEditing, onEdit, onDelete, onMov
 
   return (
     <div ref={setNodeRef} style={style} className={SIZE_CLASSES[section.size]}>
-      <Card delay={index * 0.1} padding="lg" animate={!isEditing} className={isDragging ? 'ring-2 ring-purple-500' : ''}>
+      <Card
+        delay={index * 0.1}
+        padding="lg"
+        animate={!isEditing}
+        className={isDragging ? "ring-2 ring-purple-500" : ""}
+      >
         {/* Edit controls */}
         {isEditing && (
           <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/10 gap-2">
@@ -111,9 +122,7 @@ export function SectionCard({ section, index, isEditing, onEdit, onDelete, onMov
 
         {/* Section header */}
         <div className="flex items-center gap-3 mb-6">
-          {IconComponent && (
-            <IconComponent className="w-6 h-6 text-purple-300" />
-          )}
+          {IconComponent && <IconComponent className="w-6 h-6 text-purple-300" />}
           <h2 className="text-2xl font-bold text-white">{section.title}</h2>
         </div>
 
@@ -129,7 +138,7 @@ function SectionContent({ section }: { section: AboutSection }) {
   const { content, type } = section;
 
   // Skills section with vials
-  if (type === 'skills' && isSkillsContent(content)) {
+  if (type === "skills" && isSkillsContent(content)) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         {content.skills.map((skill, i) => (
@@ -146,7 +155,7 @@ function SectionContent({ section }: { section: AboutSection }) {
   }
 
   // Interests section
-  if (type === 'interests' && isInterestsContent(content)) {
+  if (type === "interests" && isInterestsContent(content)) {
     return (
       <Grid cols={2} gap="sm">
         {content.interests.map((interest, i) => (
@@ -159,7 +168,7 @@ function SectionContent({ section }: { section: AboutSection }) {
   }
 
   // Experience section
-  if (type === 'experience' && isExperienceContent(content)) {
+  if (type === "experience" && isExperienceContent(content)) {
     return (
       <div className="space-y-6">
         {content.items.map((exp, i) => (
@@ -176,7 +185,7 @@ function SectionContent({ section }: { section: AboutSection }) {
   }
 
   // Education section
-  if (type === 'education' && isEducationContent(content)) {
+  if (type === "education" && isEducationContent(content)) {
     return (
       <div className="space-y-6">
         {content.items.map((edu, i) => (
@@ -193,7 +202,7 @@ function SectionContent({ section }: { section: AboutSection }) {
   }
 
   // Custom HTML section
-  if (type === 'custom' && 'html' in content) {
+  if (type === "custom" && "html" in content) {
     return (
       <div
         className="prose prose-invert max-w-none"

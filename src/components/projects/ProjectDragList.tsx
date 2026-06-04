@@ -1,21 +1,21 @@
 import {
   closestCenter,
   DndContext,
-  DragEndEvent,
+  type DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
-} from '@dnd-kit/core';
+} from "@dnd-kit/core";
 import {
   arrayMove,
+  rectSortingStrategy,
   SortableContext,
   sortableKeyboardCoordinates,
-  rectSortingStrategy,
-} from '@dnd-kit/sortable';
-import { Grid } from '../shared/ui';
-import { Project } from '../../types/projects';
-import { ProjectCard } from './ProjectCard';
+} from "@dnd-kit/sortable";
+import type { Project } from "../../types/projects";
+import { Grid } from "../shared/ui";
+import { ProjectCard } from "./ProjectCard";
 
 interface ProjectDragListProps {
   projects: Project[];
@@ -42,7 +42,7 @@ export function ProjectDragList({
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -96,12 +96,7 @@ export function ProjectDragList({
     return (
       <Grid cols={2} gap="lg">
         {projects.map((project, index) => (
-          <ProjectCard
-            key={project.id}
-            project={project}
-            index={index}
-            isEditing={false}
-          />
+          <ProjectCard key={project.id} project={project} index={index} isEditing={false} />
         ))}
       </Grid>
     );
@@ -109,15 +104,8 @@ export function ProjectDragList({
 
   // Editing mode - render with drag functionality
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <SortableContext
-        items={projects.map((p) => p.id)}
-        strategy={rectSortingStrategy}
-      >
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <SortableContext items={projects.map((p) => p.id)} strategy={rectSortingStrategy}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {projects.map((project, index) => (
             <ProjectCard

@@ -1,24 +1,37 @@
-import { motion } from 'framer-motion';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { commands, TERMINAL_CONFIG, TERMINAL_MESSAGES } from '../assets/terminal/terminalCommands';
-import Navbar from '../components/Navbar';
-import { TerminalLine } from '../types/pages';
-import { useAuth } from '../hooks/useAuth';
+import { motion } from "framer-motion";
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { commands, TERMINAL_CONFIG, TERMINAL_MESSAGES } from "../assets/terminal/terminalCommands";
+import Navbar from "../components/Navbar";
+import { useAuth } from "../hooks/useAuth";
+import type { TerminalLine } from "../types/pages";
 
 export default function Terminal() {
-  const { isAuthenticated: isSiteAuthenticated, isGuestViewMode, user, toggleGuestView } = useAuth();
+  const {
+    isAuthenticated: isSiteAuthenticated,
+    isGuestViewMode,
+    user,
+    toggleGuestView,
+  } = useAuth();
 
   const [lines, setLines] = useState<TerminalLine[]>(
-    TERMINAL_MESSAGES.WELCOME.map(content => ({
-      type: content === '' ? 'output' : content.includes('TERMINAL') || content.includes('Initializing') || content.includes('Connection') ? 'system' : 'output',
-      content
-    }))
+    TERMINAL_MESSAGES.WELCOME.map((content) => ({
+      type:
+        content === ""
+          ? "output"
+          : content.includes("TERMINAL") ||
+              content.includes("Initializing") ||
+              content.includes("Connection")
+            ? "system"
+            : "output",
+      content,
+    })),
   );
 
-  const [currentInput, setCurrentInput] = useState('');
+  const [currentInput, setCurrentInput] = useState("");
   // Terminal auth syncs with site auth, but can be overridden in guest view mode
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState('guest');
+  const [currentUser, setCurrentUser] = useState("guest");
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -28,8 +41,8 @@ export default function Terminal() {
 
   // helper function to check if session is valid
   const isSessionValid = (): boolean => {
-    const token = sessionStorage.getItem('ninsys_auth_token');
-    const expires = sessionStorage.getItem('ninsys_auth_expires');
+    const token = sessionStorage.getItem("ninsys_auth_token");
+    const expires = sessionStorage.getItem("ninsys_auth_expires");
 
     if (!token || !expires) return false;
 
@@ -41,113 +54,120 @@ export default function Terminal() {
     if (isSiteAuthenticated && !isGuestViewMode) {
       // Auto-authenticate terminal when site is authenticated (and not in guest view)
       setIsAuthenticated(true);
-      setCurrentUser(user || 'admin');
+      setCurrentUser(user || "admin");
     } else if (isGuestViewMode) {
       // In guest view mode, terminal acts as guest but can still login manually
       setIsAuthenticated(false);
-      setCurrentUser('guest');
+      setCurrentUser("guest");
     }
   }, [isSiteAuthenticated, isGuestViewMode, user]);
 
   const addLine = useCallback((line: TerminalLine) => {
-    setLines(prev => [...prev, { ...line, timestamp: new Date().toLocaleTimeString() }]);
+    setLines((prev) => [...prev, { ...line, timestamp: new Date().toLocaleTimeString() }]);
   }, []);
 
   /* function to handle command inputs */
-  const handleCommand = useCallback(async (input: string) => {
-    const trimmed = input.trim();
-    if (!trimmed) return;
+  const handleCommand = useCallback(
+    async (input: string) => {
+      const trimmed = input.trim();
+      if (!trimmed) return;
 
-    const [commandName, ...args] = trimmed.split(' ');
-    const command = commands[commandName!.toLowerCase()];
+      const [commandName, ...args] = trimmed.split(" ");
+      const command = commands[commandName!.toLowerCase()];
 
-    addLine({
-      type: 'input',
-      content: `${currentUser}@ninsys:~$ ${trimmed}`
-    });
-
-    if (!command) {
       addLine({
-        type: 'error',
-        content: TERMINAL_MESSAGES.COMMAND_NOT_FOUND(commandName!)
+        type: "input",
+        content: `${currentUser}@ninsys:~$ ${trimmed}`,
       });
-      return;
-    }
 
-    // check authentication for protected commands
-    if (command.requiresAuth) {
-      if (!isAuthenticated) {
+      if (!command) {
         addLine({
-          type: 'error',
-          content: TERMINAL_MESSAGES.ACCESS_DENIED(commandName!)
+          type: "error",
+          content: TERMINAL_MESSAGES.COMMAND_NOT_FOUND(commandName!),
         });
         return;
       }
 
-      // additional session validation for auth-required commands
-      if (!isSessionValid()) {
-        addLine({
-          type: 'error',
-          content: 'Session expired. Please login again.'
-        });
-        // reset auth state
-        setIsAuthenticated(false);
-        setCurrentUser('guest');
-        sessionStorage.removeItem('ninsys_auth_token');
-        sessionStorage.removeItem('ninsys_auth_expires');
-        return;
-      }
-    }
+      // check authentication for protected commands
+      if (command.requiresAuth) {
+        if (!isAuthenticated) {
+          addLine({
+            type: "error",
+            content: TERMINAL_MESSAGES.ACCESS_DENIED(commandName!),
+          });
+          return;
+        }
 
-    setIsProcessing(true);
-
-    try {
-      const result = await command.execute(args, {
-        isAuthenticated,
-        currentUser,
-        history: commandHistory,
-        isSiteAuthenticated,
-        isGuestViewMode
-      }, {
-        setLines,
-        setIsAuthenticated,
-        setCurrentUser,
-        toggleGuestView
-      });
-
-      if (result) {
-        addLine({
-          type: 'output',
-          content: result
-        });
+        // additional session validation for auth-required commands
+        if (!isSessionValid()) {
+          addLine({
+            type: "error",
+            content: "Session expired. Please login again.",
+          });
+          // reset auth state
+          setIsAuthenticated(false);
+          setCurrentUser("guest");
+          sessionStorage.removeItem("ninsys_auth_token");
+          sessionStorage.removeItem("ninsys_auth_expires");
+          return;
+        }
       }
-    } catch (error: unknown) {
-      // handle authentication errors specifically
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      if (errorMessage.includes('Session expired') || errorMessage.includes('Authentication')) {
-        addLine({
-          type: 'error',
-          content: errorMessage
-        });
-        // reset auth state on auth errors
-        setIsAuthenticated(false);
-        setCurrentUser('guest');
-        sessionStorage.removeItem('ninsys_auth_token');
-        sessionStorage.removeItem('ninsys_auth_expires');
-      } else {
-        addLine({
-          type: 'error',
-          content: TERMINAL_MESSAGES.COMMAND_ERROR(errorMessage)
-        });
+
+      setIsProcessing(true);
+
+      try {
+        const result = await command.execute(
+          args,
+          {
+            isAuthenticated,
+            currentUser,
+            history: commandHistory,
+            isSiteAuthenticated,
+            isGuestViewMode,
+          },
+          {
+            setLines,
+            setIsAuthenticated,
+            setCurrentUser,
+            toggleGuestView,
+          },
+        );
+
+        if (result) {
+          addLine({
+            type: "output",
+            content: result,
+          });
+        }
+      } catch (error: unknown) {
+        // handle authentication errors specifically
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        if (errorMessage.includes("Session expired") || errorMessage.includes("Authentication")) {
+          addLine({
+            type: "error",
+            content: errorMessage,
+          });
+          // reset auth state on auth errors
+          setIsAuthenticated(false);
+          setCurrentUser("guest");
+          sessionStorage.removeItem("ninsys_auth_token");
+          sessionStorage.removeItem("ninsys_auth_expires");
+        } else {
+          addLine({
+            type: "error",
+            content: TERMINAL_MESSAGES.COMMAND_ERROR(errorMessage),
+          });
+        }
+      } finally {
+        setIsProcessing(false);
+        setTimeout(() => {
+          inputRef.current?.focus();
+          setTimeout(() => inputRef.current?.focus(), 50);
+        }, 0);
       }
-    } finally {
-      setIsProcessing(false);
-      setTimeout(() => {
-        inputRef.current?.focus();
-        setTimeout(() => inputRef.current?.focus(), 50);
-      }, 0);
-    }
-  }, [currentUser, isAuthenticated, commandHistory, addLine]);
+    },
+    [currentUser, isAuthenticated, commandHistory, addLine],
+  );
 
   // add authentication check on component mount
   useEffect(() => {
@@ -155,11 +175,11 @@ export default function Terminal() {
     const checkAuthStatus = () => {
       if (isSessionValid()) {
         setIsAuthenticated(true);
-        setCurrentUser('admin'); // or get from token if you store username
+        setCurrentUser("admin"); // or get from token if you store username
       } else {
         // clear any stale tokens
-        sessionStorage.removeItem('ninsys_auth_token');
-        sessionStorage.removeItem('ninsys_auth_expires');
+        sessionStorage.removeItem("ninsys_auth_token");
+        sessionStorage.removeItem("ninsys_auth_expires");
       }
     };
 
@@ -167,53 +187,57 @@ export default function Terminal() {
   }, []);
 
   // auto-scroll to bottom when new lines are added
-    useEffect(() => {
+  useEffect(() => {
     if (terminalRef.current) {
-        requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
         if (terminalRef.current) {
-            terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+          terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
         }
-        });
+      });
     }
-    }, [lines]);
+  }, [lines]);
 
   // focus input when terminal is clicked
   useEffect(() => {
     const handleClick = () => inputRef.current?.focus();
     const terminal = terminalRef.current;
-    terminal?.addEventListener('click', handleClick);
-    return () => terminal?.removeEventListener('click', handleClick);
+    terminal?.addEventListener("click", handleClick);
+    return () => terminal?.removeEventListener("click", handleClick);
   }, []);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (isProcessing) return;
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (isProcessing) return;
 
-    if (e.key === 'Enter') {
-      handleCommand(currentInput);
-      setCommandHistory(prev => [...prev, currentInput]);
-      setCurrentInput('');
-      setHistoryIndex(-1);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (commandHistory.length > 0) {
-        const newIndex = historyIndex === -1 ? commandHistory.length - 1 : Math.max(0, historyIndex - 1);
-        setHistoryIndex(newIndex);
-        setCurrentInput(commandHistory[newIndex] || '');
-      }
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      if (historyIndex !== -1) {
-        const newIndex = Math.min(commandHistory.length - 1, historyIndex + 1);
-        if (newIndex === commandHistory.length - 1) {
-          setHistoryIndex(-1);
-          setCurrentInput('');
-        } else {
+      if (e.key === "Enter") {
+        handleCommand(currentInput);
+        setCommandHistory((prev) => [...prev, currentInput]);
+        setCurrentInput("");
+        setHistoryIndex(-1);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (commandHistory.length > 0) {
+          const newIndex =
+            historyIndex === -1 ? commandHistory.length - 1 : Math.max(0, historyIndex - 1);
           setHistoryIndex(newIndex);
-          setCurrentInput(commandHistory[newIndex] || '');
+          setCurrentInput(commandHistory[newIndex] || "");
+        }
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (historyIndex !== -1) {
+          const newIndex = Math.min(commandHistory.length - 1, historyIndex + 1);
+          if (newIndex === commandHistory.length - 1) {
+            setHistoryIndex(-1);
+            setCurrentInput("");
+          } else {
+            setHistoryIndex(newIndex);
+            setCurrentInput(commandHistory[newIndex] || "");
+          }
         }
       }
-    }
-  }, [currentInput, commandHistory, historyIndex, isProcessing, handleCommand]);
+    },
+    [currentInput, commandHistory, historyIndex, isProcessing, handleCommand],
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-indigo-950 relative overflow-hidden">
@@ -234,38 +258,41 @@ export default function Terminal() {
           {/* CRT Monitor Frame */}
           <div className="bg-gradient-to-br from-gray-800 via-gray-900 to-black p-8 rounded-3xl shadow-2xl border border-gray-700">
             {/* Screen */}
-            <div 
+            <div
               className="relative bg-black rounded-2xl p-8 overflow-hidden"
               style={{
-                background: 'radial-gradient(ellipse at center, #001122 0%, #000000 100%)',
-                boxShadow: 'inset 0 0 50px rgba(0, 50, 100, 0.3), inset 0 0 100px rgba(0, 50, 100, 0.1)',
-                animation: 'crt-flicker 4s infinite'
+                background: "radial-gradient(ellipse at center, #001122 0%, #000000 100%)",
+                boxShadow:
+                  "inset 0 0 50px rgba(0, 50, 100, 0.3), inset 0 0 100px rgba(0, 50, 100, 0.1)",
+                animation: "crt-flicker 4s infinite",
               }}
             >
               {/* CRT Scanlines */}
-              <div 
+              <div
                 className="absolute inset-0 pointer-events-none z-10"
                 style={{
-                  background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 150, 0.03) 2px, rgba(0, 255, 150, 0.03) 4px)',
-                  animation: 'scanlines 0.1s linear infinite'
+                  background:
+                    "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 150, 0.03) 2px, rgba(0, 255, 150, 0.03) 4px)",
+                  animation: "scanlines 0.1s linear infinite",
                 }}
               />
-              
+
               {/* CRT Curve effect */}
-              <div 
+              <div
                 className="absolute inset-0 pointer-events-none z-20"
                 style={{
-                  background: 'radial-gradient(ellipse at center, transparent 0%, transparent 85%, rgba(0, 0, 0, 0.3) 100%)',
+                  background:
+                    "radial-gradient(ellipse at center, transparent 0%, transparent 85%, rgba(0, 0, 0, 0.3) 100%)",
                 }}
               />
 
               {/* Terminal Content */}
-              <div 
+              <div
                 ref={terminalRef}
                 className="relative z-30 font-mono text-sm h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/50 scrollbar-track-transparent cursor-text p-4"
                 style={{
-                  textShadow: '0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor',
-                  margin: '8px', // extra margin to prevent glow cutoff
+                  textShadow: "0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor",
+                  margin: "8px", // extra margin to prevent glow cutoff
                 }}
               >
                 {/* Terminal Lines */}
@@ -276,13 +303,16 @@ export default function Terminal() {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
                     className={`mb-1 ${
-                      line.type === 'input' ? TERMINAL_CONFIG.COLORS.INPUT :
-                      line.type === 'error' ? TERMINAL_CONFIG.COLORS.ERROR :
-                      line.type === 'system' ? TERMINAL_CONFIG.COLORS.SYSTEM :
-                      TERMINAL_CONFIG.COLORS.OUTPUT
+                      line.type === "input"
+                        ? TERMINAL_CONFIG.COLORS.INPUT
+                        : line.type === "error"
+                          ? TERMINAL_CONFIG.COLORS.ERROR
+                          : line.type === "system"
+                            ? TERMINAL_CONFIG.COLORS.SYSTEM
+                            : TERMINAL_CONFIG.COLORS.OUTPUT
                     }`}
                     style={{
-                      filter: 'brightness(1.2)',
+                      filter: "brightness(1.2)",
                     }}
                   >
                     <pre className="whitespace-pre-wrap break-words">{line.content}</pre>
@@ -301,7 +331,7 @@ export default function Terminal() {
                     disabled={isProcessing}
                     className={`flex-1 bg-transparent outline-none ${TERMINAL_CONFIG.COLORS.INPUT} caret-green-400`}
                     style={{
-                      textShadow: '0 0 10px currentColor',
+                      textShadow: "0 0 10px currentColor",
                     }}
                     autoFocus
                   />
@@ -336,7 +366,8 @@ export default function Terminal() {
           >
             <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10 inline-block shadow-xl">
               <p className="text-white/70 text-sm mb-3">
-                <span className="text-purple-400 font-semibold">Pro tip:</span> Try commands like "help", "about", "status", or "easter"
+                <span className="text-purple-400 font-semibold">Pro tip:</span> Try commands like
+                "help", "about", "status", or "easter"
               </p>
               <p className="text-white/50 text-xs">
                 Use ↑/↓ arrows for command history • Click terminal to focus

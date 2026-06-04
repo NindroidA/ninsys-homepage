@@ -4,7 +4,7 @@ export interface Project {
   title: string;
   description: string;
   technologies: string[];
-  category: 'current' | 'completed';
+  category: "current" | "completed";
   image?: string;
   githubUrl?: string;
   liveUrl?: string;
@@ -14,7 +14,7 @@ export interface Project {
 
 // ===== Terminal ===== //
 export interface TerminalLine {
-  type: 'input' | 'output' | 'error' | 'system';
+  type: "input" | "output" | "error" | "system";
   content: string;
   timestamp?: string;
 }

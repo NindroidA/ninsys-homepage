@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AboutData, AboutDataResponse, AboutSection } from '../types/about';
-import { GoveeDevice } from '../types/govee';
-import {
+import type { AboutData, AboutDataResponse, AboutSection } from "../types/about";
+import type { GoveeDevice } from "../types/govee";
+import type {
   CreateProjectInput,
   GitHubImportResponse,
   GitHubReposResponse,
@@ -9,9 +9,12 @@ import {
   ProjectResponse,
   ProjectsResponse,
   UpdateProjectInput,
-} from '../types/projects';
+} from "../types/projects";
 
-const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://api.nindroidsystems.com';
+const API_BASE =
+  window.location.hostname === "localhost"
+    ? "http://localhost:3001"
+    : "https://api.nindroidsystems.com";
 
 export interface CogworksStats {
   guilds: number;
@@ -72,7 +75,7 @@ class NinSysAPI {
     const response = await fetch(`${API_BASE}${endpoint}`, {
       ...restOptions,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...headers,
       },
     });
@@ -86,9 +89,9 @@ class NinSysAPI {
 
   // Authenticated request - adds JWT token from sessionStorage
   private async authRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
-    const token = sessionStorage.getItem('ninsys_auth_token');
+    const token = sessionStorage.getItem("ninsys_auth_token");
     if (!token) {
-      throw new Error('Not authenticated');
+      throw new Error("Not authenticated");
     }
 
     return this.request<T>(endpoint, {
@@ -102,48 +105,48 @@ class NinSysAPI {
 
   // Cogworks endpoints
   async getCogworksStats(): Promise<CogworksStats> {
-    return this.request<CogworksStats>('/v2/cogworks/stats');
+    return this.request<CogworksStats>("/v2/cogworks/stats");
   }
 
   async getCogworksStatus(): Promise<CogworksStatus> {
-    return this.request<CogworksStatus>('/v2/cogworks/status');
+    return this.request<CogworksStatus>("/v2/cogworks/status");
   }
 
   // Govee endpoints
   async getGoveeDevices(): Promise<GoveeDevicesResponse> {
-    return this.request<GoveeDevicesResponse>('/v2/govee/devices');
+    return this.request<GoveeDevicesResponse>("/v2/govee/devices");
   }
 
   async controlGoveeDevice(device: string, model: string, command: any): Promise<any> {
-    return this.request('/v2/govee/control', {
-      method: 'PUT',
+    return this.request("/v2/govee/control", {
+      method: "PUT",
       body: JSON.stringify({ device, model, command }),
     });
   }
 
   async applyGoveePreset(presetId: string): Promise<any> {
     return this.request(`/v2/govee/preset/${presetId}`, {
-      method: 'PUT',
+      method: "PUT",
     });
   }
 
   // system health
   async getSystemHealth(): Promise<SystemHealth> {
-    return this.request<SystemHealth>('/health');
+    return this.request<SystemHealth>("/health");
   }
 
   // ===== Projects API ===== //
 
   /** Fetch all projects sorted by order field */
   async getProjects(): Promise<Project[]> {
-    const response = await this.request<ProjectsResponse>('/v2/projects');
+    const response = await this.request<ProjectsResponse>("/v2/projects");
     return response.data.projects;
   }
 
   /** Create a new project (requires auth) */
   async createProject(input: CreateProjectInput): Promise<Project> {
-    const response = await this.authRequest<ProjectResponse>('/v2/projects', {
-      method: 'POST',
+    const response = await this.authRequest<ProjectResponse>("/v2/projects", {
+      method: "POST",
       body: JSON.stringify(input),
     });
     return response.data;
@@ -152,7 +155,7 @@ class NinSysAPI {
   /** Update an existing project by ID (requires auth) */
   async updateProject(id: string, input: UpdateProjectInput): Promise<Project> {
     const response = await this.authRequest<ProjectResponse>(`/v2/projects/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(input),
     });
     return response.data;
@@ -161,14 +164,14 @@ class NinSysAPI {
   /** Delete a project by ID (requires auth) */
   async deleteProject(id: string): Promise<void> {
     await this.authRequest<{ success: boolean }>(`/v2/projects/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
   }
 
   /** Reorder projects by passing array of IDs in desired order (requires auth) */
   async reorderProjects(projectIds: string[]): Promise<void> {
-    await this.authRequest<{ success: boolean }>('/v2/projects/reorder', {
-      method: 'PUT',
+    await this.authRequest<{ success: boolean }>("/v2/projects/reorder", {
+      method: "PUT",
       body: JSON.stringify({ projectIds }),
     });
   }
@@ -181,13 +184,16 @@ class NinSysAPI {
    * @param options.perPage - Number of repos to fetch (default: API default)
    * @param options.sort - Sort order: 'updated', 'pushed', or 'full_name'
    */
-  async getGitHubRepos(options?: { perPage?: number; sort?: 'updated' | 'pushed' | 'full_name' }): Promise<GitHubReposResponse['data']['repos']> {
+  async getGitHubRepos(options?: {
+    perPage?: number;
+    sort?: "updated" | "pushed" | "full_name";
+  }): Promise<GitHubReposResponse["data"]["repos"]> {
     const params = new URLSearchParams();
-    if (options?.perPage) params.set('per_page', String(options.perPage));
-    if (options?.sort) params.set('sort', options.sort);
+    if (options?.perPage) params.set("per_page", String(options.perPage));
+    if (options?.sort) params.set("sort", options.sort);
 
     const queryString = params.toString();
-    const endpoint = `/v2/github/repos${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `/v2/github/repos${queryString ? `?${queryString}` : ""}`;
 
     const response = await this.request<GitHubReposResponse>(endpoint);
     return response.data.repos;
@@ -200,7 +206,7 @@ class NinSysAPI {
    */
   async importGitHubRepo(repoName: string): Promise<Project> {
     const response = await this.authRequest<GitHubImportResponse>(`/v2/github/import/${repoName}`, {
-      method: 'POST',
+      method: "POST",
     });
     return response.data.project;
   }
@@ -208,21 +214,21 @@ class NinSysAPI {
   // ===== About API ===== //
 
   async getAboutData(): Promise<AboutData> {
-    const response = await this.request<AboutDataResponse>('/v2/about');
+    const response = await this.request<AboutDataResponse>("/v2/about");
     return response.data;
   }
 
   async updateAboutData(data: Partial<AboutData>): Promise<AboutData> {
-    const response = await this.authRequest<AboutDataResponse>('/v2/about', {
-      method: 'PUT',
+    const response = await this.authRequest<AboutDataResponse>("/v2/about", {
+      method: "PUT",
       body: JSON.stringify(data),
     });
     return response.data;
   }
 
-  async updateAboutSections(sections: Pick<AboutSection, 'id' | 'order'>[]): Promise<AboutData> {
-    const response = await this.authRequest<AboutDataResponse>('/v2/about/sections', {
-      method: 'PUT',
+  async updateAboutSections(sections: Pick<AboutSection, "id" | "order">[]): Promise<AboutData> {
+    const response = await this.authRequest<AboutDataResponse>("/v2/about/sections", {
+      method: "PUT",
       body: JSON.stringify({ sections }),
     });
     return response.data;

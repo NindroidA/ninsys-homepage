@@ -1,6 +1,6 @@
-import { motion } from 'framer-motion';
-import { Home, ArrowLeft, Search, Bug, RefreshCw } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { motion } from "framer-motion";
+import { ArrowLeft, Bug, Home, RefreshCw, Search } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function NotFound() {
   const navigate = useNavigate();
@@ -12,9 +12,9 @@ export default function NotFound() {
       transition: {
         duration: 0.4,
         delay: 0.15,
-        staggerChildren: 0.15
-      }
-    }
+        staggerChildren: 0.15,
+      },
+    },
   };
 
   const itemVariants = {
@@ -22,8 +22,8 @@ export default function NotFound() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.4 }
-    }
+      transition: { duration: 0.4 },
+    },
   };
 
   return (
@@ -42,7 +42,7 @@ export default function NotFound() {
           transition={{
             duration: 3,
             repeat: Infinity,
-            ease: 'easeInOut'
+            ease: "easeInOut",
           }}
           className="mb-8"
         >
@@ -57,9 +57,7 @@ export default function NotFound() {
           className="bg-gradient-to-br from-white/12 via-gray-800/20 to-white/8 backdrop-blur-xl rounded-2xl p-8 border border-white/20 shadow-2xl mb-8"
         >
           <motion.div variants={itemVariants} className="mb-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Oops! Page Not Found
-            </h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Oops! Page Not Found</h2>
             <p className="text-white/70 text-lg leading-relaxed">
               The page you're looking for seems to have wandered off into the void.
             </p>
@@ -97,7 +95,7 @@ export default function NotFound() {
             <Home className="w-5 h-5 transition-transform group-hover:scale-110" />
             Back to Home
           </Link>
-          
+
           <button
             onClick={() => navigate(-1)}
             className="group flex items-center justify-center gap-3 px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 hover:border-white/30 transition-all duration-300 hover:shadow-lg hover:shadow-white/10"
@@ -108,10 +106,7 @@ export default function NotFound() {
         </motion.div>
 
         {/* quote */}
-        <motion.div
-          variants={itemVariants}
-          className="mt-12 text-center"
-        >
+        <motion.div variants={itemVariants} className="mt-12 text-center">
           <p className="text-white/50 text-sm italic">
             "Not all who wander are lost... but this page definitely is."
           </p>
@@ -123,12 +118,12 @@ export default function NotFound() {
             animate={{
               x: [0, 100, 0],
               y: [0, -50, 0],
-              opacity: [0.3, 0.6, 0.3]
+              opacity: [0.3, 0.6, 0.3],
             }}
             transition={{
               duration: 8,
               repeat: Infinity,
-              ease: 'easeInOut'
+              ease: "easeInOut",
             }}
             className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"
           />
@@ -136,13 +131,13 @@ export default function NotFound() {
             animate={{
               x: [0, -100, 0],
               y: [0, 50, 0],
-              opacity: [0.2, 0.5, 0.2]
+              opacity: [0.2, 0.5, 0.2],
             }}
             transition={{
               duration: 10,
               repeat: Infinity,
-              ease: 'easeInOut',
-              delay: 2
+              ease: "easeInOut",
+              delay: 2,
             }}
             className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-pink-500/10 rounded-full blur-3xl"
           />

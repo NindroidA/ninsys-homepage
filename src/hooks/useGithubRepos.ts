@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
-import { GitHubRepo, Project } from '../types/projects';
-import { safeFetch } from '../utils/apiHelpers';
-import { ninsysAPI } from '../utils/ninsysAPI';
+import { useCallback, useEffect, useState } from "react";
+import type { GitHubRepo, Project } from "../types/projects";
+import { safeFetch } from "../utils/apiHelpers";
+import { ninsysAPI } from "../utils/ninsysAPI";
 
 /**
  * Return type for the useGitHubRepos hook
@@ -41,8 +41,8 @@ export function useGitHubRepos(): UseGitHubReposReturn {
     setError(null);
 
     const result = await safeFetch(
-      () => ninsysAPI.getGitHubRepos({ perPage: 50, sort: 'pushed' }),
-      [] as GitHubRepo[]
+      () => ninsysAPI.getGitHubRepos({ perPage: 50, sort: "pushed" }),
+      [] as GitHubRepo[],
     );
 
     setRepos(result);
@@ -60,7 +60,7 @@ export function useGitHubRepos(): UseGitHubReposReturn {
       const project = await ninsysAPI.importGitHubRepo(repoName);
       return project;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to import repository');
+      setError(err instanceof Error ? err.message : "Failed to import repository");
       return null;
     } finally {
       setImporting(null);

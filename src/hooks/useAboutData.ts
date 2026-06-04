@@ -1,7 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
-import { AboutData, AboutProfile, AboutSection, DEFAULT_ABOUT_DATA } from '../types/about';
-import { safeFetch } from '../utils/apiHelpers';
-import { ninsysAPI } from '../utils/ninsysAPI';
+import { useCallback, useEffect, useState } from "react";
+import {
+  type AboutData,
+  type AboutProfile,
+  type AboutSection,
+  DEFAULT_ABOUT_DATA,
+} from "../types/about";
+import { safeFetch } from "../utils/apiHelpers";
+import { ninsysAPI } from "../utils/ninsysAPI";
 
 interface UseAboutDataReturn {
   data: AboutData;
@@ -24,10 +29,7 @@ export function useAboutData(): UseAboutDataReturn {
     setLoading(true);
     setError(null);
 
-    const result = await safeFetch(
-      () => ninsysAPI.getAboutData(),
-      DEFAULT_ABOUT_DATA
-    );
+    const result = await safeFetch(() => ninsysAPI.getAboutData(), DEFAULT_ABOUT_DATA);
 
     // Sort sections by order
     const sortedData = {
@@ -43,39 +45,45 @@ export function useAboutData(): UseAboutDataReturn {
     fetchData();
   }, [fetchData]);
 
-  const updateProfile = useCallback(async (profile: Partial<AboutProfile>): Promise<boolean> => {
-    try {
-      setError(null);
-      const updatedData = await ninsysAPI.updateAboutData({
-        profile: { ...data.profile, ...profile },
-      });
-      setData({
-        ...updatedData,
-        sections: [...updatedData.sections].sort((a, b) => a.order - b.order),
-      });
-      return true;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update profile');
-      return false;
-    }
-  }, [data.profile]);
+  const updateProfile = useCallback(
+    async (profile: Partial<AboutProfile>): Promise<boolean> => {
+      try {
+        setError(null);
+        const updatedData = await ninsysAPI.updateAboutData({
+          profile: { ...data.profile, ...profile },
+        });
+        setData({
+          ...updatedData,
+          sections: [...updatedData.sections].sort((a, b) => a.order - b.order),
+        });
+        return true;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to update profile");
+        return false;
+      }
+    },
+    [data.profile],
+  );
 
-  const updateSections = useCallback(async (sections: AboutSection[]): Promise<boolean> => {
-    try {
-      setError(null);
-      const updatedData = await ninsysAPI.updateAboutData({ sections });
-      setData({
-        ...updatedData,
-        sections: [...updatedData.sections].sort((a, b) => a.order - b.order),
-      });
-      return true;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update sections');
-      // Refresh to revert optimistic update
-      await fetchData();
-      return false;
-    }
-  }, [fetchData]);
+  const updateSections = useCallback(
+    async (sections: AboutSection[]): Promise<boolean> => {
+      try {
+        setError(null);
+        const updatedData = await ninsysAPI.updateAboutData({ sections });
+        setData({
+          ...updatedData,
+          sections: [...updatedData.sections].sort((a, b) => a.order - b.order),
+        });
+        return true;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to update sections");
+        // Refresh to revert optimistic update
+        await fetchData();
+        return false;
+      }
+    },
+    [fetchData],
+  );
 
   const updateFullData = useCallback(async (newData: Partial<AboutData>): Promise<boolean> => {
     try {
@@ -87,7 +95,7 @@ export function useAboutData(): UseAboutDataReturn {
       });
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update data');
+      setError(err instanceof Error ? err.message : "Failed to update data");
       return false;
     }
   }, []);
