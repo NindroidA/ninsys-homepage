@@ -1,8 +1,8 @@
 // About page data model - matches backend API spec
 
-export type SkillLevel = 'novice' | 'beginner' | 'intermediate' | 'advanced' | 'expert';
-export type SectionType = 'skills' | 'interests' | 'experience' | 'education' | 'custom';
-export type SectionSize = 'small' | 'medium' | 'large';
+export type SkillLevel = "novice" | "beginner" | "intermediate" | "advanced" | "expert";
+export type SectionType = "skills" | "interests" | "experience" | "education" | "custom";
+export type SectionSize = "small" | "medium" | "large";
 
 // Skill level to percentage mapping
 export const SKILL_LEVEL_PERCENT: Record<SkillLevel, number> = {
@@ -15,11 +15,11 @@ export const SKILL_LEVEL_PERCENT: Record<SkillLevel, number> = {
 
 // Skill level display names
 export const SKILL_LEVEL_LABELS: Record<SkillLevel, string> = {
-  novice: 'Novice',
-  beginner: 'Beginner',
-  intermediate: 'Intermediate',
-  advanced: 'Advanced',
-  expert: 'Expert',
+  novice: "Novice",
+  beginner: "Beginner",
+  intermediate: "Intermediate",
+  advanced: "Advanced",
+  expert: "Expert",
 };
 
 export interface Skill {
@@ -111,10 +111,10 @@ export interface AboutDataResponse {
 // Default empty about data
 export const DEFAULT_ABOUT_DATA: AboutData = {
   profile: {
-    name: 'Your Name',
-    tagline: 'Developer & Creator',
-    location: 'Your Location',
-    bio: ['Add your bio here...'],
+    name: "Your Name",
+    tagline: "Developer & Creator",
+    location: "Your Location",
+    bio: ["Add your bio here..."],
     social: {},
   },
   sections: [],
@@ -122,29 +122,29 @@ export const DEFAULT_ABOUT_DATA: AboutData = {
 
 // Type guards
 export function isSkillsContent(content: SectionContent): content is SkillsContent {
-  return 'skills' in content;
+  return "skills" in content;
 }
 
 export function isInterestsContent(content: SectionContent): content is InterestsContent {
-  return 'interests' in content;
+  return "interests" in content;
 }
 
 export function isExperienceContent(content: SectionContent): content is ExperienceContent {
-  if (!('items' in content)) return false;
+  if (!("items" in content)) return false;
   const items = (content as ExperienceContent).items;
   if (!Array.isArray(items) || items.length === 0) return false;
   const firstItem = items[0];
-  return firstItem !== undefined && 'company' in firstItem;
+  return firstItem !== undefined && "company" in firstItem;
 }
 
 export function isEducationContent(content: SectionContent): content is EducationContent {
-  if (!('items' in content)) return false;
+  if (!("items" in content)) return false;
   const items = (content as EducationContent).items;
   if (!Array.isArray(items) || items.length === 0) return false;
   const firstItem = items[0];
-  return firstItem !== undefined && 'school' in firstItem;
+  return firstItem !== undefined && "school" in firstItem;
 }
 
 export function isCustomContent(content: SectionContent): content is CustomContent {
-  return 'html' in content;
+  return "html" in content;
 }

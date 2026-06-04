@@ -1,9 +1,9 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { KeyRound, Loader2, X, Zap } from 'lucide-react';
-import { useState, useRef, useEffect, KeyboardEvent } from 'react';
-import { createPortal } from 'react-dom';
-import { useAuth } from '../../hooks/useAuth';
-import { IS_DEV } from '../../context/AuthContext';
+import { AnimatePresence, motion } from "framer-motion";
+import { KeyRound, Loader2, X, Zap } from "lucide-react";
+import { type KeyboardEvent, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { IS_DEV } from "../../context/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 
 interface AdminLoginModalProps {
   isOpen: boolean;
@@ -12,7 +12,7 @@ interface AdminLoginModalProps {
 
 export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
   const { login, devLogin } = useAuth();
-  const [code, setCode] = useState(['', '', '', '', '', '']);
+  const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -20,7 +20,7 @@ export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
   // Focus first input when modal opens
   useEffect(() => {
     if (isOpen) {
-      setCode(['', '', '', '', '', '']);
+      setCode(["", "", "", "", "", ""]);
       setError(null);
       setTimeout(() => inputRefs.current[0]?.focus(), 100);
     }
@@ -29,12 +29,12 @@ export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
   // Handle keyboard escape
   useEffect(() => {
     const handleEscape = (e: globalThis.KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === "Escape" && isOpen) {
         onClose();
       }
     };
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
   }, [isOpen, onClose]);
 
   const handleInputChange = (index: number, value: string) => {
@@ -51,22 +51,22 @@ export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
     }
 
     // Auto-submit when all digits entered
-    if (value && index === 5 && newCode.every(d => d)) {
-      handleSubmit(newCode.join(''));
+    if (value && index === 5 && newCode.every((d) => d)) {
+      handleSubmit(newCode.join(""));
     }
   };
 
   const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && !code[index] && index > 0) {
+    if (e.key === "Backspace" && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
-    const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    const pastedData = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
     if (pastedData.length === 6) {
-      const newCode = pastedData.split('');
+      const newCode = pastedData.split("");
       setCode(newCode);
       handleSubmit(pastedData);
     }
@@ -74,7 +74,7 @@ export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
 
   const handleSubmit = async (totpCode: string) => {
     if (totpCode.length !== 6) {
-      setError('Please enter all 6 digits');
+      setError("Please enter all 6 digits");
       return;
     }
 
@@ -88,8 +88,8 @@ export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
     if (result.success) {
       onClose();
     } else {
-      setError(result.error || 'Authentication failed');
-      setCode(['', '', '', '', '', '']);
+      setError(result.error || "Authentication failed");
+      setCode(["", "", "", "", "", ""]);
       inputRefs.current[0]?.focus();
     }
   };
@@ -144,7 +144,9 @@ export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
                 {code.map((digit, index) => (
                   <input
                     key={index}
-                    ref={(el) => { inputRefs.current[index] = el; }}
+                    ref={(el) => {
+                      inputRefs.current[index] = el;
+                    }}
                     type="text"
                     inputMode="numeric"
                     maxLength={1}
@@ -204,6 +206,6 @@ export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
         </>
       )}
     </AnimatePresence>,
-    document.body
+    document.body,
   );
 }

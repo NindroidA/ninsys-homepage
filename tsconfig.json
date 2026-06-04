@@ -29,5 +29,6 @@
     "noPropertyAccessFromIndexSignature": false,
     "noImplicitAny": false
   },
-  "include": ["src", "tailwind.config.js", "postcss.config.js", "eslint.config.mjs", "vite.config.ts"]
+  "include": ["src", "tailwind.config.js", "postcss.config.js", "vite.config.ts"],
+  "exclude": ["src/_archive"]
 }

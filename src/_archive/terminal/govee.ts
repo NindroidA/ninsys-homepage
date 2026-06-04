@@ -36,8 +36,8 @@ export interface ColorPreset {
   name: string;
   description: string;
   commands: {
-    deviceType?: 'lightStrip' | 'bulbs' | 'all';
-    action: 'color' | 'scene' | 'brightness' | 'powerSwitch';
+    deviceType?: "lightStrip" | "bulbs" | "all";
+    action: "color" | "scene" | "brightness" | "powerSwitch";
     value: ColorPresetValue;
   }[];
 }

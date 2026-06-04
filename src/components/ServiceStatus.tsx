@@ -1,43 +1,61 @@
-import { motion } from 'framer-motion';
-import { Activity, AlertTriangle, CheckCircle, Clock, Cog, Cpu, Database, Globe, HardDrive, Lightbulb, RefreshCw, Rocket, Server, Shield, Users, XCircle, Zap } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useLiveServices } from '../hooks/useLiveServices';
+import { motion } from "framer-motion";
+import {
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Cog,
+  Cpu,
+  Database,
+  Globe,
+  HardDrive,
+  Lightbulb,
+  RefreshCw,
+  Rocket,
+  Server,
+  Shield,
+  Users,
+  XCircle,
+  Zap,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useLiveServices } from "../hooks/useLiveServices";
 
 const statusConfig = {
   online: {
     icon: CheckCircle,
-    color: 'text-emerald-400',
-    bg: 'bg-emerald-400/20',
-    pulse: '',
-    label: 'Online',
+    color: "text-emerald-400",
+    bg: "bg-emerald-400/20",
+    pulse: "",
+    label: "Online",
   },
   offline: {
     icon: XCircle,
-    color: 'text-red-400',
-    bg: 'bg-red-400/20',
-    pulse: 'animate-pulse',
-    label: 'Offline',
+    color: "text-red-400",
+    bg: "bg-red-400/20",
+    pulse: "animate-pulse",
+    label: "Offline",
   },
   maintenance: {
     icon: Clock,
-    color: 'text-amber-400',
-    bg: 'bg-amber-400/20',
-    pulse: 'animate-pulse',
-    label: 'Maintenance',
+    color: "text-amber-400",
+    bg: "bg-amber-400/20",
+    pulse: "animate-pulse",
+    label: "Maintenance",
   },
   loading: {
     icon: AlertTriangle,
-    color: 'text-yellow-400',
-    bg: 'bg-yellow-400/20',
-    pulse: 'animate-pulse',
-    label: 'Loading',
+    color: "text-yellow-400",
+    bg: "bg-yellow-400/20",
+    pulse: "animate-pulse",
+    label: "Loading",
   },
   coming_soon: {
     icon: Rocket,
-    color: 'text-purple-400',
-    bg: 'bg-purple-400/20',
-    pulse: '',
-    label: 'Coming Soon',
+    color: "text-purple-400",
+    bg: "bg-purple-400/20",
+    pulse: "",
+    label: "Coming Soon",
   },
 };
 
@@ -72,26 +90,29 @@ export default function ServiceStatus() {
   // Trigger re-render every second for "last checked" time updates
   useEffect(() => {
     const timer = setInterval(() => {
-      setTick(t => t + 1);
+      setTick((t) => t + 1);
     }, 1000);
     return () => clearInterval(timer);
   }, []);
 
   const formatLastChecked = (lastChecked?: string) => {
-    if (!lastChecked) return '';
+    if (!lastChecked) return "";
     const diff = Date.now() - new Date(lastChecked).getTime();
     const minutes = Math.floor(diff / 60000);
     const seconds = Math.floor((diff % 60000) / 1000);
-        
+
     if (minutes > 0) return `${minutes}m ${seconds}s ago`;
     return `${seconds}s ago`;
   };
 
   const getStatusSummary = () => {
-    const summary = services.reduce((acc, service) => {
-      acc[service.status] = (acc[service.status] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const summary = services.reduce(
+      (acc, service) => {
+        acc[service.status] = (acc[service.status] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
     return summary;
   };
 
@@ -115,16 +136,16 @@ export default function ServiceStatus() {
               className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors duration-200 disabled:opacity-50"
               title="Refresh all services"
             >
-              <RefreshCw className={`w-5 h-5 text-white/80 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-5 h-5 text-white/80 ${loading ? "animate-spin" : ""}`} />
             </button>
           </div>
-          
+
           {error && (
             <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
               {error}
             </div>
           )}
-          
+
           <div className="flex justify-center gap-8 text-sm flex-wrap">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 bg-emerald-400 rounded-full shadow-lg shadow-emerald-400/50"></div>
@@ -181,55 +202,60 @@ export default function ServiceStatus() {
                     )}
                   </div>
                 </div>
-                <div className={`p-2 rounded-full ${status.bg} backdrop-blur-sm border border-white/20 ${status.pulse} flex-shrink-0`}>
+                <div
+                  className={`p-2 rounded-full ${status.bg} backdrop-blur-sm border border-white/20 ${status.pulse} flex-shrink-0`}
+                >
                   <StatusIcon className={`w-4 h-4 ${status.color}`} />
                 </div>
               </div>
-              
+
               {service.description && (
-                <p className="text-white/70 text-base mb-6 leading-relaxed">{service.description}</p>
+                <p className="text-white/70 text-base mb-6 leading-relaxed">
+                  {service.description}
+                </p>
               )}
 
-              {service.stats && (service.stats.guilds || service.stats.users || service.stats.devices) && (
-                <div className="mb-6 space-y-3 bg-white/5 rounded-xl p-4 border border-white/10">
+              {service.stats &&
+                (service.stats.guilds || service.stats.users || service.stats.devices) && (
+                  <div className="mb-6 space-y-3 bg-white/5 rounded-xl p-4 border border-white/10">
                     {service.stats.guilds && (
-                    <div className="flex justify-between text-base">
+                      <div className="flex justify-between text-base">
                         <span className="text-white/60">Servers:</span>
                         <span className="text-white/80 font-medium">{service.stats.guilds}</span>
-                    </div>
+                      </div>
                     )}
                     {service.stats.users && (
-                    <div className="flex justify-between text-base">
+                      <div className="flex justify-between text-base">
                         <span className="text-white/60">Users:</span>
-                        <span className="text-white/80 font-medium">{service.stats.users.toLocaleString()}</span>
-                    </div>
+                        <span className="text-white/80 font-medium">
+                          {service.stats.users.toLocaleString()}
+                        </span>
+                      </div>
                     )}
                     {service.stats.devices && (
-                    <div className="flex justify-between text-base">
+                      <div className="flex justify-between text-base">
                         <span className="text-white/60">Devices:</span>
                         <span className="text-white/80 font-medium">{service.stats.devices}</span>
-                    </div>
+                      </div>
                     )}
-                </div>
-               )}
+                  </div>
+                )}
 
-                <div className="flex items-center justify-between mt-auto">
-                    <div className="flex flex-col">
-                        <span className={`text-base font-medium ${status.color} mb-1`}>
-                            {status.label}
-                        </span>
-                        {service.lastUpdated && (
-                            <span className="text-m text-white/50">
-                                Last checked: {formatLastChecked(service.lastUpdated)}
-                            </span>
-                        )}
-                        {service.uptime && (
-                            <span className="text-m text-white/50">
-                                Uptime: {service.uptime}
-                            </span>
-                        )}
-                    </div>
+              <div className="flex items-center justify-between mt-auto">
+                <div className="flex flex-col">
+                  <span className={`text-base font-medium ${status.color} mb-1`}>
+                    {status.label}
+                  </span>
+                  {service.lastUpdated && (
+                    <span className="text-m text-white/50">
+                      Last checked: {formatLastChecked(service.lastUpdated)}
+                    </span>
+                  )}
+                  {service.uptime && (
+                    <span className="text-m text-white/50">Uptime: {service.uptime}</span>
+                  )}
                 </div>
+              </div>
             </motion.div>
           );
         })}

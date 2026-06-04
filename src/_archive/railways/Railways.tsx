@@ -1,8 +1,8 @@
-import { Badge, Button, Card, FloatingElements } from '../components/shared/ui';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Info, RotateCcw, ZoomIn, ZoomOut } from 'lucide-react';
-import { useState } from 'react';
-import Navbar from '../components/Navbar';
+import { motion, useMotionValue, useTransform } from "framer-motion";
+import { ArrowLeft, ArrowRight, Info, RotateCcw, ZoomIn, ZoomOut } from "lucide-react";
+import { useState } from "react";
+import Navbar from "../components/Navbar";
+import { Badge, Button, Card, FloatingElements } from "../components/shared/ui";
 
 export default function Railways() {
   const [zoom, setZoom] = useState(1);
@@ -10,25 +10,22 @@ export default function Railways() {
   const background = useTransform(
     x,
     [-400, 0, 400],
-    ['rgba(139, 92, 246, 0.2)', 'rgba(168, 85, 247, 0.2)', 'rgba(236, 72, 153, 0.2)']
+    ["rgba(139, 92, 246, 0.2)", "rgba(168, 85, 247, 0.2)", "rgba(236, 72, 153, 0.2)"],
   );
 
   const resetPosition = () => {
     x.set(0);
   };
 
-  const zoomIn = () => setZoom(prev => Math.min(prev + 0.2, 2));
-  const zoomOut = () => setZoom(prev => Math.max(prev - 0.2, 0.6));
+  const zoomIn = () => setZoom((prev) => Math.min(prev + 0.2, 2));
+  const zoomOut = () => setZoom((prev) => Math.max(prev - 0.2, 0.6));
 
   return (
     <div className="min-h-screen relative overflow-hidden">
       <Navbar variant="minimal" />
-      
+
       {/* Animated background */}
-      <motion.div 
-        className="absolute inset-0"
-        style={{ backgroundColor: background }}
-      />
+      <motion.div className="absolute inset-0" style={{ backgroundColor: background }} />
 
       {/* Floating elements */}
       <FloatingElements variant="purple" intensity="low" />
@@ -47,9 +44,7 @@ export default function Railways() {
               🚂 Railways
             </span>
           </h1>
-          <p className="text-xl text-white/70">
-            Swipe or drag the minecart along the rails!
-          </p>
+          <p className="text-xl text-white/70">Swipe or drag the minecart along the rails!</p>
         </motion.div>
 
         {/* Railway track container */}
@@ -57,10 +52,20 @@ export default function Railways() {
           <Card padding="lg" hover={false}>
             {/* Zoom controls */}
             <div className="flex justify-end gap-2 mb-4">
-              <Button onClick={zoomOut} variant="secondary" size="sm" icon={<ZoomOut className="w-4 h-4" />}>
+              <Button
+                onClick={zoomOut}
+                variant="secondary"
+                size="sm"
+                icon={<ZoomOut className="w-4 h-4" />}
+              >
                 Zoom Out
               </Button>
-              <Button onClick={zoomIn} variant="secondary" size="sm" icon={<ZoomIn className="w-4 h-4" />}>
+              <Button
+                onClick={zoomIn}
+                variant="secondary"
+                size="sm"
+                icon={<ZoomIn className="w-4 h-4" />}
+              >
                 Zoom In
               </Button>
             </div>
@@ -78,7 +83,7 @@ export default function Railways() {
                     <div className="h-3 bg-gradient-to-r from-gray-700 via-gray-500 to-gray-700 rounded-full mb-12 shadow-xl"></div>
                     {/* Bottom rail */}
                     <div className="h-3 bg-gradient-to-r from-gray-700 via-gray-500 to-gray-700 rounded-full shadow-xl"></div>
-                    
+
                     {/* Railroad ties - more ties for bigger track */}
                     <div className="absolute inset-0 flex justify-around items-center px-4">
                       {[...Array(20)].map((_, i) => (
@@ -108,18 +113,18 @@ export default function Railways() {
                     <div className="w-32 h-24 bg-gradient-to-br from-slate-600 via-slate-700 to-slate-800 rounded-2xl border-4 border-slate-900 shadow-2xl relative overflow-hidden">
                       {/* Inner shadow for depth */}
                       <div className="absolute inset-3 bg-gradient-to-br from-slate-800 via-slate-900 to-black rounded-lg"></div>
-                      
+
                       {/* Metal bands */}
                       <div className="absolute top-3 left-2 right-2 h-1.5 bg-gradient-to-r from-gray-600 via-gray-400 to-gray-600 rounded-full shadow-inner"></div>
                       <div className="absolute bottom-3 left-2 right-2 h-1.5 bg-gradient-to-r from-gray-600 via-gray-400 to-gray-600 rounded-full shadow-inner"></div>
-                      
+
                       {/* Rivets */}
                       <div className="absolute top-2 left-3 w-2 h-2 bg-gray-500 rounded-full shadow-inner"></div>
                       <div className="absolute top-2 right-3 w-2 h-2 bg-gray-500 rounded-full shadow-inner"></div>
                       <div className="absolute bottom-2 left-3 w-2 h-2 bg-gray-500 rounded-full shadow-inner"></div>
                       <div className="absolute bottom-2 right-3 w-2 h-2 bg-gray-500 rounded-full shadow-inner"></div>
                     </div>
-                    
+
                     {/* Wheels - larger and more detailed */}
                     <div className="absolute -bottom-4 left-4 w-8 h-8 bg-gradient-to-br from-gray-700 via-gray-900 to-black rounded-full border-3 border-gray-800 shadow-2xl">
                       <div className="absolute inset-2 border-2 border-gray-600 rounded-full"></div>
@@ -133,7 +138,7 @@ export default function Railways() {
                         <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
                       </div>
                     </div>
-                    
+
                     {/* Shine/highlight effect */}
                     <div className="absolute top-3 left-4 w-12 h-12 bg-gradient-to-br from-white/40 to-transparent rounded-full blur-md"></div>
                   </div>
