@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { AboutData, AboutDataResponse, AboutSection } from "../types/about";
-import type { GoveeDevice } from "../types/govee";
 import type {
   CreateProjectInput,
   GitHubImportResponse,
@@ -10,11 +8,7 @@ import type {
   ProjectsResponse,
   UpdateProjectInput,
 } from "../types/projects";
-
-const API_BASE =
-  window.location.hostname === "localhost"
-    ? "http://localhost:3001"
-    : "https://api.nindroidsystems.com";
+import { API_BASE } from "./apiBase";
 
 export interface CogworksStats {
   guilds: number;
@@ -48,15 +42,6 @@ export interface SystemHealth {
     uptime: number;
     memory: any;
     services: any;
-  };
-}
-
-export interface GoveeDevicesResponse {
-  success: boolean;
-  timestamp: string;
-  data: {
-    devices: GoveeDevice[];
-    groups: any[];
   };
 }
 
@@ -110,24 +95,6 @@ class NinSysAPI {
 
   async getCogworksStatus(): Promise<CogworksStatus> {
     return this.request<CogworksStatus>("/v2/cogworks/status");
-  }
-
-  // Govee endpoints
-  async getGoveeDevices(): Promise<GoveeDevicesResponse> {
-    return this.request<GoveeDevicesResponse>("/v2/govee/devices");
-  }
-
-  async controlGoveeDevice(device: string, model: string, command: any): Promise<any> {
-    return this.request("/v2/govee/control", {
-      method: "PUT",
-      body: JSON.stringify({ device, model, command }),
-    });
-  }
-
-  async applyGoveePreset(presetId: string): Promise<any> {
-    return this.request(`/v2/govee/preset/${presetId}`, {
-      method: "PUT",
-    });
   }
 
   // system health

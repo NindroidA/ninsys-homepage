@@ -13,7 +13,6 @@ import { ninsysAPI } from "../utils/ninsysAPI";
  * @property updateProject - Update an existing project by ID, returns updated project or null
  * @property deleteProject - Delete a project by ID, returns true on success
  * @property reorderProjects - Reorder projects by passing array of IDs in new order
- * @property addProject - Add a project to local state (used after GitHub import)
  * @property setLocalProjects - Directly set local projects array (for optimistic updates)
  */
 interface UseProjectsReturn {
@@ -25,7 +24,6 @@ interface UseProjectsReturn {
   updateProject: (id: string, input: UpdateProjectInput) => Promise<Project | null>;
   deleteProject: (id: string) => Promise<boolean>;
   reorderProjects: (projectIds: string[]) => Promise<boolean>;
-  addProject: (project: Project) => void;
   setLocalProjects: (projects: Project[]) => void;
 }
 
@@ -121,11 +119,6 @@ export function useProjects(): UseProjectsReturn {
     setProjects(newProjects);
   }, []);
 
-  // Add a project to local state (for imported projects)
-  const addProject = useCallback((project: Project) => {
-    setProjects((prev) => [...prev, project].sort((a, b) => a.order - b.order));
-  }, []);
-
   return {
     projects,
     loading,
@@ -135,7 +128,6 @@ export function useProjects(): UseProjectsReturn {
     updateProject,
     deleteProject,
     reorderProjects,
-    addProject,
     setLocalProjects,
   };
 }

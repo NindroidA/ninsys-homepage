@@ -1,6 +1,6 @@
 import { createContext, type ReactNode, useCallback, useEffect, useState } from "react";
 import type { AuthContextValue, AuthState, LoginResponse } from "../types/auth";
-import { API_BASE } from "../utils/goveeAPI";
+import { API_BASE } from "../utils/apiBase";
 
 // Dev mode check - allows bypassing auth on localhost
 export const IS_DEV =

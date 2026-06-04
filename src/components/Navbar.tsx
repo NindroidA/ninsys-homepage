@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FolderGit2, Home, Info, Terminal as TerminalIcon, Train } from "lucide-react";
+import { FolderGit2, Home, Info } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 interface NavbarProps {
@@ -12,9 +12,7 @@ export default function Navbar({ variant = "default" }: NavbarProps) {
   const navItems = [
     { path: "/", label: "Home", icon: Home },
     { path: "/projects", label: "Projects", icon: FolderGit2 },
-    { path: "/railways", label: "Railways", icon: Train },
     { path: "/about", label: "About", icon: Info },
-    { path: "/terminal", label: "Terminal", icon: TerminalIcon },
   ];
 
   if (variant === "minimal") {
