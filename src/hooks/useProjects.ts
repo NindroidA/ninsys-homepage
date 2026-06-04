@@ -1,20 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "../lib/queryClient";
 import type { CreateProjectInput, Project, UpdateProjectInput } from "../types/projects";
-import { safeFetch } from "../utils/apiHelpers";
 import { ninsysAPI } from "../utils/ninsysAPI";
 
-/**
- * Return type for the useProjects hook
- * @property projects - Array of projects sorted by order field
- * @property loading - True while initial fetch is in progress
- * @property error - Error message from the most recent failed operation, or null
- * @property refresh - Refetch all projects from the API
- * @property createProject - Create a new project, returns the created project or null on error
- * @property updateProject - Update an existing project by ID, returns updated project or null
- * @property deleteProject - Delete a project by ID, returns true on success
- * @property reorderProjects - Reorder projects by passing array of IDs in new order
- * @property setLocalProjects - Directly set local projects array (for optimistic updates)
- */
 interface UseProjectsReturn {
   projects: Project[];
   loading: boolean;
@@ -24,110 +12,87 @@ interface UseProjectsReturn {
   updateProject: (id: string, input: UpdateProjectInput) => Promise<Project | null>;
   deleteProject: (id: string) => Promise<boolean>;
   reorderProjects: (projectIds: string[]) => Promise<boolean>;
+  /** Optimistic local update (e.g. drag-and-drop) — writes straight to the cache. */
   setLocalProjects: (projects: Project[]) => void;
 }
 
+const sortByOrder = (projects: Project[]) => [...projects].sort((a, b) => a.order - b.order);
+const message = (err: unknown, fallback: string) => (err instanceof Error ? err.message : fallback);
+
 /**
- * Hook for managing projects with CRUD operations and drag-and-drop reordering.
- * Fetches projects on mount and provides methods for create, update, delete, and reorder.
- * Includes optimistic update support via setLocalProjects for smooth drag-and-drop UX.
- *
- * @example
- * const { projects, loading, createProject, reorderProjects } = useProjects();
+ * Projects data + CRUD, backed by TanStack Query (caching, dedup, retries,
+ * cancellation, real error surfacing). The public API is unchanged so consumers
+ * don't need updates.
  */
 export function useProjects(): UseProjectsReturn {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const qc = useQueryClient();
+  const invalidate = () => qc.invalidateQueries({ queryKey: queryKeys.projects });
 
-  const fetchProjects = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const query = useQuery({
+    queryKey: queryKeys.projects,
+    queryFn: async () => sortByOrder(await ninsysAPI.getProjects()),
+  });
 
-    const result = await safeFetch(() => ninsysAPI.getProjects(), [] as Project[]);
+  const createMut = useMutation({
+    mutationFn: (input: CreateProjectInput) => ninsysAPI.createProject(input),
+    onSuccess: invalidate,
+  });
+  const updateMut = useMutation({
+    mutationFn: ({ id, input }: { id: string; input: UpdateProjectInput }) =>
+      ninsysAPI.updateProject(id, input),
+    onSuccess: invalidate,
+  });
+  const deleteMut = useMutation({
+    mutationFn: (id: string) => ninsysAPI.deleteProject(id),
+    onSuccess: invalidate,
+  });
+  const reorderMut = useMutation({
+    mutationFn: (projectIds: string[]) => ninsysAPI.reorderProjects(projectIds),
+    onSettled: invalidate,
+  });
 
-    // Sort by order field
-    const sorted = [...result].sort((a, b) => a.order - b.order);
-    setProjects(sorted);
-    setLoading(false);
-  }, []);
+  const err =
+    query.error ?? createMut.error ?? updateMut.error ?? deleteMut.error ?? reorderMut.error;
 
-  useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
-
-  const createProject = useCallback(async (input: CreateProjectInput): Promise<Project | null> => {
-    try {
-      setError(null);
-      const newProject = await ninsysAPI.createProject(input);
-      setProjects((prev) => [...prev, newProject].sort((a, b) => a.order - b.order));
-      return newProject;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create project");
-      return null;
-    }
-  }, []);
-
-  const updateProject = useCallback(
-    async (id: string, input: UpdateProjectInput): Promise<Project | null> => {
+  return {
+    projects: query.data ?? [],
+    loading: query.isLoading,
+    error: err ? message(err, "Something went wrong with projects") : null,
+    refresh: async () => {
+      await query.refetch();
+    },
+    createProject: async (input) => {
       try {
-        setError(null);
-        const updated = await ninsysAPI.updateProject(id, input);
-        setProjects((prev) =>
-          prev.map((p) => (p.id === id ? updated : p)).sort((a, b) => a.order - b.order),
-        );
-        return updated;
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to update project");
+        return await createMut.mutateAsync(input);
+      } catch {
         return null;
       }
     },
-    [],
-  );
-
-  const deleteProject = useCallback(async (id: string): Promise<boolean> => {
-    try {
-      setError(null);
-      await ninsysAPI.deleteProject(id);
-      setProjects((prev) => prev.filter((p) => p.id !== id));
-      return true;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete project");
-      return false;
-    }
-  }, []);
-
-  const reorderProjects = useCallback(
-    async (projectIds: string[]): Promise<boolean> => {
+    updateProject: async (id, input) => {
       try {
-        setError(null);
-        await ninsysAPI.reorderProjects(projectIds);
-        // Refresh to get updated order values
-        await fetchProjects();
+        return await updateMut.mutateAsync({ id, input });
+      } catch {
+        return null;
+      }
+    },
+    deleteProject: async (id) => {
+      try {
+        await deleteMut.mutateAsync(id);
         return true;
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to reorder projects");
-        // Refresh to revert optimistic update
-        await fetchProjects();
+      } catch {
         return false;
       }
     },
-    [fetchProjects],
-  );
-
-  const setLocalProjects = useCallback((newProjects: Project[]) => {
-    setProjects(newProjects);
-  }, []);
-
-  return {
-    projects,
-    loading,
-    error,
-    refresh: fetchProjects,
-    createProject,
-    updateProject,
-    deleteProject,
-    reorderProjects,
-    setLocalProjects,
+    reorderProjects: async (projectIds) => {
+      try {
+        await reorderMut.mutateAsync(projectIds);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    setLocalProjects: (projects) => {
+      qc.setQueryData(queryKeys.projects, projects);
+    },
   };
 }
