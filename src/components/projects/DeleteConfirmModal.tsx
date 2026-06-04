@@ -1,5 +1,5 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import { AlertTriangle, Loader2 } from 'lucide-react';
+import { AnimatePresence, motion } from "framer-motion";
+import { AlertTriangle, Loader2 } from "lucide-react";
 
 interface DeleteConfirmModalProps {
   isOpen: boolean;
@@ -45,43 +45,43 @@ export function DeleteConfirmModal({
               className="w-full max-w-md bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl p-6"
               onClick={(e) => e.stopPropagation()}
             >
-            <div className="flex flex-col items-center text-center">
-              <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mb-4">
-                <AlertTriangle className="w-8 h-8 text-red-400" />
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mb-4">
+                  <AlertTriangle className="w-8 h-8 text-red-400" />
+                </div>
+
+                <h2 className="text-xl font-bold text-white mb-2">Delete Project?</h2>
+
+                <p className="text-white/60 mb-6">
+                  Are you sure you want to delete{" "}
+                  <span className="text-white font-medium">&quot;{title}&quot;</span>? This action
+                  cannot be undone.
+                </p>
+
+                <div className="flex gap-4 w-full">
+                  <button
+                    onClick={onClose}
+                    disabled={deleting}
+                    className="flex-1 px-6 py-3 bg-white/5 hover:bg-white/10 disabled:opacity-50 text-white/70 rounded-lg transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleConfirm}
+                    disabled={deleting}
+                    className="flex-1 px-6 py-3 bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                  >
+                    {deleting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Deleting...
+                      </>
+                    ) : (
+                      "Delete"
+                    )}
+                  </button>
+                </div>
               </div>
-
-              <h2 className="text-xl font-bold text-white mb-2">Delete Project?</h2>
-
-              <p className="text-white/60 mb-6">
-                Are you sure you want to delete{' '}
-                <span className="text-white font-medium">&quot;{title}&quot;</span>? This
-                action cannot be undone.
-              </p>
-
-              <div className="flex gap-4 w-full">
-                <button
-                  onClick={onClose}
-                  disabled={deleting}
-                  className="flex-1 px-6 py-3 bg-white/5 hover:bg-white/10 disabled:opacity-50 text-white/70 rounded-lg transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleConfirm}
-                  disabled={deleting}
-                  className="flex-1 px-6 py-3 bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-                >
-                  {deleting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Deleting...
-                    </>
-                  ) : (
-                    'Delete'
-                  )}
-                </button>
-              </div>
-            </div>
             </div>
           </motion.div>
         </>

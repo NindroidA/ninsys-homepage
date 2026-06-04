@@ -1,19 +1,19 @@
-import { KeyRound, Eye, EyeOff, LogOut } from 'lucide-react';
-import { useState } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import { AdminLoginModal } from './AdminLoginModal';
+import { Eye, EyeOff, KeyRound, LogOut } from "lucide-react";
+import { useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import { AdminLoginModal } from "./AdminLoginModal";
 
 interface AdminLoginButtonProps {
-  variant?: 'subtle' | 'prominent';
+  variant?: "subtle" | "prominent";
 }
 
-export function AdminLoginButton({ variant = 'subtle' }: AdminLoginButtonProps) {
+export function AdminLoginButton({ variant = "subtle" }: AdminLoginButtonProps) {
   const { isAuthenticated, isGuestViewMode, toggleGuestView, logout } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!isAuthenticated) {
     // Not logged in - show login button
-    if (variant === 'subtle') {
+    if (variant === "subtle") {
       return (
         <>
           <button
@@ -50,10 +50,10 @@ export function AdminLoginButton({ variant = 'subtle' }: AdminLoginButtonProps) 
         onClick={toggleGuestView}
         className={`p-2 rounded-lg transition-all duration-300 ${
           isGuestViewMode
-            ? 'bg-amber-500/20 text-amber-400 hover:bg-amber-500/30'
-            : 'text-white/40 hover:text-white/60 hover:bg-white/10'
+            ? "bg-amber-500/20 text-amber-400 hover:bg-amber-500/30"
+            : "text-white/40 hover:text-white/60 hover:bg-white/10"
         }`}
-        title={isGuestViewMode ? 'Exit Guest View' : 'View as Guest'}
+        title={isGuestViewMode ? "Exit Guest View" : "View as Guest"}
       >
         {isGuestViewMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
       </button>

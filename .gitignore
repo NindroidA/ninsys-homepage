@@ -30,8 +30,10 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # claude
 .claude
 
-# vscode
-.vscode
+# vscode (commit shared editor config; ignore the rest)
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 
 # Finder (MacOS) folder config
 .DS_Store

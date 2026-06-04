@@ -1,40 +1,34 @@
 import {
   closestCenter,
   DndContext,
-  DragEndEvent,
+  type DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
-} from '@dnd-kit/core';
+} from "@dnd-kit/core";
 import {
   arrayMove,
+  rectSortingStrategy,
   SortableContext,
   sortableKeyboardCoordinates,
-  rectSortingStrategy,
-} from '@dnd-kit/sortable';
-import { Button, Card, FloatingElements, GradientText } from '../components/shared/ui';
-import { motion } from 'framer-motion';
-import { Edit2, Github, Linkedin, Loader2, Mail, MapPin, Plus, X } from 'lucide-react';
-import { useCallback, useState } from 'react';
-import { ProfileEditModal, SectionCard, SectionEditModal } from '../components/about';
-import { DeleteConfirmModal } from '../components/projects';
-import FooterComponent from '../components/Footer';
-import Navbar from '../components/Navbar';
-import { useAboutData } from '../hooks/useAboutData';
-import { useAdminVisible } from '../hooks/useAuth';
-import { AboutProfile, AboutSection } from '../types/about';
+} from "@dnd-kit/sortable";
+import { motion } from "framer-motion";
+import { Edit2, Github, Linkedin, Loader2, Mail, MapPin, Plus, X } from "lucide-react";
+import { useCallback, useState } from "react";
+import { ProfileEditModal, SectionCard, SectionEditModal } from "../components/about";
+import FooterComponent from "../components/Footer";
+import Navbar from "../components/Navbar";
+import { DeleteConfirmModal } from "../components/projects";
+import { Seo } from "../components/Seo";
+import { Button, Card, FloatingElements, GradientText } from "../components/shared/ui";
+import { useAboutData } from "../hooks/useAboutData";
+import { useAdminVisible } from "../hooks/useAuth";
+import type { AboutProfile, AboutSection } from "../types/about";
 
 export default function AboutMe() {
   const isAdminVisible = useAdminVisible();
-  const {
-    data,
-    loading,
-    error,
-    updateProfile,
-    updateSections,
-    setLocalSections,
-  } = useAboutData();
+  const { data, loading, error, updateProfile, updateSections, setLocalSections } = useAboutData();
 
   // UI State
   const [isEditing, setIsEditing] = useState(false);
@@ -48,7 +42,9 @@ export default function AboutMe() {
   // DnD sensors
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
 
   // Handlers
@@ -71,7 +67,7 @@ export default function AboutMe() {
         updateSections(newSections);
       }
     },
-    [data.sections, setLocalSections, updateSections]
+    [data.sections, setLocalSections, updateSections],
   );
 
   const handleMoveUp = useCallback(
@@ -84,7 +80,7 @@ export default function AboutMe() {
       setLocalSections(newSections);
       updateSections(newSections);
     },
-    [data.sections, setLocalSections, updateSections]
+    [data.sections, setLocalSections, updateSections],
   );
 
   const handleMoveDown = useCallback(
@@ -97,7 +93,7 @@ export default function AboutMe() {
       setLocalSections(newSections);
       updateSections(newSections);
     },
-    [data.sections, setLocalSections, updateSections]
+    [data.sections, setLocalSections, updateSections],
   );
 
   const handleSaveProfile = useCallback(
@@ -106,17 +102,17 @@ export default function AboutMe() {
       await updateProfile(profile);
       setSaving(false);
     },
-    [updateProfile]
+    [updateProfile],
   );
 
   const handleSaveSection = useCallback(
-    async (sectionData: Omit<AboutSection, 'id' | 'order'> & { id?: string }) => {
+    async (sectionData: Omit<AboutSection, "id" | "order"> & { id?: string }) => {
       setSaving(true);
       try {
         if (sectionData.id) {
           // Update existing section
           const updatedSections = data.sections.map((s) =>
-            s.id === sectionData.id ? { ...s, ...sectionData } : s
+            s.id === sectionData.id ? { ...s, ...sectionData } : s,
           );
           await updateSections(updatedSections);
         } else {
@@ -132,7 +128,7 @@ export default function AboutMe() {
         setSaving(false);
       }
     },
-    [data.sections, updateSections]
+    [data.sections, updateSections],
   );
 
   const handleDeleteSection = useCallback(async () => {
@@ -193,6 +189,11 @@ export default function AboutMe() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      <Seo
+        title="About"
+        description="About Andrew Curtis (NindroidA) — developer, homelab tinkerer, and the systems behind Nindroid Systems."
+        path="/about"
+      />
       <Navbar />
       <FloatingElements variant="purple" intensity="medium" />
 
@@ -208,11 +209,11 @@ export default function AboutMe() {
             >
               <Button
                 onClick={() => setIsEditing(!isEditing)}
-                variant={isEditing ? 'primary' : 'secondary'}
+                variant={isEditing ? "primary" : "secondary"}
                 size="sm"
                 icon={isEditing ? <X className="w-4 h-4" /> : <Edit2 className="w-4 h-4" />}
               >
-                {isEditing ? 'Done Editing' : 'Edit Page'}
+                {isEditing ? "Done Editing" : "Edit Page"}
               </Button>
               {isEditing && (
                 <Button
@@ -327,10 +328,7 @@ export default function AboutMe() {
               collisionDetection={closestCenter}
               onDragEnd={handleDragEnd}
             >
-              <SortableContext
-                items={sections.map((s) => s.id)}
-                strategy={rectSortingStrategy}
-              >
+              <SortableContext items={sections.map((s) => s.id)} strategy={rectSortingStrategy}>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {sections.map((section, index) => (
                     <SectionCard
@@ -362,7 +360,6 @@ export default function AboutMe() {
               </div>
             </Card>
           )}
-
         </div>
       </div>
 
@@ -395,7 +392,7 @@ export default function AboutMe() {
           setDeletingSection(null);
         }}
         onConfirm={handleDeleteSection}
-        title={deletingSection?.title || ''}
+        title={deletingSection?.title || ""}
         deleting={saving}
       />
     </div>

@@ -1,6 +1,6 @@
-import { motion } from 'framer-motion';
-import { useState, useMemo } from 'react';
-import { SKILL_LEVEL_LABELS, SKILL_LEVEL_PERCENT, SkillLevel } from '../../types/about';
+import { motion } from "framer-motion";
+import { useMemo, useState } from "react";
+import { SKILL_LEVEL_LABELS, SKILL_LEVEL_PERCENT, type SkillLevel } from "../../types/about";
 
 interface SkillVialProps {
   name: string;
@@ -10,18 +10,24 @@ interface SkillVialProps {
 }
 
 // Diagonal gradient colors based on level (from bottom-left to top-right of liquid)
-const LEVEL_GRADIENTS: Record<SkillLevel, { from: string; to: string; mid: string; glow: string }> = {
-  novice: { from: '#991b1b', to: '#f87171', mid: '#dc2626', glow: 'rgba(239, 68, 68, 0.6)' },        // red gradient
-  beginner: { from: '#9a3412', to: '#fdba74', mid: '#ea580c', glow: 'rgba(249, 115, 22, 0.6)' },     // orange gradient
-  intermediate: { from: '#854d0e', to: '#fde047', mid: '#eab308', glow: 'rgba(234, 179, 8, 0.6)' },  // yellow gradient
-  advanced: { from: '#3f6212', to: '#bef264', mid: '#84cc16', glow: 'rgba(132, 204, 22, 0.6)' },     // lime gradient
-  expert: { from: '#166534', to: '#86efac', mid: '#22c55e', glow: 'rgba(34, 197, 94, 0.6)' },        // green gradient
-};
+const LEVEL_GRADIENTS: Record<SkillLevel, { from: string; to: string; mid: string; glow: string }> =
+  {
+    novice: { from: "#991b1b", to: "#f87171", mid: "#dc2626", glow: "rgba(239, 68, 68, 0.6)" }, // red gradient
+    beginner: { from: "#9a3412", to: "#fdba74", mid: "#ea580c", glow: "rgba(249, 115, 22, 0.6)" }, // orange gradient
+    intermediate: {
+      from: "#854d0e",
+      to: "#fde047",
+      mid: "#eab308",
+      glow: "rgba(234, 179, 8, 0.6)",
+    }, // yellow gradient
+    advanced: { from: "#3f6212", to: "#bef264", mid: "#84cc16", glow: "rgba(132, 204, 22, 0.6)" }, // lime gradient
+    expert: { from: "#166534", to: "#86efac", mid: "#22c55e", glow: "rgba(34, 197, 94, 0.6)" }, // green gradient
+  };
 
 export function SkillVial({ name, level, category, compact = false }: SkillVialProps) {
   const [isHovered, setIsHovered] = useState(false);
   // Fallback to 'intermediate' if level is invalid
-  const validLevel = level && level in SKILL_LEVEL_PERCENT ? level : 'intermediate';
+  const validLevel = level && level in SKILL_LEVEL_PERCENT ? level : "intermediate";
   const percent = SKILL_LEVEL_PERCENT[validLevel];
   const gradient = LEVEL_GRADIENTS[validLevel];
   const vialHeight = compact ? 60 : 80;
@@ -29,26 +35,28 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
   const liquidHeight = (percent / 100) * (vialHeight - 16); // -16 for top/bottom padding
 
   // Sanitize name for valid SVG IDs (remove spaces and special characters)
-  const safeId = useMemo(() => name.replace(/[^a-zA-Z0-9]/g, '_'), [name]);
+  const safeId = useMemo(() => name.replace(/[^a-zA-Z0-9]/g, "_"), [name]);
 
   // Memoize the liquid top position to avoid recalculating
   const liquidTop = useMemo(() => vialHeight - 8 - liquidHeight, [vialHeight, liquidHeight]);
 
   // Generate random bubble positions for hover effect
-  const bubbles = isHovered ? [
-    { x: vialWidth / 2 - 5, delay: 0, size: 3 },
-    { x: vialWidth / 2 + 3, delay: 0.15, size: 2.5 },
-    { x: vialWidth / 2 - 2, delay: 0.3, size: 2 },
-    { x: vialWidth / 2 + 5, delay: 0.1, size: 2.5 },
-    { x: vialWidth / 2, delay: 0.25, size: 3.5 },
-    { x: vialWidth / 2 - 4, delay: 0.4, size: 2 },
-    { x: vialWidth / 2 + 2, delay: 0.35, size: 1.5 },
-  ] : [];
+  const bubbles = isHovered
+    ? [
+        { x: vialWidth / 2 - 5, delay: 0, size: 3 },
+        { x: vialWidth / 2 + 3, delay: 0.15, size: 2.5 },
+        { x: vialWidth / 2 - 2, delay: 0.3, size: 2 },
+        { x: vialWidth / 2 + 5, delay: 0.1, size: 2.5 },
+        { x: vialWidth / 2, delay: 0.25, size: 3.5 },
+        { x: vialWidth / 2 - 4, delay: 0.4, size: 2 },
+        { x: vialWidth / 2 + 2, delay: 0.35, size: 1.5 },
+      ]
+    : [];
 
   // Create wave paths with sloshing effect (tilt: positive = higher on left, negative = higher on right)
   const createWavePath = (tilt: number) => {
     // Ensure y is always a valid number to prevent "undefined" in path
-    const y = typeof liquidTop === 'number' && !isNaN(liquidTop) ? liquidTop : vialHeight - 8;
+    const y = typeof liquidTop === "number" && !isNaN(liquidTop) ? liquidTop : vialHeight - 8;
     const leftY = y - tilt;
     const rightY = y + tilt;
     return `M 4 ${leftY} Q ${vialWidth / 2} ${y + 2}, ${vialWidth - 4} ${rightY} L ${vialWidth - 4} ${vialHeight + 10} L 4 ${vialHeight + 10} Z`;
@@ -56,7 +64,7 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
 
   return (
     <div
-      className={`flex items-center gap-3 ${compact ? 'py-1' : 'py-2'}`}
+      className={`flex items-center gap-3 ${compact ? "py-1" : "py-2"}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -103,13 +111,7 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
 
             {/* Clip path for liquid */}
             <clipPath id={`vial-clip-${safeId}`}>
-              <rect
-                x="4"
-                y="10"
-                width={vialWidth - 8}
-                height={vialHeight - 16}
-                rx="4"
-              />
+              <rect x="4" y="10" width={vialWidth - 8} height={vialHeight - 16} rx="4" />
             </clipPath>
           </defs>
 
@@ -166,12 +168,40 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
             <ellipse cx={vialWidth / 2 + 4} cy="3" rx="1" ry="0.7" fill="#5D4E37" opacity="0.4" />
             <ellipse cx={vialWidth / 2 - 4} cy="9" rx="0.8" ry="0.6" fill="#5D4E37" opacity="0.5" />
             <ellipse cx={vialWidth / 2} cy="5" rx="0.7" ry="0.5" fill="#5D4E37" opacity="0.35" />
-            <ellipse cx={vialWidth / 2 + 3} cy="10" rx="0.9" ry="0.6" fill="#5D4E37" opacity="0.4" />
+            <ellipse
+              cx={vialWidth / 2 + 3}
+              cy="10"
+              rx="0.9"
+              ry="0.6"
+              fill="#5D4E37"
+              opacity="0.4"
+            />
 
             {/* Cork grain lines */}
-            <line x1={vialWidth / 2 - 4} y1="1" x2={vialWidth / 2 - 5} y2="12" stroke="rgba(93,78,55,0.3)" strokeWidth="0.5" />
-            <line x1={vialWidth / 2 + 1} y1="1" x2={vialWidth / 2} y2="12" stroke="rgba(93,78,55,0.25)" strokeWidth="0.5" />
-            <line x1={vialWidth / 2 + 5} y1="1" x2={vialWidth / 2 + 4} y2="12" stroke="rgba(93,78,55,0.3)" strokeWidth="0.5" />
+            <line
+              x1={vialWidth / 2 - 4}
+              y1="1"
+              x2={vialWidth / 2 - 5}
+              y2="12"
+              stroke="rgba(93,78,55,0.3)"
+              strokeWidth="0.5"
+            />
+            <line
+              x1={vialWidth / 2 + 1}
+              y1="1"
+              x2={vialWidth / 2}
+              y2="12"
+              stroke="rgba(93,78,55,0.25)"
+              strokeWidth="0.5"
+            />
+            <line
+              x1={vialWidth / 2 + 5}
+              y1="1"
+              x2={vialWidth / 2 + 4}
+              y2="12"
+              stroke="rgba(93,78,55,0.3)"
+              strokeWidth="0.5"
+            />
 
             {/* Cork bottom shadow */}
             <rect
@@ -191,7 +221,7 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
               x="4"
               initial={{ y: vialHeight - 8 }}
               animate={{ y: liquidTop }}
-              transition={{ duration: 1.2, ease: 'easeOut' }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
               width={vialWidth - 8}
               height={liquidHeight + 20}
               fill={`url(#liquid-gradient-${safeId})`}
@@ -205,15 +235,15 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
               d={createWavePath(0)}
               animate={{
                 d: [
-                  createWavePath(4),    // Higher on left
-                  createWavePath(-4),   // Higher on right
-                  createWavePath(4),    // Higher on left
+                  createWavePath(4), // Higher on left
+                  createWavePath(-4), // Higher on right
+                  createWavePath(4), // Higher on left
                 ],
               }}
               transition={{
                 duration: 2,
                 repeat: Infinity,
-                ease: 'easeInOut',
+                ease: "easeInOut",
               }}
             />
 
@@ -224,15 +254,15 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
               d={createWavePath(0)}
               animate={{
                 d: [
-                  createWavePath(-3),   // Higher on right
-                  createWavePath(3),    // Higher on left
-                  createWavePath(-3),   // Higher on right
+                  createWavePath(-3), // Higher on right
+                  createWavePath(3), // Higher on left
+                  createWavePath(-3), // Higher on right
                 ],
               }}
               transition={{
                 duration: 2.2,
                 repeat: Infinity,
-                ease: 'easeInOut',
+                ease: "easeInOut",
                 delay: 0.5,
               }}
             />
@@ -248,7 +278,7 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
                   cy: liquidTop + 5,
                   opacity: [0.4, 0.6, 0],
                 }}
-                transition={{ duration: 2.8, repeat: Infinity, repeatType: 'loop', delay: 0 }}
+                transition={{ duration: 2.8, repeat: Infinity, repeatType: "loop", delay: 0 }}
               />
             )}
             {percent >= 40 && (
@@ -261,7 +291,7 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
                   cy: liquidTop + 8,
                   opacity: [0.35, 0.55, 0],
                 }}
-                transition={{ duration: 2.5, repeat: Infinity, repeatType: 'loop', delay: 0.8 }}
+                transition={{ duration: 2.5, repeat: Infinity, repeatType: "loop", delay: 0.8 }}
               />
             )}
             {percent >= 60 && (
@@ -274,7 +304,7 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
                   cy: liquidTop + 6,
                   opacity: [0.3, 0.5, 0],
                 }}
-                transition={{ duration: 3.2, repeat: Infinity, repeatType: 'loop', delay: 1.5 }}
+                transition={{ duration: 3.2, repeat: Infinity, repeatType: "loop", delay: 1.5 }}
               />
             )}
             {percent >= 50 && (
@@ -287,7 +317,7 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
                   cy: liquidTop + 7,
                   opacity: [0.35, 0.5, 0],
                 }}
-                transition={{ duration: 2.2, repeat: Infinity, repeatType: 'loop', delay: 2 }}
+                transition={{ duration: 2.2, repeat: Infinity, repeatType: "loop", delay: 2 }}
               />
             )}
 
@@ -307,7 +337,7 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
                 transition={{
                   duration: 1,
                   delay: bubble.delay,
-                  ease: 'easeOut',
+                  ease: "easeOut",
                 }}
               />
             ))}
@@ -324,13 +354,7 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
           />
 
           {/* Top shine curve */}
-          <ellipse
-            cx="8"
-            cy="16"
-            rx="3"
-            ry="2"
-            fill="rgba(255,255,255,0.35)"
-          />
+          <ellipse cx="8" cy="16" rx="3" ry="2" fill="rgba(255,255,255,0.35)" />
 
           {/* Secondary thin highlight */}
           <rect
@@ -356,7 +380,7 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
       {/* Text content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className={`font-medium text-white truncate ${compact ? 'text-sm' : ''}`}>
+          <span className={`font-medium text-white truncate ${compact ? "text-sm" : ""}`}>
             {name}
           </span>
           {category && (
@@ -366,10 +390,7 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
           )}
         </div>
         <div className="flex items-center gap-2 mt-0.5">
-          <span
-            className="text-xs font-medium"
-            style={{ color: gradient.to }}
-          >
+          <span className="text-xs font-medium" style={{ color: gradient.to }}>
             {SKILL_LEVEL_LABELS[validLevel]}
           </span>
         </div>
@@ -379,9 +400,9 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
 }
 
 // Alternative horizontal bar version for compact lists
-export function SkillBar({ name, level }: Pick<SkillVialProps, 'name' | 'level'>) {
+export function SkillBar({ name, level }: Pick<SkillVialProps, "name" | "level">) {
   // Fallback to 'intermediate' if level is invalid
-  const validLevel = level && level in SKILL_LEVEL_PERCENT ? level : 'intermediate';
+  const validLevel = level && level in SKILL_LEVEL_PERCENT ? level : "intermediate";
   const percent = SKILL_LEVEL_PERCENT[validLevel];
   const gradient = LEVEL_GRADIENTS[validLevel];
 
@@ -395,11 +416,11 @@ export function SkillBar({ name, level }: Pick<SkillVialProps, 'name' | 'level'>
         <motion.div
           className="h-full rounded-full"
           style={{
-            background: `linear-gradient(90deg, ${gradient.from}, ${gradient.mid}, ${gradient.to})`
+            background: `linear-gradient(90deg, ${gradient.from}, ${gradient.mid}, ${gradient.to})`,
           }}
           initial={{ width: 0 }}
           animate={{ width: `${percent}%` }}
-          transition={{ duration: 1, ease: 'easeOut' }}
+          transition={{ duration: 1, ease: "easeOut" }}
         />
       </div>
     </div>
