@@ -1,9 +1,13 @@
+import { lazy } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "../components/Layout";
-import NotFound from "./404NotFound";
-import AboutMe from "./AboutMe";
 import Homepage from "./Homepage";
-import Projects from "./Projects";
+
+// Homepage is the landing route, so it stays in the main bundle. Secondary routes
+// are code-split and fetched on demand (the <Suspense> boundary lives in Layout).
+const Projects = lazy(() => import("./Projects"));
+const AboutMe = lazy(() => import("./AboutMe"));
+const NotFound = lazy(() => import("./404NotFound"));
 
 export default function Pages() {
   return (
