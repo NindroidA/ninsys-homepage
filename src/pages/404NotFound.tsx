@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowLeft, Bug, Home, RefreshCw, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { Seo } from "../components/Seo";
 
 export default function NotFound() {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ export default function NotFound() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center p-8">
+      <Seo title="Page Not Found" />
       <motion.div
         variants={containerVariants}
         initial="hidden"

@@ -10,6 +10,7 @@ import {
   ProjectEditModal,
 } from "../components/projects";
 import type { ProjectInitialData } from "../components/projects/ProjectEditModal";
+import { Seo } from "../components/Seo";
 import { Button, Card, Section } from "../components/shared/ui";
 import { useAdminVisible } from "../hooks/useAuth";
 import { useGitHubRepos } from "../hooks/useGithubRepos";
@@ -128,6 +129,11 @@ export default function Projects() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      <Seo
+        title="Projects"
+        description="Things I've built and shipped — projects, experiments, and self-hosted systems by NindroidA."
+        path="/projects"
+      />
       <Navbar />
 
       <Section

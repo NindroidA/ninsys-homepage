@@ -20,6 +20,7 @@ import { ProfileEditModal, SectionCard, SectionEditModal } from "../components/a
 import FooterComponent from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { DeleteConfirmModal } from "../components/projects";
+import { Seo } from "../components/Seo";
 import { Button, Card, FloatingElements, GradientText } from "../components/shared/ui";
 import { useAboutData } from "../hooks/useAboutData";
 import { useAdminVisible } from "../hooks/useAuth";
@@ -41,7 +42,9 @@ export default function AboutMe() {
   // DnD sensors
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
 
   // Handlers
@@ -186,6 +189,11 @@ export default function AboutMe() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      <Seo
+        title="About"
+        description="About Andrew Curtis (NindroidA) — developer, homelab tinkerer, and the systems behind Nindroid Systems."
+        path="/about"
+      />
       <Navbar />
       <FloatingElements variant="purple" intensity="medium" />
 
