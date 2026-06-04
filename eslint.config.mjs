@@ -26,7 +26,7 @@ export default defineConfig([
     },
     rules: {
       'no-console': 'off',
-      'camelcase': 'warn',
+      'camelcase': ['warn', { properties: 'never' }],
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['warn', { 'argsIgnorePattern': '^_' }],
       '@typescript-eslint/explicit-function-return-type': 'off',
