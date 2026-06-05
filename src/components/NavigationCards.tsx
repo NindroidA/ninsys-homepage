@@ -1,110 +1,75 @@
 import { motion } from "framer-motion";
-import { ArrowRight, ExternalLink, Folder, Server, Settings, Terminal, Zap } from "lucide-react";
+import { ArrowRight, ExternalLink, Folder, Server, Settings, Terminal } from "lucide-react";
+import type { JSX } from "react";
 import { Link } from "react-router-dom";
 import type { NavigationCard } from "../assets/navigationCards";
+import { GlassPanel } from "./ui/GlassPanel";
 
 interface NavigationCardsProps {
   cards: NavigationCard[];
 }
 
 const iconMap = {
-  //server: Server,
-  //database: Database,
   settings: Settings,
-  //monitor: Monitor,
   terminal: Terminal,
   folder: Folder,
 };
 
-const colorMap = {
-  blue: "from-blue-400/80 to-purple-500/80",
-  purple: "from-purple-500/80 to-pink-500/80",
-  green: "from-emerald-400/80 to-cyan-500/80",
-  orange: "from-orange-400/80 to-pink-500/80",
-  indigo: "from-indigo-500/80 to-purple-500/80",
-  teal: "from-teal-400/80 to-blue-500/80",
-  red: "from-red-400/80 to-pink-500/80",
-  cyan: "from-cyan-400/80 to-blue-500/80",
-};
+function NavCard({ card }: { card: NavigationCard }): JSX.Element {
+  const CardIcon = iconMap[card.icon as keyof typeof iconMap] ?? Server;
+  const ActionIcon = card.external ? ExternalLink : ArrowRight;
 
-export default function NavigationCards({ cards }: NavigationCardsProps) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-      className="w-full max-w-6xl mx-auto p-8"
-    >
-      {/* nav cards header */}
-      <div className="text-center mb-12">
-        <div className="bg-gradient-to-br from-white/8 via-gray-800/20 to-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl">
-          <h2 className="text-3xl font-bold text-white mb-4">🚀 Quick Access</h2>
-          <p className="text-white/70">Navigate to your homelab services and tools</p>
-        </div>
+  const body = (
+    <GlassPanel interactive className="group flex h-full flex-col rounded-3xl p-6 sm:p-7">
+      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-purple-300/15 bg-gradient-to-br from-violet-500/25 to-pink-500/20">
+        <CardIcon className="h-6 w-6 text-purple-100" />
       </div>
 
-      {/* nav cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {cards.map((card) => {
-          const CardIcon = iconMap[card.icon as keyof typeof iconMap] || Server;
-          const gradientColor = colorMap[card.color as keyof typeof colorMap] || colorMap.purple;
+      {card.category && (
+        <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/40">
+          {card.category}
+        </span>
+      )}
+      <h3 className="mt-1 font-display text-xl font-bold text-white">{card.title}</h3>
+      <p className="mt-2 flex-1 text-sm leading-relaxed text-white/55">{card.description}</p>
 
-          return (
-            <motion.div
-              key={card.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
-              whileHover={{ scale: 1.02, y: -5 }}
-              className="group relative"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl blur-xl"></div>
-              <div className="relative bg-gradient-to-br from-white/12 via-gray-800/20 to-white/8 backdrop-blur-xl rounded-3xl p-8 border border-white/20 hover:border-white/30 transition-all duration-200 hover:shadow-2xl hover:shadow-purple-500/20 hover:bg-gradient-to-br hover:from-white/15 hover:via-gray-700/25 hover:to-white/10 h-full flex flex-col">
-                <div
-                  className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${gradientColor} backdrop-blur-sm flex items-center justify-center mb-6 shadow-lg border border-white/20`}
-                >
-                  <CardIcon className="w-8 h-8 text-white drop-shadow-lg" />
-                </div>
+      <span className="mt-5 inline-flex items-center gap-2 font-mono text-sm text-purple-200 transition-colors group-hover:text-white">
+        {card.external ? "Launch" : "Open"}
+        <ActionIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+      </span>
+    </GlassPanel>
+  );
 
-                <h3 className="text-xl font-bold text-white mb-3">{card.title}</h3>
-                <p className="text-white/70 mb-6 leading-relaxed">{card.description}</p>
+  return card.external ? (
+    <a href={card.url} target="_blank" rel="noopener noreferrer" className="block">
+      {body}
+    </a>
+  ) : (
+    <Link to={card.url} className="block">
+      {body}
+    </Link>
+  );
+}
 
-                <div className="flex items-center justify-between">
-                  {card.external ? (
-                    <a
-                      href={card.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group/btn flex items-center gap-3 text-white font-medium transition-all duration-200 bg-gradient-to-r from-purple-500/20 via-gray-700/30 to-pink-500/20 hover:from-purple-500/30 hover:via-gray-600/40 hover:to-pink-500/30 px-6 py-3 rounded-2xl backdrop-blur-sm border border-white/20 hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/20"
-                    >
-                      <Zap className="w-4 h-4 text-purple-300 group-hover/btn:text-white transition-colors duration-200" />
-                      <span className="text-purple-200 group-hover/btn:text-white transition-colors duration-200">
-                        Launch
-                      </span>
-                      <ArrowRight className="w-4 h-4 text-purple-300 group-hover/btn:text-white group-hover/btn:translate-x-1 transition-all duration-200" />
-                      <ExternalLink className="w-3 h-3 text-purple-400 group-hover/btn:text-white transition-colors duration-200" />
-                    </a>
-                  ) : (
-                    <Link
-                      to={card.url}
-                      className="group/btn flex items-center gap-3 text-white font-medium transition-all duration-200 bg-gradient-to-r from-purple-500/20 via-gray-700/30 to-pink-500/20 hover:from-purple-500/30 hover:via-gray-600/40 hover:to-pink-500/30 px-6 py-3 rounded-2xl backdrop-blur-sm border border-white/20 hover:border-white/30 hover:shadow-lg hover:shadow-purple-500/20"
-                    >
-                      <Zap className="w-4 h-4 text-purple-300 group-hover/btn:text-white transition-colors duration-200" />
-                      <span className="text-purple-200 group-hover/btn:text-white transition-colors duration-200">
-                        Visit
-                      </span>
-                      <ArrowRight className="w-4 h-4 text-purple-300 group-hover/btn:text-white group-hover/btn:translate-x-1 transition-all duration-200" />
-                    </Link>
-                  )}
+export default function NavigationCards({ cards }: NavigationCardsProps): JSX.Element {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="mx-auto w-full max-w-6xl"
+    >
+      <div className="mb-8">
+        <span className="font-mono text-xs uppercase tracking-[0.18em] text-white/40">
+          {"// have a look around"}
+        </span>
+        <h2 className="mt-1 font-display text-3xl font-bold text-white sm:text-4xl">Explore</h2>
+      </div>
 
-                  <div
-                    className={`w-3 h-3 rounded-full bg-gradient-to-r ${gradientColor} shadow-lg`}
-                  ></div>
-                </div>
-              </div>
-            </motion.div>
-          );
-        })}
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        {cards.map((card) => (
+          <NavCard key={card.id} card={card} />
+        ))}
       </div>
     </motion.div>
   );

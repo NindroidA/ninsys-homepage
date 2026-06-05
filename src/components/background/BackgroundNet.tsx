@@ -55,6 +55,7 @@ export function BackgroundNet() {
     let mx = -999;
     let my = -999;
     let raf = 0;
+    let lastW = -1;
     let nodes: Node[] = [];
     let stars: Star[] = [];
     let bits: Bit[] = [];
@@ -201,7 +202,13 @@ export function BackgroundNet() {
       canvas.style.width = `${W}px`;
       canvas.style.height = `${H}px`;
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      seed();
+      // Mobile browsers fire resize on scroll as the URL bar shows/hides, changing
+      // only the height. Reseeding there would re-randomize every node and make the
+      // static constellation jump around, so only reseed when the width changes.
+      if (W !== lastW) {
+        lastW = W;
+        seed();
+      }
       if (STATIC) draw(0);
     };
 
@@ -226,7 +233,7 @@ export function BackgroundNet() {
   return (
     <div
       aria-hidden="true"
-      className="absolute inset-0 overflow-hidden bg-[#09060f] [background-image:radial-gradient(rgba(198,188,224,0.05)_1px,transparent_1.6px)] [background-size:26px_26px]"
+      className="pointer-events-none absolute inset-0 overflow-hidden bg-[#09060f] [background-image:radial-gradient(rgba(198,188,224,0.05)_1px,transparent_1.6px)] [background-size:26px_26px]"
     >
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
       <div className="pointer-events-none absolute inset-0 [background:radial-gradient(125%_95%_at_50%_32%,transparent_52%,rgba(0,0,0,0.62)_100%)]" />

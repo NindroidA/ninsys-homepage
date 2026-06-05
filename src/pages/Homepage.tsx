@@ -25,7 +25,7 @@ export default function Homepage() {
           className="relative z-10 w-full max-w-4xl text-center"
         >
           <span className="inline-flex items-center gap-2 bg-[linear-gradient(135deg,#5eead4,#10b981)] bg-clip-text font-mono text-xs uppercase tracking-[0.18em] text-transparent">
-            {"// systems · bots · homelab"}
+            {"// bots, tools, and one stubborn homelab"}
             <span className="inline-block h-3.5 w-2 translate-y-0.5 bg-emerald-400 motion-safe:animate-[blink_1.1s_steps(1)_infinite]" />
           </span>
 
@@ -34,8 +34,8 @@ export default function Homepage() {
           </h1>
 
           <p className="mx-auto mt-4 max-w-xl text-base text-white/60 sm:text-lg">
-            Developer &amp; systems operator — I build and self-host bots, tools, and the occasional
-            minecart.
+            I build Discord bots and little web tools, then self-host the whole lot on a homelab
+            that&apos;s usually online.
           </p>
 
           <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-xl border border-purple-500/20 bg-white/[0.04] px-4 py-2.5 font-mono text-[13px] backdrop-blur-md">
