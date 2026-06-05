@@ -79,7 +79,8 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background bg-violet-950 text-foreground;
+    @apply font-sans text-white;
+    background-color: #09060f;
   }
 }
 
@@ -99,6 +100,12 @@
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
   }
 }
 
