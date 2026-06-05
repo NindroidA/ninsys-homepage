@@ -6,6 +6,7 @@ import {
   ExternalLink,
   Github,
   Globe,
+  LayoutDashboard,
   type LucideIcon,
   Network,
   Server,
@@ -21,6 +22,7 @@ const iconMap: Record<string, LucideIcon> = {
   boxes: Boxes,
   server: Server,
   globe: Globe,
+  dashboard: LayoutDashboard,
   network: Network,
   shield: Shield,
 };
@@ -93,9 +95,9 @@ function HostedCard({ project }: { project: HostedProject }): JSX.Element {
             Visit
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
-        ) : (
+        ) : project.status === "building" ? (
           <span className="font-mono text-sm text-white/35">In progress</span>
-        )}
+        ) : null}
         {project.repoUrl && (
           <a
             href={project.repoUrl}
