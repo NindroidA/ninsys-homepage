@@ -47,19 +47,19 @@ const BASE_SERVICES: LiveService[] = [
   },
   {
     id: "cogworks-web",
-    name: "Cogworks",
+    name: "Cogworks Dashboard",
     description: "Web dashboard for Cogworks Bot management",
     category: "Web Application",
     icon: "globe",
-    status: "coming_soon",
+    status: "online",
   },
   {
     id: "pluginator",
     name: "Pluginator",
-    description: "Plugin management and automation platform",
+    description: "Web app for Minecraft server plugin management",
     category: "Developer Tools",
     icon: "zap",
-    status: "coming_soon",
+    status: "online",
   },
 ];
 
@@ -74,7 +74,11 @@ async function fetchServices(): Promise<LiveService[]> {
     if (svc.id === "api") {
       const healthy =
         systemHealth.status === "fulfilled" && systemHealth.value.data?.status === "healthy";
-      return { ...svc, status: healthy ? "online" : "offline", lastUpdated: now };
+      return {
+        ...svc,
+        status: healthy ? "online" : "offline",
+        lastUpdated: now,
+      };
     }
     if (svc.id === "cogworks") {
       const online = cogworksStatus.status === "fulfilled" && cogworksStatus.value.online;
@@ -88,7 +92,7 @@ async function fetchServices(): Promise<LiveService[]> {
         lastUpdated: now,
       };
     }
-    return svc; // coming_soon entries unchanged
+    return svc; // statically-statused entries (dashboard, pluginator) pass through
   });
 }
 
