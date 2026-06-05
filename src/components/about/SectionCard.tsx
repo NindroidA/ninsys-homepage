@@ -123,7 +123,7 @@ export function SectionCard({
         {/* Section header */}
         <div className="flex items-center gap-3 mb-6">
           {IconComponent && <IconComponent className="w-6 h-6 text-purple-300" />}
-          <h2 className="text-2xl font-bold text-white">{section.title}</h2>
+          <h2 className="font-display text-2xl font-bold text-white">{section.title}</h2>
         </div>
 
         {/* Section content */}

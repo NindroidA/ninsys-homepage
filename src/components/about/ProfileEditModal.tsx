@@ -126,12 +126,12 @@ export function ProfileEditModal({
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
             <div
-              className="w-full max-w-2xl max-h-[90vh] overflow-auto bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl"
+              className="w-full max-w-2xl max-h-[90vh] overflow-auto bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-white/10">
-                <h2 className="text-2xl font-bold text-white">Edit Profile</h2>
+                <h2 className="font-display text-2xl font-bold text-white">Edit Profile</h2>
                 <button
                   onClick={onClose}
                   className="p-2 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors"
@@ -150,7 +150,7 @@ export function ProfileEditModal({
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                      className="w-full px-4 py-3 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30"
                       placeholder="Your Name"
                     />
                   </div>
@@ -160,7 +160,7 @@ export function ProfileEditModal({
                       type="text"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                      className="w-full px-4 py-3 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30"
                       placeholder="City, Country"
                     />
                   </div>
@@ -173,7 +173,7 @@ export function ProfileEditModal({
                     type="text"
                     value={tagline}
                     onChange={(e) => setTagline(e.target.value)}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                    className="w-full px-4 py-3 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30"
                     placeholder="Developer & Creator"
                   />
                 </div>
@@ -208,7 +208,7 @@ export function ProfileEditModal({
                           className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors ${
                             avatarInputMode === "url"
                               ? "bg-purple-500/20 text-purple-300 border border-purple-500"
-                              : "bg-white/5 text-white/60 border border-white/10 hover:border-white/20"
+                              : "bg-white/[0.04] text-white/60 border border-purple-300/12 hover:border-white/20"
                           }`}
                         >
                           <Link2 className="w-4 h-4" />
@@ -220,7 +220,7 @@ export function ProfileEditModal({
                           className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors ${
                             avatarInputMode === "file"
                               ? "bg-purple-500/20 text-purple-300 border border-purple-500"
-                              : "bg-white/5 text-white/60 border border-white/10 hover:border-white/20"
+                              : "bg-white/[0.04] text-white/60 border border-purple-300/12 hover:border-white/20"
                           }`}
                         >
                           <Upload className="w-4 h-4" />
@@ -234,7 +234,7 @@ export function ProfileEditModal({
                           type="url"
                           value={avatarUrl.startsWith("data:") ? "" : avatarUrl}
                           onChange={(e) => setAvatarUrl(e.target.value)}
-                          className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
+                          className="w-full px-4 py-2 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 text-sm"
                           placeholder="https://example.com/avatar.jpg"
                         />
                       )}
@@ -252,7 +252,7 @@ export function ProfileEditModal({
                           <button
                             type="button"
                             onClick={() => fileInputRef.current?.click()}
-                            className="w-full px-4 py-2 bg-white/5 border border-dashed border-white/20 rounded-lg text-white/60 hover:border-purple-500/50 hover:text-purple-300 transition-colors text-sm flex items-center justify-center gap-2"
+                            className="w-full px-4 py-2 bg-white/[0.04] border border-dashed border-white/20 rounded-lg text-white/60 hover:border-purple-500/50 hover:text-purple-300 transition-colors text-sm flex items-center justify-center gap-2"
                           >
                             <Upload className="w-4 h-4" />
                             Choose image (max 2MB)
@@ -288,13 +288,13 @@ export function ProfileEditModal({
                           value={paragraph}
                           onChange={(e) => handleUpdateBio(i, e.target.value)}
                           rows={2}
-                          className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50 resize-none"
+                          className="flex-1 px-4 py-3 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 resize-none"
                           placeholder={`Paragraph ${i + 1}...`}
                         />
                         <button
                           type="button"
                           onClick={() => handleRemoveBio(i)}
-                          className="p-2 h-fit bg-white/5 hover:bg-red-500/20 text-white/40 hover:text-red-400 rounded-lg transition-colors"
+                          className="p-2 h-fit bg-white/[0.04] hover:bg-red-500/20 text-white/40 hover:text-red-400 rounded-lg transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -323,7 +323,7 @@ export function ProfileEditModal({
                         type="url"
                         value={github}
                         onChange={(e) => setGithub(e.target.value)}
-                        className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                        className="flex-1 px-4 py-2 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30"
                         placeholder="https://github.com/username"
                       />
                     </div>
@@ -333,7 +333,7 @@ export function ProfileEditModal({
                         type="url"
                         value={linkedin}
                         onChange={(e) => setLinkedin(e.target.value)}
-                        className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                        className="flex-1 px-4 py-2 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30"
                         placeholder="https://linkedin.com/in/username"
                       />
                     </div>
@@ -343,7 +343,7 @@ export function ProfileEditModal({
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                        className="flex-1 px-4 py-2 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30"
                         placeholder="your.email@example.com"
                       />
                     </div>
@@ -355,14 +355,14 @@ export function ProfileEditModal({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 px-6 py-3 bg-white/5 hover:bg-white/10 text-white/70 rounded-lg transition-colors"
+                    className="flex-1 px-6 py-3 bg-white/[0.04] hover:bg-white/10 text-white/70 rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={saving || !name}
-                    className="flex-1 px-6 py-3 bg-purple-500 hover:bg-purple-600 disabled:bg-purple-500/30 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
+                    className="flex-1 px-6 py-3 bg-gradient-to-br from-violet-500 to-pink-500 hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-all"
                   >
                     {saving ? "Saving..." : "Save Changes"}
                   </button>
