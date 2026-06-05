@@ -1,0 +1,105 @@
+import { createContext, type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  DEFAULT_SITE_CONFIG,
+  type HomeSection,
+  type HomeSectionId,
+  type SiteConfig,
+} from "../types/siteConfig";
+
+const STORAGE_KEY = "ninsys_site_config";
+
+export interface SiteConfigValue {
+  config: SiteConfig;
+  toggleSection: (id: HomeSectionId) => void;
+  moveSection: (id: HomeSectionId, direction: -1 | 1) => void;
+  setEnable3DRack: (value: boolean) => void;
+  reset: () => void;
+}
+
+export const SiteConfigContext = createContext<SiteConfigValue | null>(null);
+
+/**
+ * Reconcile a stored (possibly stale) config against the current defaults:
+ * keep the stored section order + visibility for known ids, drop unknown ids,
+ * append any newly-added default sections, and backfill missing scalar fields.
+ */
+function reconcile(raw: unknown): SiteConfig {
+  const partial = (raw ?? {}) as Partial<SiteConfig>;
+  const known = DEFAULT_SITE_CONFIG.sections;
+  const stored = Array.isArray(partial.sections) ? partial.sections : [];
+
+  const ordered: HomeSection[] = [];
+  for (const s of stored) {
+    const def = known.find((k) => k.id === s?.id);
+    if (def && !ordered.some((o) => o.id === def.id)) {
+      ordered.push({ id: def.id, label: def.label, visible: s.visible !== false });
+    }
+  }
+  for (const def of known) {
+    if (!ordered.some((o) => o.id === def.id)) ordered.push({ ...def });
+  }
+
+  return {
+    sections: ordered,
+    enable3DRack:
+      typeof partial.enable3DRack === "boolean"
+        ? partial.enable3DRack
+        : DEFAULT_SITE_CONFIG.enable3DRack,
+  };
+}
+
+function loadConfig(): SiteConfig {
+  if (typeof window === "undefined") return DEFAULT_SITE_CONFIG;
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    return raw ? reconcile(JSON.parse(raw)) : DEFAULT_SITE_CONFIG;
+  } catch {
+    return DEFAULT_SITE_CONFIG;
+  }
+}
+
+export function SiteConfigProvider({ children }: { children: ReactNode }) {
+  const [config, setConfig] = useState<SiteConfig>(loadConfig);
+
+  // Persist to localStorage. (Swap this for a PUT /v2/config when the API lands.)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+    } catch {
+      // ignore quota / privacy-mode failures
+    }
+  }, [config]);
+
+  const toggleSection = useCallback((id: HomeSectionId) => {
+    setConfig((prev) => ({
+      ...prev,
+      sections: prev.sections.map((s) => (s.id === id ? { ...s, visible: !s.visible } : s)),
+    }));
+  }, []);
+
+  const moveSection = useCallback((id: HomeSectionId, direction: -1 | 1) => {
+    setConfig((prev) => {
+      const index = prev.sections.findIndex((s) => s.id === id);
+      const target = index + direction;
+      if (index < 0 || target < 0 || target >= prev.sections.length) return prev;
+      const sections = [...prev.sections];
+      const [moved] = sections.splice(index, 1);
+      if (moved) sections.splice(target, 0, moved);
+      return { ...prev, sections };
+    });
+  }, []);
+
+  const setEnable3DRack = useCallback((value: boolean) => {
+    setConfig((prev) => ({ ...prev, enable3DRack: value }));
+  }, []);
+
+  const reset = useCallback(() => setConfig(DEFAULT_SITE_CONFIG), []);
+
+  const value = useMemo<SiteConfigValue>(
+    () => ({ config, toggleSection, moveSection, setEnable3DRack, reset }),
+    [config, toggleSection, moveSection, setEnable3DRack, reset],
+  );
+
+  return <SiteConfigContext.Provider value={value}>{children}</SiteConfigContext.Provider>;
+}

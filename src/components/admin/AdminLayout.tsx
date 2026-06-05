@@ -24,9 +24,20 @@ interface NavItem {
 // Single source of truth for the admin sections. `ready: false` entries render as
 // disabled "soon" placeholders so the full structure is visible while it's built.
 export const ADMIN_NAV: NavItem[] = [
-  { label: "Overview", to: "/admin", icon: LayoutDashboard, end: true, ready: true },
+  {
+    label: "Overview",
+    to: "/admin",
+    icon: LayoutDashboard,
+    end: true,
+    ready: true,
+  },
   { label: "Services", to: "/admin/services", icon: Activity, ready: true },
-  { label: "Site Config", to: "/admin/site", icon: SlidersHorizontal, ready: false },
+  {
+    label: "Site Config",
+    to: "/admin/site",
+    icon: SlidersHorizontal,
+    ready: true,
+  },
   { label: "Hosted", to: "/admin/hosted", icon: Server, ready: false },
   { label: "Projects", to: "/admin/projects", icon: FolderGit2, ready: false },
   { label: "Utilities", to: "/admin/utilities", icon: Wrench, ready: false },

@@ -6,6 +6,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { AdminLogin } from "./AdminLogin";
 import { AdminOverview } from "./AdminOverview";
 import { AdminServices } from "./AdminServices";
+import { AdminSiteConfig } from "./AdminSiteConfig";
 
 /**
  * The admin area. Mounted at `/admin/*` outside the public Layout so it has its
@@ -31,6 +32,7 @@ export default function AdminApp(): JSX.Element {
         <Route element={<AdminLayout />}>
           <Route index element={<AdminOverview />} />
           <Route path="services" element={<AdminServices />} />
+          <Route path="site" element={<AdminSiteConfig />} />
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Route>
       </Routes>

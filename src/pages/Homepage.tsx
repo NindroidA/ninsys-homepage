@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Github } from "lucide-react";
+import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { navigationCards } from "../assets/navigationCards";
 import { BackgroundNet } from "../components/background/BackgroundNet";
@@ -9,10 +10,32 @@ import NavigationCards from "../components/NavigationCards";
 import ServiceStatus from "../components/ServiceStatus";
 import { Wordmark } from "../components/ui/Wordmark";
 import { useLiveServices } from "../hooks/useLiveServices";
+import { useSiteConfig } from "../hooks/useSiteConfig";
+import type { HomeSectionId } from "../types/siteConfig";
+
+// Homepage sections that the admin Site Config can show/hide and reorder.
+const SECTIONS: Record<HomeSectionId, () => React.ReactElement> = {
+  status: () => (
+    <section className="relative px-4 py-20 sm:px-8 sm:py-28">
+      <ServiceStatus />
+    </section>
+  ),
+  hosted: () => (
+    <section className="relative px-4 pb-4 sm:px-8">
+      <HostedShelf />
+    </section>
+  ),
+  nav: () => (
+    <section className="relative px-4 py-16 sm:px-8">
+      <NavigationCards cards={navigationCards} />
+    </section>
+  ),
+};
 
 export default function Homepage() {
   const { services } = useLiveServices();
   const online = services.filter((s) => s.status === "online").length;
+  const { config } = useSiteConfig();
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -65,20 +88,12 @@ export default function Homepage() {
         </motion.div>
       </section>
 
-      {/* live status */}
-      <section className="relative px-4 py-20 sm:px-8 sm:py-28">
-        <ServiceStatus />
-      </section>
-
-      {/* hosted projects */}
-      <section className="relative px-4 pb-4 sm:px-8">
-        <HostedShelf />
-      </section>
-
-      {/* nav cards */}
-      <section className="relative px-4 py-16 sm:px-8">
-        <NavigationCards cards={navigationCards} />
-      </section>
+      {/* configurable sections (admin Site Config controls visibility + order) */}
+      {config.sections
+        .filter((s) => s.visible)
+        .map((s) => (
+          <Fragment key={s.id}>{SECTIONS[s.id]()}</Fragment>
+        ))}
 
       <FooterComponent />
     </div>

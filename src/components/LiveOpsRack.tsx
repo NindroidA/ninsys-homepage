@@ -1,5 +1,6 @@
 import { type JSX, lazy, Suspense, useState } from "react";
 import { useRender3D } from "../hooks/useRender3D";
+import { useSiteConfig } from "../hooks/useSiteConfig";
 import { ServerRackLoader } from "./ServerRackLoader";
 import { GlassPanel } from "./ui/GlassPanel";
 
@@ -19,7 +20,8 @@ interface LiveOpsRackProps {
  * rack poster. A small overlay ties it to the real online/total service count.
  */
 export function LiveOpsRack({ online, total }: LiveOpsRackProps): JSX.Element {
-  const render3D = useRender3D();
+  const { config } = useSiteConfig();
+  const render3D = useRender3D() && config.enable3DRack;
   const [failed, setFailed] = useState(false);
   const allOnline = total > 0 && online === total;
 
