@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import { AuthProvider } from "./context/AuthContext";
+import { SiteConfigProvider } from "./context/SiteConfigContext";
 import { queryClient } from "./lib/queryClient";
 import Pages from "./pages/index.tsx";
 
@@ -10,7 +11,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Pages />
+        <SiteConfigProvider>
+          <Pages />
+        </SiteConfigProvider>
       </AuthProvider>
     </QueryClientProvider>
   </React.StrictMode>,
