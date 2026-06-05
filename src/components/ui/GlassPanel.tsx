@@ -1,4 +1,5 @@
-import { forwardRef, type HTMLAttributes } from "react";
+import { forwardRef, type HTMLAttributes, type JSX } from "react";
+import { cn } from "../../utils/cn";
 
 interface GlassPanelProps extends HTMLAttributes<HTMLDivElement> {
   /** Brightens the border + lifts the surface on hover (for clickable cards). */
@@ -15,19 +16,17 @@ interface GlassPanelProps extends HTMLAttributes<HTMLDivElement> {
 export const GlassPanel = forwardRef<HTMLDivElement, GlassPanelProps>(function GlassPanel(
   { interactive = false, className = "", children, ...rest },
   ref,
-) {
+): JSX.Element {
   return (
     <div
       ref={ref}
-      className={[
+      className={cn(
         "relative border border-purple-300/12 bg-white/[0.035] backdrop-blur-md",
         "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.07),0_24px_60px_-32px_rgba(0,0,0,0.85)]",
         interactive &&
           "transition-colors duration-300 hover:border-purple-300/25 hover:bg-white/[0.055]",
         className,
-      ]
-        .filter(Boolean)
-        .join(" ")}
+      )}
       {...rest}
     >
       {children}

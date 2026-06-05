@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from "react";
+import { type JSX, lazy, Suspense, useState } from "react";
 import { useRender3D } from "../hooks/useRender3D";
 import { ServerRackLoader } from "./ServerRackLoader";
 import { GlassPanel } from "./ui/GlassPanel";
@@ -18,7 +18,7 @@ interface LiveOpsRackProps {
  * on capable devices (see `useRender3D`); everyone else gets the lightweight 2D
  * rack poster. A small overlay ties it to the real online/total service count.
  */
-export function LiveOpsRack({ online, total }: LiveOpsRackProps) {
+export function LiveOpsRack({ online, total }: LiveOpsRackProps): JSX.Element {
   const render3D = useRender3D();
   const [failed, setFailed] = useState(false);
   const allOnline = total > 0 && online === total;

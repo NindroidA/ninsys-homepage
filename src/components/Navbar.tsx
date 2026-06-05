@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { FolderGit2, Home, Info } from "lucide-react";
+import type { JSX } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 interface NavbarProps {
@@ -18,7 +19,7 @@ const glass =
 const activePill =
   "bg-gradient-to-br from-violet-500 to-pink-500 text-white shadow-[0_8px_24px_-10px_rgba(236,72,153,0.6)]";
 
-export default function Navbar({ variant = "default" }: NavbarProps) {
+export default function Navbar({ variant = "default" }: NavbarProps): JSX.Element {
   const location = useLocation();
 
   if (variant === "minimal") {

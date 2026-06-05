@@ -14,6 +14,7 @@ import {
   Users,
   Zap,
 } from "lucide-react";
+import type { JSX } from "react";
 import { useLiveServices } from "../hooks/useLiveServices";
 import { LiveOpsRack } from "./LiveOpsRack";
 import { GlassPanel } from "./ui/GlassPanel";
@@ -103,18 +104,27 @@ const formatLastChecked = (lastChecked?: string) => {
 };
 
 /** A small status LED with the locked aesthetic gradient + glow. */
-function StatusDot({ style, size = "sm" }: { style: StatusStyle; size?: "sm" | "xs" }) {
+function StatusDot({
+  style,
+  size = "sm",
+}: {
+  style: StatusStyle;
+  size?: "sm" | "xs";
+}): JSX.Element {
   const dim = size === "sm" ? "h-2.5 w-2.5" : "h-2 w-2";
   return (
     <span
       aria-hidden="true"
       className={`${dim} shrink-0 rounded-full ${style.pulse ? "motion-safe:animate-pulse" : ""}`}
-      style={{ background: style.gradient, boxShadow: `0 0 10px ${style.glow}` }}
+      style={{
+        background: style.gradient,
+        boxShadow: `0 0 10px ${style.glow}`,
+      }}
     />
   );
 }
 
-export default function ServiceStatus() {
+export default function ServiceStatus(): JSX.Element {
   const { services, loading, error, refresh } = useLiveServices();
 
   const summary = services.reduce<Record<string, number>>((acc, s) => {
@@ -132,8 +142,7 @@ export default function ServiceStatus() {
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className="mx-auto w-full max-w-6xl"
     >
@@ -141,7 +150,7 @@ export default function ServiceStatus() {
       <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <span className="font-mono text-xs uppercase tracking-[0.18em] text-white/40">
-            {"// live infrastructure"}
+            {"// what's up right now"}
           </span>
           <h2 className="mt-1 font-display text-3xl font-bold text-white sm:text-4xl">
             System Status
@@ -188,14 +197,14 @@ export default function ServiceStatus() {
           const style = getStatusStyle(service.status);
           const ServiceIcon = getServiceIcon(service.icon);
           const stats = service.stats;
-          const hasStats = stats && (stats.guilds || stats.users || stats.devices);
+          const hasStats =
+            stats != null && (stats.guilds != null || stats.users != null || stats.devices != null);
 
           return (
             <motion.div
               key={service.id}
               initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: Math.min(index * 0.06, 0.3) }}
             >
               <GlassPanel interactive className="flex h-full flex-col rounded-2xl p-5">

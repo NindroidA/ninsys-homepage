@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight, ExternalLink, Folder, Server, Settings, Terminal } from "lucide-react";
+import type { JSX } from "react";
 import { Link } from "react-router-dom";
 import type { NavigationCard } from "../assets/navigationCards";
 import { GlassPanel } from "./ui/GlassPanel";
@@ -14,7 +15,7 @@ const iconMap = {
   folder: Folder,
 };
 
-function NavCard({ card }: { card: NavigationCard }) {
+function NavCard({ card }: { card: NavigationCard }): JSX.Element {
   const CardIcon = iconMap[card.icon as keyof typeof iconMap] ?? Server;
   const ActionIcon = card.external ? ExternalLink : ArrowRight;
 
@@ -50,18 +51,17 @@ function NavCard({ card }: { card: NavigationCard }) {
   );
 }
 
-export default function NavigationCards({ cards }: NavigationCardsProps) {
+export default function NavigationCards({ cards }: NavigationCardsProps): JSX.Element {
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className="mx-auto w-full max-w-6xl"
     >
       <div className="mb-8">
         <span className="font-mono text-xs uppercase tracking-[0.18em] text-white/40">
-          {"// quick access"}
+          {"// have a look around"}
         </span>
         <h2 className="mt-1 font-display text-3xl font-bold text-white sm:text-4xl">Explore</h2>
       </div>

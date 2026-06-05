@@ -1,9 +1,10 @@
 import { Coffee, Github } from "lucide-react";
+import type { JSX } from "react";
 import { version } from "../../package.json";
 import { AdminLoginButton } from "./admin/AdminLoginButton";
 import { GlassPanel } from "./ui/GlassPanel";
 
-export default function FooterComponent() {
+export default function FooterComponent(): JSX.Element {
   return (
     <footer className="relative px-4 py-12 sm:px-8">
       <div className="mx-auto max-w-6xl">
