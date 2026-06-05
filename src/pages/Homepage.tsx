@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { navigationCards } from "../assets/navigationCards";
 import { BackgroundNet } from "../components/background/BackgroundNet";
 import FooterComponent from "../components/Footer";
+import HostedShelf from "../components/HostedShelf";
 import NavigationCards from "../components/NavigationCards";
 import ServiceStatus from "../components/ServiceStatus";
 import { Wordmark } from "../components/ui/Wordmark";
@@ -68,6 +69,11 @@ export default function Homepage() {
       {/* live status */}
       <section className="relative px-4 py-20 sm:px-8 sm:py-28">
         <ServiceStatus />
+      </section>
+
+      {/* hosted projects */}
+      <section className="relative px-4 pb-4 sm:px-8">
+        <HostedShelf />
       </section>
 
       {/* nav cards */}
