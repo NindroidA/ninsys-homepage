@@ -11,19 +11,18 @@ export function Card({
   padding = "lg",
   onClick,
 }: CardProps) {
-  const baseClasses = "rounded-3xl border transition-all duration-500";
+  const baseClasses =
+    "relative rounded-2xl border transition-colors duration-300 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_24px_60px_-32px_rgba(0,0,0,0.85)]";
 
+  // v2 glass: purple-tinted hairline + inner-top highlight, light single blur.
   const variants = {
-    default:
-      "bg-gradient-to-br from-white/12 via-gray-800/20 to-white/8 backdrop-blur-xl border-white/20",
-    glass: "bg-white/5 backdrop-blur-2xl border-white/10 shadow-2xl",
-    elevated:
-      "bg-gradient-to-br from-white/15 via-gray-700/25 to-white/10 backdrop-blur-xl border-white/30 shadow-2xl",
-    minimal: "bg-white/8 backdrop-blur-lg border-white/15",
+    default: "bg-white/[0.035] backdrop-blur-md border-purple-300/12",
+    glass: "bg-white/[0.03] backdrop-blur-md border-purple-300/10",
+    elevated: "bg-white/[0.05] backdrop-blur-md border-purple-300/20",
+    minimal: "bg-white/[0.02] backdrop-blur-sm border-white/10",
     gradient:
-      "bg-gradient-to-br from-purple-500/10 via-pink-500/5 to-indigo-500/10 backdrop-blur-xl border-purple-400/20",
-    bordered:
-      "bg-gradient-to-br from-white/10 via-gray-800/15 to-white/5 backdrop-blur-xl border-white/30",
+      "bg-gradient-to-br from-violet-500/10 to-pink-500/5 backdrop-blur-md border-purple-400/15",
+    bordered: "bg-white/[0.03] backdrop-blur-md border-purple-300/15",
   };
 
   const paddings = {
@@ -34,9 +33,7 @@ export function Card({
     xl: "p-12",
   };
 
-  const hoverClasses = hover
-    ? "hover:border-white/30 hover:shadow-2xl hover:shadow-purple-500/10 hover:bg-gradient-to-br hover:from-white/15 hover:via-gray-700/25 hover:to-white/10"
-    : "";
+  const hoverClasses = hover ? "hover:border-purple-300/25 hover:bg-white/[0.055]" : "";
 
   const classes = `${baseClasses} ${variants[variant]} ${paddings[padding]} ${hoverClasses} ${onClick ? "cursor-pointer" : ""} ${className}`;
 

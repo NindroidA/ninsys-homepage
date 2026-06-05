@@ -142,11 +142,11 @@ export function ProjectCard({
         {/* Project header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-start gap-4">
-            <div className="p-3 bg-gradient-to-br from-purple-500/20 via-purple-600/20 to-purple-700/20 rounded-xl border border-purple-500/20 shrink-0">
-              <ProjectIcon className="w-6 h-6 text-purple-300" />
+            <div className="p-3 bg-gradient-to-br from-violet-500/25 to-pink-500/20 rounded-xl border border-purple-300/15 shrink-0">
+              <ProjectIcon className="w-6 h-6 text-purple-100" />
             </div>
             <div className="flex-1">
-              <h3 className="text-2xl font-bold text-white mb-2">{project.title}</h3>
+              <h3 className="font-display text-2xl font-bold text-white mb-2">{project.title}</h3>
               <div className="flex items-center gap-3 text-sm text-white/60">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
@@ -176,13 +176,18 @@ export function ProjectCard({
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">
             <Tag className="w-4 h-4 text-purple-300" />
-            <span className="text-sm font-medium text-white/60">Technologies</span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/40">
+              Technologies
+            </span>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5">
             {project.technologies.map((tech) => (
-              <Badge key={tech} variant="default" size="sm">
+              <span
+                key={tech}
+                className="rounded-md border border-white/5 bg-white/[0.03] px-2 py-0.5 font-mono text-[11px] text-white/50"
+              >
                 {tech}
-              </Badge>
+              </span>
             ))}
           </div>
         </div>

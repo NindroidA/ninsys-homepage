@@ -49,13 +49,13 @@ export function Section({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className={`mb-16 ${centered ? "text-center" : ""}`}
+            className={`mb-12 ${centered ? "text-center" : ""}`}
           >
             {title && (
               <div className={`flex items-center gap-3 mb-4 ${centered ? "justify-center" : ""}`}>
                 {titleIcon && <span className="text-2xl">{titleIcon}</span>}
-                <h2 className="text-4xl md:text-5xl font-bold text-white">
-                  <span className="bg-gradient-to-r from-violet-400 via-purple-500 to-pink-400 bg-clip-text text-transparent">
+                <h2 className="font-display text-4xl font-bold tracking-tight md:text-5xl">
+                  <span className="bg-gradient-to-br from-white to-[#cdbdf5] bg-clip-text text-transparent">
                     {title}
                   </span>
                 </h2>
@@ -63,7 +63,7 @@ export function Section({
             )}
             {subtitle && (
               <p
-                className={`text-xl text-white/70 ${centered ? "max-w-3xl mx-auto" : ""} leading-relaxed`}
+                className={`text-lg text-white/55 ${centered ? "max-w-2xl mx-auto" : ""} leading-relaxed`}
               >
                 {subtitle}
               </p>

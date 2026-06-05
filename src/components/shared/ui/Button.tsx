@@ -16,20 +16,20 @@ export function Button({
   fullWidth = false,
 }: ButtonProps) {
   const baseClasses =
-    "rounded-xl font-semibold transition-all duration-300 flex items-center justify-center border";
+    "rounded-xl font-semibold transition-all duration-200 flex items-center justify-center border";
 
   const variants = {
     primary:
-      "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-transparent hover:shadow-lg hover:shadow-purple-500/25",
+      "bg-gradient-to-br from-violet-500 to-pink-500 text-white border-transparent shadow-[0_10px_30px_-12px_rgba(236,72,153,0.55)] hover:brightness-110",
     secondary:
-      "bg-white/10 hover:bg-white/20 text-white border-white/20 hover:border-white/30 backdrop-blur-sm hover:shadow-lg",
-    ghost: "bg-transparent hover:bg-white/10 text-white/80 hover:text-white border-transparent",
+      "bg-white/[0.04] hover:bg-white/[0.08] text-white/90 border-purple-300/12 backdrop-blur-md",
+    ghost: "bg-transparent hover:bg-white/10 text-white/70 hover:text-white border-transparent",
     gradient:
-      "bg-gradient-to-r from-violet-400 via-purple-700 to-pink-300 hover:from-violet-500 hover:via-purple-800 hover:to-pink-400 text-white border-transparent hover:shadow-lg hover:shadow-purple-500/30 animate-gradient",
+      "bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 text-white border-transparent hover:brightness-110 animate-gradient",
     glass:
-      "bg-gradient-to-r from-purple-500/20 via-gray-700/30 to-pink-500/20 hover:from-purple-500/30 hover:via-gray-600/40 hover:to-pink-500/30 backdrop-blur-sm border-white/20 hover:border-white/30 text-purple-200 hover:text-white hover:shadow-lg hover:shadow-purple-500/20",
+      "bg-white/[0.04] hover:bg-white/[0.08] text-purple-100 border-purple-300/15 backdrop-blur-md",
     outline:
-      "bg-transparent hover:bg-purple-500/10 text-purple-300 border-purple-400/50 hover:border-purple-400/80 hover:shadow-lg hover:shadow-purple-500/20",
+      "bg-transparent hover:bg-purple-500/10 text-purple-200 border-purple-400/40 hover:border-purple-400/70",
   };
 
   const sizes = {

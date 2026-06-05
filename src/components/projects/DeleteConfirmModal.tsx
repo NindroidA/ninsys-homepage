@@ -42,15 +42,15 @@ export function DeleteConfirmModal({
             className="fixed inset-0 z-[51] flex items-center justify-center p-4"
           >
             <div
-              className="w-full max-w-md bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl p-6"
+              className="w-full max-w-md bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_30px_80px_-40px_rgba(0,0,0,0.9)] p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mb-4">
-                  <AlertTriangle className="w-8 h-8 text-red-400" />
+                <div className="w-16 h-16 rounded-full bg-rose-500/15 border border-rose-500/25 flex items-center justify-center mb-4">
+                  <AlertTriangle className="w-8 h-8 text-rose-300" />
                 </div>
 
-                <h2 className="text-xl font-bold text-white mb-2">Delete Project?</h2>
+                <h2 className="font-display text-xl font-bold text-white mb-2">Delete Project?</h2>
 
                 <p className="text-white/60 mb-6">
                   Are you sure you want to delete{" "}
@@ -60,16 +60,18 @@ export function DeleteConfirmModal({
 
                 <div className="flex gap-4 w-full">
                   <button
+                    type="button"
                     onClick={onClose}
                     disabled={deleting}
-                    className="flex-1 px-6 py-3 bg-white/5 hover:bg-white/10 disabled:opacity-50 text-white/70 rounded-lg transition-colors"
+                    className="flex-1 px-6 py-3 bg-white/[0.04] hover:bg-white/[0.08] border border-purple-300/12 disabled:opacity-50 text-white/70 rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
                   <button
+                    type="button"
                     onClick={handleConfirm}
                     disabled={deleting}
-                    className="flex-1 px-6 py-3 bg-red-500 hover:bg-red-600 disabled:bg-red-500/50 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                    className="flex-1 px-6 py-3 bg-rose-500 hover:bg-rose-600 disabled:bg-rose-500/50 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
                   >
                     {deleting ? (
                       <>
