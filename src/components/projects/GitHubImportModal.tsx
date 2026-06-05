@@ -127,14 +127,14 @@ export function GitHubImportModal({
             className="fixed inset-0 z-[53] flex items-center justify-center p-4"
           >
             <div
-              className="w-full max-w-3xl h-[80vh] flex flex-col bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl"
+              className="w-full max-w-3xl h-[80vh] flex flex-col bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-white/10 shrink-0">
                 <div className="flex items-center gap-3">
                   <Github className="w-6 h-6 text-white" />
-                  <h2 className="text-2xl font-bold text-white">Import from GitHub</h2>
+                  <h2 className="font-display text-2xl font-bold text-white">Import from GitHub</h2>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -163,7 +163,7 @@ export function GitHubImportModal({
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search repositories..."
-                    className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all"
+                    className="w-full pl-12 pr-4 py-3 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
                   />
                 </div>
               </div>
@@ -199,7 +199,7 @@ export function GitHubImportModal({
                         className={`p-4 rounded-xl border transition-colors ${
                           imported
                             ? "bg-green-500/5 border-green-500/20"
-                            : "bg-white/5 border-white/10 hover:border-purple-500/30"
+                            : "bg-white/[0.04] border-white/10 hover:border-purple-500/30"
                         }`}
                       >
                         <div className="flex items-start justify-between gap-4">
@@ -262,7 +262,7 @@ export function GitHubImportModal({
                               href={repo.html_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white/60 rounded-lg text-sm transition-colors"
+                              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/[0.04] hover:bg-white/10 text-white/60 rounded-lg text-sm transition-colors"
                             >
                               <ExternalLink className="w-3 h-3" />
                               View

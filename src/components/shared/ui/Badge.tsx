@@ -9,14 +9,14 @@ export function Badge({
   pulse = false,
 }: BadgeProps) {
   const variants = {
-    default: "bg-white/10 text-white/90 border-white/20 hover:bg-white/20",
-    success: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/30",
-    warning: "bg-amber-500/20 text-amber-300 border-amber-500/30 hover:bg-amber-500/30",
-    error: "bg-red-500/20 text-red-300 border-red-500/30 hover:bg-red-500/30",
-    info: "bg-blue-500/20 text-blue-300 border-blue-500/30 hover:bg-blue-500/30",
-    purple: "bg-purple-500/20 text-purple-300 border-purple-400/30 hover:bg-purple-500/30",
-    pink: "bg-pink-500/20 text-pink-300 border-pink-400/30 hover:bg-pink-500/30",
-    cyan: "bg-cyan-500/20 text-cyan-300 border-cyan-400/30 hover:bg-cyan-500/30",
+    default: "bg-white/[0.06] text-white/80 border-white/10 hover:bg-white/[0.1]",
+    success: "bg-emerald-500/15 text-emerald-300 border-emerald-500/25 hover:bg-emerald-500/25",
+    warning: "bg-amber-500/15 text-amber-300 border-amber-500/25 hover:bg-amber-500/25",
+    error: "bg-rose-500/15 text-rose-300 border-rose-500/25 hover:bg-rose-500/25",
+    info: "bg-sky-500/15 text-sky-300 border-sky-500/25 hover:bg-sky-500/25",
+    purple: "bg-violet-500/15 text-violet-200 border-violet-400/25 hover:bg-violet-500/25",
+    pink: "bg-pink-500/15 text-pink-200 border-pink-400/25 hover:bg-pink-500/25",
+    cyan: "bg-cyan-500/15 text-cyan-200 border-cyan-400/25 hover:bg-cyan-500/25",
   };
 
   const sizes = {
@@ -27,7 +27,7 @@ export function Badge({
 
   return (
     <span
-      className={`inline-flex items-center rounded-xl border backdrop-blur-sm font-medium transition-all duration-200 ${variants[variant]} ${sizes[size]} ${pulse ? "animate-pulse" : ""} ${className}`}
+      className={`inline-flex items-center rounded-lg border font-medium transition-colors duration-200 ${variants[variant]} ${sizes[size]} ${pulse ? "animate-pulse" : ""} ${className}`}
     >
       {icon && <span className="flex-shrink-0">{icon}</span>}
       {children}
