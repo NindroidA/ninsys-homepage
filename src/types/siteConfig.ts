@@ -4,6 +4,8 @@
  * to `GET/PUT /v2/config` later with no consumer changes.
  */
 
+import { hostedProjects } from "../assets/hostedProjects";
+
 export type HomeSectionId = "status" | "hosted" | "nav";
 
 export interface HomeSection {
@@ -13,11 +15,19 @@ export interface HomeSection {
   visible: boolean;
 }
 
+/** Ordered visibility overlay over the static `hostedProjects` entries. */
+export interface HostedOverride {
+  id: string;
+  visible: boolean;
+}
+
 export interface SiteConfig {
   /** Ordered homepage sections. The hero and footer are fixed and not listed here. */
   sections: HomeSection[];
   /** Attempt the WebGL 3D rack on capable devices; false = always the 2D poster. */
   enable3DRack: boolean;
+  /** Order + visibility for the Hosted shelf cards (ids reference hostedProjects). */
+  hosted: HostedOverride[];
 }
 
 export const DEFAULT_SITE_CONFIG: SiteConfig = {
@@ -27,4 +37,5 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
     { id: "nav", label: "Explore (quick access)", visible: true },
   ],
   enable3DRack: true,
+  hosted: hostedProjects.map((p) => ({ id: p.id, visible: true })),
 };

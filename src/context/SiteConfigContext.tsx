@@ -3,6 +3,7 @@ import {
   DEFAULT_SITE_CONFIG,
   type HomeSection,
   type HomeSectionId,
+  type HostedOverride,
   type SiteConfig,
 } from "../types/siteConfig";
 
@@ -12,6 +13,8 @@ export interface SiteConfigValue {
   config: SiteConfig;
   toggleSection: (id: HomeSectionId) => void;
   moveSection: (id: HomeSectionId, direction: -1 | 1) => void;
+  toggleHosted: (id: string) => void;
+  moveHosted: (id: string, direction: -1 | 1) => void;
   setEnable3DRack: (value: boolean) => void;
   reset: () => void;
 }
@@ -32,11 +35,28 @@ function reconcile(raw: unknown): SiteConfig {
   for (const s of stored) {
     const def = known.find((k) => k.id === s?.id);
     if (def && !ordered.some((o) => o.id === def.id)) {
-      ordered.push({ id: def.id, label: def.label, visible: s.visible !== false });
+      ordered.push({
+        id: def.id,
+        label: def.label,
+        visible: s.visible !== false,
+      });
     }
   }
   for (const def of known) {
     if (!ordered.some((o) => o.id === def.id)) ordered.push({ ...def });
+  }
+
+  const knownHosted = DEFAULT_SITE_CONFIG.hosted;
+  const storedHosted = Array.isArray(partial.hosted) ? partial.hosted : [];
+  const hosted: HostedOverride[] = [];
+  for (const h of storedHosted) {
+    const def = knownHosted.find((k) => k.id === h?.id);
+    if (def && !hosted.some((o) => o.id === def.id)) {
+      hosted.push({ id: def.id, visible: h.visible !== false });
+    }
+  }
+  for (const def of knownHosted) {
+    if (!hosted.some((o) => o.id === def.id)) hosted.push({ ...def });
   }
 
   return {
@@ -45,6 +65,7 @@ function reconcile(raw: unknown): SiteConfig {
       typeof partial.enable3DRack === "boolean"
         ? partial.enable3DRack
         : DEFAULT_SITE_CONFIG.enable3DRack,
+    hosted,
   };
 }
 
@@ -90,6 +111,25 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const toggleHosted = useCallback((id: string) => {
+    setConfig((prev) => ({
+      ...prev,
+      hosted: prev.hosted.map((h) => (h.id === id ? { ...h, visible: !h.visible } : h)),
+    }));
+  }, []);
+
+  const moveHosted = useCallback((id: string, direction: -1 | 1) => {
+    setConfig((prev) => {
+      const index = prev.hosted.findIndex((h) => h.id === id);
+      const target = index + direction;
+      if (index < 0 || target < 0 || target >= prev.hosted.length) return prev;
+      const hosted = [...prev.hosted];
+      const [moved] = hosted.splice(index, 1);
+      if (moved) hosted.splice(target, 0, moved);
+      return { ...prev, hosted };
+    });
+  }, []);
+
   const setEnable3DRack = useCallback((value: boolean) => {
     setConfig((prev) => ({ ...prev, enable3DRack: value }));
   }, []);
@@ -97,8 +137,16 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
   const reset = useCallback(() => setConfig(DEFAULT_SITE_CONFIG), []);
 
   const value = useMemo<SiteConfigValue>(
-    () => ({ config, toggleSection, moveSection, setEnable3DRack, reset }),
-    [config, toggleSection, moveSection, setEnable3DRack, reset],
+    () => ({
+      config,
+      toggleSection,
+      moveSection,
+      toggleHosted,
+      moveHosted,
+      setEnable3DRack,
+      reset,
+    }),
+    [config, toggleSection, moveSection, toggleHosted, moveHosted, setEnable3DRack, reset],
   );
 
   return <SiteConfigContext.Provider value={value}>{children}</SiteConfigContext.Provider>;

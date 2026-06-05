@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import type { JSX } from "react";
 import { type HostedProject, type HostedStatus, hostedProjects } from "../assets/hostedProjects";
+import { useSiteConfig } from "../hooks/useSiteConfig";
 import { GlassPanel } from "./ui/GlassPanel";
 
 const iconMap: Record<string, LucideIcon> = {
@@ -115,6 +116,16 @@ function HostedCard({ project }: { project: HostedProject }): JSX.Element {
 }
 
 export default function HostedShelf(): JSX.Element {
+  const { config } = useSiteConfig();
+  const byId = new Map(hostedProjects.map((p) => [p.id, p]));
+  // Render in the admin-configured order, hiding any toggled off.
+  const visible = config.hosted
+    .filter((h) => h.visible)
+    .map((h) => byId.get(h.id))
+    .filter((p): p is HostedProject => Boolean(p));
+
+  if (visible.length === 0) return <></>;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -130,7 +141,7 @@ export default function HostedShelf(): JSX.Element {
       </div>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {hostedProjects.map((project) => (
+        {visible.map((project) => (
           <HostedCard key={project.id} project={project} />
         ))}
       </div>
