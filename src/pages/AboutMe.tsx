@@ -195,7 +195,7 @@ export default function AboutMe() {
         path="/about"
       />
       <Navbar />
-      <FloatingElements variant="purple" intensity="medium" />
+      <FloatingElements variant="purple" intensity="low" />
 
       {/* Main content */}
       <div className="relative z-10 pt-8 pb-20 px-4 md:px-8">
@@ -251,7 +251,7 @@ export default function AboutMe() {
 
               <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
                 {/* Profile picture */}
-                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-2xl border-4 border-white/20 overflow-hidden">
+                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center shadow-2xl border-2 border-purple-300/20 overflow-hidden">
                   {profile.avatarUrl ? (
                     <img
                       src={profile.avatarUrl}
@@ -265,10 +265,10 @@ export default function AboutMe() {
 
                 {/* Info */}
                 <div className="flex-1 text-center md:text-left">
-                  <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">
+                  <h1 className="font-display text-4xl md:text-5xl font-bold tracking-tight mb-3">
                     <GradientText variant="primary">{profile.name}</GradientText>
                   </h1>
-                  <p className="text-xl text-white/70 mb-4">{profile.tagline}</p>
+                  <p className="text-lg text-white/60 mb-4">{profile.tagline}</p>
                   <div className="flex items-center justify-center md:justify-start gap-2 text-white/60 mb-6">
                     <MapPin className="w-4 h-4" />
                     <span>{profile.location}</span>
@@ -281,7 +281,7 @@ export default function AboutMe() {
                         href={profile.social.github}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-3 bg-white/10 hover:bg-white/20 rounded-xl border border-white/10 hover:border-white/20 transition-all duration-200 group"
+                        className="p-3 bg-white/[0.04] hover:bg-white/[0.08] rounded-xl border border-purple-300/12 hover:border-purple-300/25 transition-all duration-200 group"
                       >
                         <Github className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
                       </a>
@@ -291,7 +291,7 @@ export default function AboutMe() {
                         href={profile.social.linkedin}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-3 bg-white/10 hover:bg-white/20 rounded-xl border border-white/10 hover:border-white/20 transition-all duration-200 group"
+                        className="p-3 bg-white/[0.04] hover:bg-white/[0.08] rounded-xl border border-purple-300/12 hover:border-purple-300/25 transition-all duration-200 group"
                       >
                         <Linkedin className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
                       </a>
@@ -299,7 +299,7 @@ export default function AboutMe() {
                     {profile.social.email && (
                       <a
                         href={`mailto:${profile.social.email}`}
-                        className="p-3 bg-white/10 hover:bg-white/20 rounded-xl border border-white/10 hover:border-white/20 transition-all duration-200 group"
+                        className="p-3 bg-white/[0.04] hover:bg-white/[0.08] rounded-xl border border-purple-300/12 hover:border-purple-300/25 transition-all duration-200 group"
                       >
                         <Mail className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
                       </a>

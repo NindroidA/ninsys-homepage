@@ -189,12 +189,12 @@ export function SectionEditModal({
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
             <div
-              className="w-full max-w-2xl max-h-[90vh] overflow-auto bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl"
+              className="w-full max-w-2xl max-h-[90vh] overflow-auto bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-white/10">
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="font-display text-2xl font-bold text-white">
                   {section ? "Edit Section" : "New Section"}
                 </h2>
                 <button
@@ -220,7 +220,7 @@ export function SectionEditModal({
                         className={`px-4 py-2 rounded-lg border transition-colors capitalize ${
                           formData.type === type
                             ? "bg-purple-500/20 border-purple-500 text-purple-300"
-                            : "bg-white/5 border-white/10 text-white/60 hover:border-white/20"
+                            : "bg-white/[0.04] border-white/10 text-white/60 hover:border-white/20"
                         }`}
                       >
                         {type}
@@ -235,9 +235,14 @@ export function SectionEditModal({
                   <input
                     type="text"
                     value={formData.title}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        title: e.target.value,
+                      }))
+                    }
                     required
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                    className="w-full px-4 py-3 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30"
                     placeholder="Section Title"
                   />
                 </div>
@@ -257,7 +262,7 @@ export function SectionEditModal({
                             className={`p-2 rounded-lg border transition-colors ${
                               formData.icon === name
                                 ? "bg-purple-500/20 border-purple-500"
-                                : "bg-white/5 border-white/10 hover:border-white/20"
+                                : "bg-white/[0.04] border-white/10 hover:border-white/20"
                             }`}
                           >
                             <Icon className="w-5 h-5 text-white/70" />
@@ -271,17 +276,20 @@ export function SectionEditModal({
                     <select
                       value={formData.size}
                       onChange={(e) =>
-                        setFormData((prev) => ({ ...prev, size: e.target.value as SectionSize }))
+                        setFormData((prev) => ({
+                          ...prev,
+                          size: e.target.value as SectionSize,
+                        }))
                       }
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                      className="w-full px-4 py-3 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30"
                     >
-                      <option value="small" className="bg-slate-900">
+                      <option value="small" className="bg-[#0d0a16]">
                         Small
                       </option>
-                      <option value="medium" className="bg-slate-900">
+                      <option value="medium" className="bg-[#0d0a16]">
                         Medium
                       </option>
-                      <option value="large" className="bg-slate-900">
+                      <option value="large" className="bg-[#0d0a16]">
                         Large (Full Width)
                       </option>
                     </select>
@@ -334,14 +342,14 @@ export function SectionEditModal({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 px-6 py-3 bg-white/5 hover:bg-white/10 text-white/70 rounded-lg transition-colors"
+                    className="flex-1 px-6 py-3 bg-white/[0.04] hover:bg-white/10 text-white/70 rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={saving || !formData.title}
-                    className="flex-1 px-6 py-3 bg-purple-500 hover:bg-purple-600 disabled:bg-purple-500/30 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
+                    className="flex-1 px-6 py-3 bg-gradient-to-br from-violet-500 to-pink-500 hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-all"
                   >
                     {saving ? "Saving..." : section ? "Save Changes" : "Create Section"}
                   </button>
@@ -455,7 +463,7 @@ function SkillsEditor({
       <label className="block text-sm font-medium text-white/70 mb-2">Skills</label>
       <div className="space-y-3 mb-4">
         {skills.map((skill, i) => (
-          <div key={i} className="p-3 bg-white/5 rounded-lg space-y-2">
+          <div key={i} className="p-3 bg-white/[0.04] rounded-lg space-y-2">
             <div className="flex items-center justify-between gap-2">
               <span className="font-medium text-white">{skill.name}</span>
               <button
@@ -482,14 +490,14 @@ function SkillsEditor({
             value={newSkillName}
             onChange={(e) => setNewSkillName(e.target.value)}
             placeholder="New skill name..."
-            className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+            className="flex-1 px-3 py-2 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white text-sm"
             onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), onAdd())}
           />
           <button
             type="button"
             onClick={onAdd}
             disabled={!newSkillName.trim()}
-            className="px-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 disabled:bg-white/5 disabled:text-white/30 text-purple-300 rounded-lg transition-colors"
+            className="px-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 disabled:bg-white/[0.04] disabled:text-white/30 text-purple-300 rounded-lg transition-colors"
           >
             <Plus className="w-5 h-5" />
           </button>
@@ -541,7 +549,7 @@ function InterestsEditor({
           value={newEmoji}
           onChange={(e) => setNewEmoji(e.target.value)}
           placeholder="Emoji"
-          className="w-16 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-center"
+          className="w-16 px-3 py-2 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white text-center"
           maxLength={4}
         />
         <input
@@ -549,7 +557,7 @@ function InterestsEditor({
           value={newLabel}
           onChange={(e) => setNewLabel(e.target.value)}
           placeholder="Interest label"
-          className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+          className="flex-1 px-3 py-2 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white text-sm"
           onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), onAdd())}
         />
         <button
@@ -582,7 +590,7 @@ function ExperienceEditor({
       <label className="block text-sm font-medium text-white/70 mb-2">Experience</label>
       <div className="space-y-4">
         {items.map((item, i) => (
-          <div key={i} className="p-4 bg-white/5 rounded-lg space-y-3">
+          <div key={i} className="p-4 bg-white/[0.04] rounded-lg space-y-3">
             <div className="flex justify-between">
               <span className="text-xs text-white/40">Experience #{i + 1}</span>
               <button
@@ -598,7 +606,7 @@ function ExperienceEditor({
               value={item.title}
               onChange={(e) => updateItem(i, "title", e.target.value)}
               placeholder="Job Title"
-              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm"
+              className="w-full px-3 py-2 bg-white/[0.04] border border-purple-300/12 rounded text-white text-sm"
             />
             <div className="grid grid-cols-2 gap-2">
               <input
@@ -606,14 +614,14 @@ function ExperienceEditor({
                 value={item.company}
                 onChange={(e) => updateItem(i, "company", e.target.value)}
                 placeholder="Company"
-                className="px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm"
+                className="px-3 py-2 bg-white/[0.04] border border-purple-300/12 rounded text-white text-sm"
               />
               <input
                 type="text"
                 value={item.period}
                 onChange={(e) => updateItem(i, "period", e.target.value)}
                 placeholder="Period (e.g., 2020 - Present)"
-                className="px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm"
+                className="px-3 py-2 bg-white/[0.04] border border-purple-300/12 rounded text-white text-sm"
               />
             </div>
             <textarea
@@ -621,7 +629,7 @@ function ExperienceEditor({
               onChange={(e) => updateItem(i, "description", e.target.value)}
               placeholder="Description"
               rows={2}
-              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm resize-none"
+              className="w-full px-3 py-2 bg-white/[0.04] border border-purple-300/12 rounded text-white text-sm resize-none"
             />
           </div>
         ))}
@@ -656,7 +664,7 @@ function EducationEditor({
       <label className="block text-sm font-medium text-white/70 mb-2">Education</label>
       <div className="space-y-4">
         {items.map((item, i) => (
-          <div key={i} className="p-4 bg-white/5 rounded-lg space-y-3">
+          <div key={i} className="p-4 bg-white/[0.04] rounded-lg space-y-3">
             <div className="flex justify-between">
               <span className="text-xs text-white/40">Education #{i + 1}</span>
               <button
@@ -672,7 +680,7 @@ function EducationEditor({
               value={item.degree}
               onChange={(e) => updateItem(i, "degree", e.target.value)}
               placeholder="Degree"
-              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm"
+              className="w-full px-3 py-2 bg-white/[0.04] border border-purple-300/12 rounded text-white text-sm"
             />
             <div className="grid grid-cols-2 gap-2">
               <input
@@ -680,14 +688,14 @@ function EducationEditor({
                 value={item.school}
                 onChange={(e) => updateItem(i, "school", e.target.value)}
                 placeholder="School"
-                className="px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm"
+                className="px-3 py-2 bg-white/[0.04] border border-purple-300/12 rounded text-white text-sm"
               />
               <input
                 type="text"
                 value={item.period}
                 onChange={(e) => updateItem(i, "period", e.target.value)}
                 placeholder="Period (e.g., 2018 - 2022)"
-                className="px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm"
+                className="px-3 py-2 bg-white/[0.04] border border-purple-300/12 rounded text-white text-sm"
               />
             </div>
             <textarea
@@ -695,7 +703,7 @@ function EducationEditor({
               onChange={(e) => updateItem(i, "description", e.target.value)}
               placeholder="Description"
               rows={2}
-              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded text-white text-sm resize-none"
+              className="w-full px-3 py-2 bg-white/[0.04] border border-purple-300/12 rounded text-white text-sm resize-none"
             />
           </div>
         ))}
