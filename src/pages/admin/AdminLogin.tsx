@@ -1,6 +1,7 @@
 import { KeyRound, Loader2, Zap } from "lucide-react";
-import { type JSX, type KeyboardEvent, useRef, useState } from "react";
+import { type JSX, useState } from "react";
 import { Link } from "react-router-dom";
+import { TotpInput } from "../../components/admin/TotpInput";
 import { BackgroundNet } from "../../components/background/BackgroundNet";
 import { GlassPanel } from "../../components/ui/GlassPanel";
 import { IS_DEV } from "../../context/AuthContext";
@@ -9,44 +10,18 @@ import { useAuth } from "../../hooks/useAuth";
 /** Full-page TOTP gate for the admin area. */
 export function AdminLogin(): JSX.Element {
   const { login, devLogin } = useAuth();
-  const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const inputs = useRef<(HTMLInputElement | null)[]>([]);
+  const [clearSignal, setClearSignal] = useState(0);
 
-  const submit = async (value: string) => {
-    if (value.length !== 6) return;
+  const submit = async (code: string) => {
     setLoading(true);
     setError(null);
-    const result = await login(value);
+    const result = await login(code);
     setLoading(false);
     if (!result.success) {
       setError(result.error || "Authentication failed");
-      setCode(["", "", "", "", "", ""]);
-      inputs.current[0]?.focus();
-    }
-  };
-
-  const onChange = (index: number, raw: string) => {
-    if (!/^\d*$/.test(raw)) return;
-    const next = [...code];
-    next[index] = raw.slice(-1);
-    setCode(next);
-    setError(null);
-    if (raw && index < 5) inputs.current[index + 1]?.focus();
-    if (raw && index === 5 && next.every(Boolean)) submit(next.join(""));
-  };
-
-  const onKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Backspace" && !code[index] && index > 0) inputs.current[index - 1]?.focus();
-  };
-
-  const onPaste = (e: React.ClipboardEvent) => {
-    e.preventDefault();
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
-    if (pasted.length === 6) {
-      setCode(pasted.split(""));
-      submit(pasted);
+      setClearSignal((s) => s + 1);
     }
   };
 
@@ -66,26 +41,8 @@ export function AdminLogin(): JSX.Element {
           </div>
         </div>
 
-        {/* biome-ignore lint/a11y/noStaticElementInteractions: paste handler on the group is intentional */}
-        <div className="mb-5 flex justify-center gap-2.5" onPaste={onPaste}>
-          {code.map((digit, index) => (
-            <input
-              // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional inputs
-              key={index}
-              ref={(el) => {
-                inputs.current[index] = el;
-              }}
-              type="text"
-              inputMode="numeric"
-              maxLength={1}
-              value={digit}
-              onChange={(e) => onChange(index, e.target.value)}
-              onKeyDown={(e) => onKeyDown(index, e)}
-              disabled={loading}
-              aria-label={`Digit ${index + 1}`}
-              className="h-14 w-12 rounded-xl border border-purple-300/12 bg-white/[0.04] text-center font-display text-2xl font-bold text-white outline-none transition-colors focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 disabled:opacity-50"
-            />
-          ))}
+        <div className="mb-5">
+          <TotpInput onSubmit={submit} disabled={loading} clearSignal={clearSignal} />
         </div>
 
         {error && (

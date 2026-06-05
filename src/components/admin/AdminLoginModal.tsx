@@ -1,9 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { KeyRound, Loader2, X, Zap } from "lucide-react";
-import { type KeyboardEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { IS_DEV } from "../../context/AuthContext";
 import { useAuth } from "../../hooks/useAuth";
+import { TotpInput } from "./TotpInput";
 
 interface AdminLoginModalProps {
   isOpen: boolean;
@@ -12,103 +13,53 @@ interface AdminLoginModalProps {
 
 export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
   const { login, devLogin } = useAuth();
-  const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [clearSignal, setClearSignal] = useState(0);
 
-  // Focus first input when modal opens
+  // Reset transient state each time the modal opens.
   useEffect(() => {
     if (isOpen) {
-      setCode(["", "", "", "", "", ""]);
       setError(null);
-      setTimeout(() => inputRefs.current[0]?.focus(), 100);
+      setLoading(false);
+      setClearSignal((s) => s + 1);
     }
   }, [isOpen]);
 
-  // Handle keyboard escape
+  // Close on Escape.
   useEffect(() => {
-    const handleEscape = (e: globalThis.KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
-      }
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) onClose();
     };
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
   }, [isOpen, onClose]);
 
-  const handleInputChange = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return;
-
-    const newCode = [...code];
-    newCode[index] = value.slice(-1);
-    setCode(newCode);
+  const submit = async (code: string) => {
+    setLoading(true);
     setError(null);
-
-    // Auto-focus next input
-    if (value && index < 5) {
-      inputRefs.current[index + 1]?.focus();
-    }
-
-    // Auto-submit when all digits entered
-    if (value && index === 5 && newCode.every((d) => d)) {
-      handleSubmit(newCode.join(""));
-    }
-  };
-
-  const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Backspace" && !code[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    }
-  };
-
-  const handlePaste = (e: React.ClipboardEvent) => {
-    e.preventDefault();
-    const pastedData = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
-    if (pastedData.length === 6) {
-      const newCode = pastedData.split("");
-      setCode(newCode);
-      handleSubmit(pastedData);
-    }
-  };
-
-  const handleSubmit = async (totpCode: string) => {
-    if (totpCode.length !== 6) {
-      setError("Please enter all 6 digits");
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    const result = await login(totpCode);
-
-    setIsLoading(false);
-
+    const result = await login(code);
+    setLoading(false);
     if (result.success) {
       onClose();
     } else {
       setError(result.error || "Authentication failed");
-      setCode(["", "", "", "", "", ""]);
-      inputRefs.current[0]?.focus();
+      setClearSignal((s) => s + 1);
     }
   };
 
-  // Use portal to render modal at document body level, escaping any parent CSS contexts
   return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/70 backdrop-blur-md z-[9999]"
+            className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-md"
           />
 
-          {/* Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -117,86 +68,64 @@ export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
             className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
           >
             <div
-              className="bg-gradient-to-br from-slate-900 via-purple-950 to-indigo-950 backdrop-blur-xl rounded-2xl p-8 border border-white/20 shadow-2xl max-w-md w-full"
+              className="w-full max-w-md rounded-2xl border border-purple-300/12 bg-[#0d0a16]/95 p-8 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur-xl"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header */}
-              <div className="flex items-center justify-between mb-6">
+              <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                    <KeyRound className="w-5 h-5 text-white" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-pink-500">
+                    <KeyRound className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold text-white">Admin Login</h2>
-                    <p className="text-sm text-white/60">Enter your TOTP code</p>
+                    <h2 className="font-display text-xl font-bold text-white">Admin Login</h2>
+                    <p className="font-mono text-xs uppercase tracking-[0.16em] text-white/40">
+                      enter your totp code
+                    </p>
                   </div>
                 </div>
                 <button
+                  type="button"
                   onClick={onClose}
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  className="rounded-lg p-2 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+                  aria-label="Close"
                 >
-                  <X className="w-5 h-5 text-white/60" />
+                  <X className="h-5 w-5" />
                 </button>
               </div>
 
-              {/* Code Input */}
-              <div className="flex justify-center gap-3 mb-6" onPaste={handlePaste}>
-                {code.map((digit, index) => (
-                  <input
-                    key={index}
-                    ref={(el) => {
-                      inputRefs.current[index] = el;
-                    }}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleInputChange(index, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(index, e)}
-                    disabled={isLoading}
-                    className="w-12 h-14 text-center text-2xl font-bold bg-white/10 border border-white/20 rounded-xl text-white focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all disabled:opacity-50"
-                  />
-                ))}
+              <div className="mb-5">
+                <TotpInput onSubmit={submit} disabled={loading} clearSignal={clearSignal} />
               </div>
 
-              {/* Error Message */}
               {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm text-center"
-                >
+                <div className="mb-4 rounded-xl border border-rose-500/20 bg-rose-500/10 p-3 text-center text-sm text-rose-300">
                   {error}
-                </motion.div>
-              )}
-
-              {/* Loading State */}
-              {isLoading && (
-                <div className="flex items-center justify-center gap-2 text-white/60">
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Verifying...</span>
                 </div>
               )}
 
-              {/* Help Text */}
-              <p className="text-center text-white/40 text-sm mt-4">
-                Enter the 6-digit code from your authenticator app
+              {loading && (
+                <div className="flex items-center justify-center gap-2 text-white/60">
+                  <Loader2 className="h-5 w-5 animate-spin" /> Verifying…
+                </div>
+              )}
+
+              <p className="mt-4 text-center text-sm text-white/40">
+                Enter the 6-digit code from your authenticator app.
               </p>
 
-              {/* Dev Mode Bypass */}
               {IS_DEV && (
-                <div className="mt-6 pt-4 border-t border-white/10">
+                <div className="mt-6 border-t border-white/5 pt-4">
                   <button
+                    type="button"
                     onClick={() => {
                       devLogin();
                       onClose();
                     }}
-                    className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 hover:to-orange-500/30 border border-amber-500/30 rounded-xl text-amber-300 hover:text-amber-200 transition-all duration-200 font-medium"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-amber-500/25 bg-gradient-to-r from-amber-500/15 to-orange-500/15 px-4 py-3 font-medium text-amber-200 transition-colors hover:from-amber-500/25 hover:to-orange-500/25"
                   >
-                    <Zap className="w-4 h-4" />
-                    Dev Login (Skip Auth)
+                    <Zap className="h-4 w-4" /> Dev Login (skip auth)
                   </button>
-                  <p className="text-center text-amber-500/60 text-xs mt-2">
+                  <p className="mt-2 text-center text-xs text-amber-500/60">
                     Only available on localhost
                   </p>
                 </div>

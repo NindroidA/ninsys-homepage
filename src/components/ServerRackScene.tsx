@@ -19,9 +19,12 @@ function Scene({ onReady }: SceneProps) {
   return (
     <>
       <PerspectiveCamera makeDefault position={[0, 10, 5]} fov={75} />
+      {/* Camera is fixed — the rack auto-spins on its own; let visitors not drag it
+          out of frame. */}
       <OrbitControls
         enableZoom={false}
         enablePan={false}
+        enableRotate={false}
         maxPolarAngle={Math.PI / 2}
         minPolarAngle={Math.PI / 2}
         autoRotate={false}
