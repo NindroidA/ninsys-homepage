@@ -35,8 +35,7 @@ export default function Homepage() {
           </h1>
 
           <p className="mx-auto mt-4 max-w-xl text-base text-white/60 sm:text-lg">
-            I build Discord bots and little web tools, then self-host the whole lot on a homelab
-            that&apos;s usually online.
+            personal development by a silly guy :3
           </p>
 
           <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-xl border border-purple-500/20 bg-white/[0.04] px-4 py-2.5 font-mono text-[13px] backdrop-blur-md">
