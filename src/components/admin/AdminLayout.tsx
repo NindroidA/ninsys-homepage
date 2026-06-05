@@ -38,9 +38,9 @@ export const ADMIN_NAV: NavItem[] = [
     icon: SlidersHorizontal,
     ready: true,
   },
-  { label: "Hosted", to: "/admin/hosted", icon: Server, ready: false },
-  { label: "Projects", to: "/admin/projects", icon: FolderGit2, ready: false },
-  { label: "Utilities", to: "/admin/utilities", icon: Wrench, ready: false },
+  { label: "Hosted", to: "/admin/hosted", icon: Server, ready: true },
+  { label: "Projects", to: "/admin/projects", icon: FolderGit2, ready: true },
+  { label: "Utilities", to: "/admin/utilities", icon: Wrench, ready: true },
 ];
 
 function NavRow({ item }: { item: NavItem }): JSX.Element {
