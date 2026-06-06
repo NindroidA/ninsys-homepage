@@ -1,5 +1,6 @@
-import { ExternalLink, Github, KeyRound, Loader2, RefreshCw, Star, Trash2 } from "lucide-react";
+import { ExternalLink, KeyRound, Loader2, RefreshCw, Star, Trash2 } from "lucide-react";
 import { type JSX, useState } from "react";
+import { GithubIcon } from "../../components/icons/BrandIcons";
 import { GlassPanel } from "../../components/ui/GlassPanel";
 import { IS_DEV } from "../../context/AuthContext";
 import { useAuth } from "../../hooks/useAuth";
@@ -92,7 +93,7 @@ export function AdminUtilities(): JSX.Element {
       <GlassPanel className="mt-5 rounded-2xl p-5">
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Github className="h-4 w-4 text-purple-200" />
+            <GithubIcon className="h-4 w-4 text-purple-200" />
             <h2 className="font-display text-lg font-semibold text-white">GitHub repositories</h2>
           </div>
           <button

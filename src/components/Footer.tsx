@@ -1,7 +1,8 @@
-import { Coffee, Github } from "lucide-react";
+import { Coffee } from "lucide-react";
 import type { JSX } from "react";
 import { version } from "../../package.json";
 import { AdminLoginButton } from "./admin/AdminLoginButton";
+import { GithubIcon } from "./icons/BrandIcons";
 import { GlassPanel } from "./ui/GlassPanel";
 
 export default function FooterComponent(): JSX.Element {
@@ -32,7 +33,7 @@ export default function FooterComponent(): JSX.Element {
                 className="rounded-xl border border-purple-300/12 bg-white/[0.04] p-2.5 text-white/70 transition-colors hover:bg-white/[0.08] hover:text-white"
                 aria-label="GitHub"
               >
-                <Github className="h-5 w-5" />
+                <GithubIcon className="h-5 w-5" />
               </a>
               <a
                 href="https://buymeacoffee.com/nindroida"

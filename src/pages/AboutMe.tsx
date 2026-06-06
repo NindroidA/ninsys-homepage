@@ -14,10 +14,11 @@ import {
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
 import { motion } from "framer-motion";
-import { Edit2, Github, Linkedin, Loader2, Mail, MapPin, Plus, X } from "lucide-react";
+import { Edit2, Loader2, Mail, MapPin, Plus, X } from "lucide-react";
 import { useCallback, useState } from "react";
 import { ProfileEditModal, SectionCard, SectionEditModal } from "../components/about";
 import FooterComponent from "../components/Footer";
+import { GithubIcon, LinkedinIcon } from "../components/icons/BrandIcons";
 import Navbar from "../components/Navbar";
 import { DeleteConfirmModal } from "../components/projects";
 import { Seo } from "../components/Seo";
@@ -283,7 +284,7 @@ export default function AboutMe() {
                         rel="noopener noreferrer"
                         className="p-3 bg-white/[0.04] hover:bg-white/[0.08] rounded-xl border border-purple-300/12 hover:border-purple-300/25 transition-all duration-200 group"
                       >
-                        <Github className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
+                        <GithubIcon className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
                       </a>
                     )}
                     {profile.social.linkedin && (
@@ -293,7 +294,7 @@ export default function AboutMe() {
                         rel="noopener noreferrer"
                         className="p-3 bg-white/[0.04] hover:bg-white/[0.08] rounded-xl border border-purple-300/12 hover:border-purple-300/25 transition-all duration-200 group"
                       >
-                        <Linkedin className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
+                        <LinkedinIcon className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
                       </a>
                     )}
                     {profile.social.email && (

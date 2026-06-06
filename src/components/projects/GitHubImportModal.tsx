@@ -1,7 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ExternalLink, Github, Import, Loader2, RefreshCw, Search, Star, X } from "lucide-react";
+import { ExternalLink, Import, Loader2, RefreshCw, Search, Star, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { GitHubRepo } from "../../types/projects";
+import { GithubIcon } from "../icons/BrandIcons";
 
 /**
  * GitHub's official language colors for repository language indicators.
@@ -133,7 +134,7 @@ export function GitHubImportModal({
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-white/10 shrink-0">
                 <div className="flex items-center gap-3">
-                  <Github className="w-6 h-6 text-white" />
+                  <GithubIcon className="w-6 h-6 text-white" />
                   <h2 className="font-display text-2xl font-bold text-white">Import from GitHub</h2>
                 </div>
                 <div className="flex items-center gap-2">

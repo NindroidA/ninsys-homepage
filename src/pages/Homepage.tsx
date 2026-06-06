@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
-import { Github } from "lucide-react";
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { navigationCards } from "../assets/navigationCards";
 import { BackgroundNet } from "../components/background/BackgroundNet";
 import FooterComponent from "../components/Footer";
 import HostedShelf from "../components/HostedShelf";
+import { GithubIcon } from "../components/icons/BrandIcons";
 import NavigationCards from "../components/NavigationCards";
 import ServiceStatus from "../components/ServiceStatus";
 import { Wordmark } from "../components/ui/Wordmark";
@@ -82,7 +82,7 @@ export default function Homepage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-xl border border-purple-500/20 bg-white/[0.04] px-5 py-3 text-sm font-semibold text-white/90 transition hover:bg-white/[0.08]"
             >
-              <Github className="h-4 w-4" /> GitHub
+              <GithubIcon className="h-4 w-4" /> GitHub
             </a>
           </div>
         </motion.div>
