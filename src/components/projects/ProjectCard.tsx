@@ -7,7 +7,6 @@ import {
   Edit2,
   ExternalLink,
   Folder,
-  Github,
   Globe,
   GripVertical,
   Star,
@@ -16,6 +15,7 @@ import {
 } from "lucide-react";
 import type { Project } from "../../types/projects";
 import { getLucideIcon } from "../../utils/iconUtils";
+import { GithubIcon } from "../icons/BrandIcons";
 import { Badge, Button, Card } from "../shared/ui";
 
 const MONTHS = [
@@ -200,7 +200,7 @@ export function ProjectCard({
               target="_blank"
               variant="secondary"
               size="sm"
-              icon={<Github className="w-4 h-4" />}
+              icon={<GithubIcon className="w-4 h-4" />}
             >
               Code
             </Button>

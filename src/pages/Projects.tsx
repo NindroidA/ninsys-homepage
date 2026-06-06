@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
-import { Edit2, Github, Loader2, Plus, X } from "lucide-react";
+import { Edit2, Loader2, Plus, X } from "lucide-react";
 import { useCallback, useState } from "react";
 import FooterComponent from "../components/Footer";
+import { GithubIcon } from "../components/icons/BrandIcons";
 import Navbar from "../components/Navbar";
 import {
   DeleteConfirmModal,
@@ -172,7 +173,7 @@ export default function Projects() {
                   onClick={() => setGithubModalOpen(true)}
                   variant="glass"
                   size="sm"
-                  icon={<Github className="w-4 h-4" />}
+                  icon={<GithubIcon className="w-4 h-4" />}
                 >
                   Import from GitHub
                 </Button>

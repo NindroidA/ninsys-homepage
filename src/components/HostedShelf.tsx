@@ -4,7 +4,6 @@ import {
   Bot,
   Boxes,
   ExternalLink,
-  Github,
   Globe,
   LayoutDashboard,
   type LucideIcon,
@@ -15,6 +14,7 @@ import {
 import type { JSX } from "react";
 import { type HostedProject, type HostedStatus, hostedProjects } from "../assets/hostedProjects";
 import { useSiteConfig } from "../hooks/useSiteConfig";
+import { GithubIcon } from "./icons/BrandIcons";
 import { GlassPanel } from "./ui/GlassPanel";
 
 const iconMap: Record<string, LucideIcon> = {
@@ -107,7 +107,7 @@ function HostedCard({ project }: { project: HostedProject }): JSX.Element {
             className="ml-auto text-white/50 transition-colors hover:text-white"
             aria-label={`${project.name} on GitHub`}
           >
-            <Github className="h-4 w-4" />
+            <GithubIcon className="h-4 w-4" />
           </a>
         )}
       </div>
