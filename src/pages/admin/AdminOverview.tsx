@@ -94,7 +94,7 @@ export function AdminOverview(): JSX.Element {
             {services.map((s) => (
               <li
                 key={s.id}
-                className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2"
+                className="flex items-center justify-between rounded-lg border border-white/5 bg-white/2 px-3 py-2"
               >
                 <span className="truncate text-sm text-white/80">{s.name}</span>
                 <span className="flex items-center gap-2 font-mono text-[11px] text-white/40">
@@ -118,7 +118,7 @@ export function AdminOverview(): JSX.Element {
                 .map((p) => (
                   <li
                     key={p.id}
-                    className="flex items-center gap-2 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2 text-sm text-white/80"
+                    className="flex items-center gap-2 rounded-lg border border-white/5 bg-white/2 px-3 py-2 text-sm text-white/80"
                   >
                     <Star className="h-3.5 w-3.5 fill-current text-amber-300" />
                     <span className="truncate">{p.title}</span>

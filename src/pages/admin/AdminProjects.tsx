@@ -33,13 +33,13 @@ export function AdminProjects(): JSX.Element {
         </div>
         <Link
           to="/projects"
-          className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-br from-violet-500 to-pink-500 px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110"
+          className="inline-flex items-center gap-2 rounded-lg bg-linear-to-br from-violet-500 to-pink-500 px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110"
         >
           Open editor <ExternalLink className="h-4 w-4" />
         </Link>
       </header>
 
-      <div className="mb-6 rounded-xl border border-purple-300/12 bg-white/[0.03] px-4 py-3 font-mono text-xs text-white/55">
+      <div className="mb-6 rounded-xl border border-purple-300/12 bg-white/3 px-4 py-3 font-mono text-xs text-white/55">
         Full create / edit / reorder / GitHub-import lives on the{" "}
         <Link to="/projects" className="text-purple-200 hover:text-white">
           Projects page
@@ -69,7 +69,7 @@ export function AdminProjects(): JSX.Element {
             {projects.map((p) => (
               <li
                 key={p.id}
-                className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2"
+                className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/2 px-3 py-2"
               >
                 {p.featured && <Star className="h-3.5 w-3.5 fill-current text-amber-300" />}
                 <span className="truncate text-sm text-white/85">{p.title}</span>

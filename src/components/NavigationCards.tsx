@@ -21,7 +21,7 @@ function NavCard({ card }: { card: NavigationCard }): JSX.Element {
 
   const body = (
     <GlassPanel interactive className="group flex h-full flex-col rounded-3xl p-6 sm:p-7">
-      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-purple-300/15 bg-gradient-to-br from-violet-500/25 to-pink-500/20">
+      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-purple-300/15 bg-linear-to-br from-violet-500/25 to-pink-500/20">
         <CardIcon className="h-6 w-6 text-purple-100" />
       </div>
 

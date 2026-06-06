@@ -64,7 +64,7 @@ export function TotpInput({ onSubmit, disabled, clearSignal = 0 }: TotpInputProp
           onKeyDown={(e) => onKeyDown(index, e)}
           disabled={disabled}
           aria-label={`Digit ${index + 1}`}
-          className="h-14 w-12 rounded-xl border border-purple-300/12 bg-white/[0.04] text-center font-display text-2xl font-bold text-white outline-none transition-colors focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 disabled:opacity-50"
+          className="h-14 w-12 rounded-xl border border-purple-300/12 bg-white/4 text-center font-display text-2xl font-bold text-white outline-hidden transition-colors focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 disabled:opacity-50"
         />
       ))}
     </div>

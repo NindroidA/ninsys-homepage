@@ -21,7 +21,7 @@ function Toggle({
       aria-label={label}
       onClick={() => onChange(!checked)}
       className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-        checked ? "bg-gradient-to-r from-violet-500 to-pink-500" : "bg-white/10"
+        checked ? "bg-linear-to-r from-violet-500 to-pink-500" : "bg-white/10"
       }`}
     >
       <span
@@ -50,13 +50,13 @@ export function AdminSiteConfig(): JSX.Element {
         <button
           type="button"
           onClick={reset}
-          className="inline-flex items-center gap-2 rounded-lg border border-purple-300/12 bg-white/[0.04] px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/[0.08]"
+          className="inline-flex items-center gap-2 rounded-lg border border-purple-300/12 bg-white/4 px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/8"
         >
           <RotateCcw className="h-3.5 w-3.5" /> Reset
         </button>
       </header>
 
-      <div className="mb-6 rounded-xl border border-amber-500/20 bg-amber-500/[0.06] px-4 py-3 font-mono text-xs text-amber-200/80">
+      <div className="mb-6 rounded-xl border border-amber-500/20 bg-amber-500/6 px-4 py-3 font-mono text-xs text-amber-200/80">
         Saved in your browser for now — this becomes server-side once the config API ships.
       </div>
 
@@ -79,7 +79,7 @@ export function AdminSiteConfig(): JSX.Element {
             <li
               key={section.id}
               className={`flex items-center gap-3 rounded-xl border border-white/5 px-3 py-2.5 transition-opacity ${
-                section.visible ? "bg-white/[0.03]" : "bg-white/[0.01] opacity-50"
+                section.visible ? "bg-white/3" : "bg-white/1 opacity-50"
               }`}
             >
               <span className="font-mono text-[11px] text-white/30">{index + 1}</span>
@@ -109,7 +109,7 @@ export function AdminSiteConfig(): JSX.Element {
               <button
                 type="button"
                 onClick={() => toggleSection(section.id)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-purple-300/12 bg-white/[0.04] px-2.5 py-1.5 font-mono text-[11px] text-white/70 transition-colors hover:bg-white/[0.08]"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-purple-300/12 bg-white/4 px-2.5 py-1.5 font-mono text-[11px] text-white/70 transition-colors hover:bg-white/8"
                 aria-label={`${section.visible ? "Hide" : "Show"} ${section.label}`}
               >
                 {section.visible ? (
@@ -130,7 +130,7 @@ export function AdminSiteConfig(): JSX.Element {
       {/* behavior */}
       <GlassPanel className="rounded-2xl p-5">
         <h2 className="mb-4 font-display text-lg font-semibold text-white">Behavior</h2>
-        <div className="flex items-center justify-between gap-4 rounded-xl border border-white/5 bg-white/[0.03] px-4 py-3">
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-white/5 bg-white/3 px-4 py-3">
           <div>
             <div className="text-sm text-white/85">3D server rack</div>
             <div className="text-xs text-white/45">

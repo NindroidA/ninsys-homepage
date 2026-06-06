@@ -50,7 +50,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             </p>
             <button
               onClick={this.handleRetry}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-200"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-purple-500 to-pink-500 text-white font-medium rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-200"
             >
               <RefreshCw className="w-4 h-4" />
               Try Again
@@ -74,7 +74,7 @@ export function ApiErrorFallback({ error, onRetry, compact = false }: ApiErrorFa
   if (compact) {
     return (
       <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
-        <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0" />
+        <AlertTriangle className="w-5 h-5 text-red-400 shrink-0" />
         <span className="text-red-300 text-sm flex-1">{error || "Failed to load data"}</span>
         {onRetry && (
           <button

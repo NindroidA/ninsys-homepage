@@ -63,7 +63,7 @@ function HostedCard({ project }: { project: HostedProject }): JSX.Element {
   return (
     <GlassPanel className="flex h-full flex-col rounded-2xl p-5">
       <div className="flex items-start justify-between gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-purple-300/15 bg-gradient-to-br from-violet-500/25 to-pink-500/20">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-purple-300/15 bg-linear-to-br from-violet-500/25 to-pink-500/20">
           <Icon className="h-5 w-5 text-purple-100" />
         </div>
         <StatusPill status={project.status} />
@@ -77,7 +77,7 @@ function HostedCard({ project }: { project: HostedProject }): JSX.Element {
           {project.stack.map((tag) => (
             <li
               key={tag}
-              className="rounded-md border border-white/5 bg-white/[0.03] px-2 py-0.5 font-mono text-[11px] text-white/50"
+              className="rounded-md border border-white/5 bg-white/3 px-2 py-0.5 font-mono text-[11px] text-white/50"
             >
               {tag}
             </li>

@@ -14,7 +14,7 @@ export interface BadgeProps {
 export interface ButtonProps {
   children: ReactNode;
   onClick?: () => void;
-  variant?: "primary" | "secondary" | "ghost" | "gradient" | "glass" | "outline";
+  variant?: "primary" | "secondary" | "ghost" | "gradient" | "glass" | "outline-solid";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   className?: string;

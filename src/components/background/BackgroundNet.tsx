@@ -233,7 +233,7 @@ export function BackgroundNet() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 overflow-hidden bg-[#09060f] [background-image:radial-gradient(rgba(198,188,224,0.05)_1px,transparent_1.6px)] [background-size:26px_26px]"
+      className="pointer-events-none absolute inset-0 overflow-hidden bg-[#09060f] bg-[radial-gradient(rgba(198,188,224,0.05)_1px,transparent_1.6px)] bg-size-[26px_26px]"
     >
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
       <div className="pointer-events-none absolute inset-0 [background:radial-gradient(125%_95%_at_50%_32%,transparent_52%,rgba(0,0,0,0.62)_100%)]" />

@@ -301,7 +301,7 @@ export function ProjectEditModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50"
           />
 
           {/* Modal */}
@@ -309,7 +309,7 @@ export function ProjectEditModal({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed inset-0 z-[52] flex items-center justify-center p-4"
+            className="fixed inset-0 z-52 flex items-center justify-center p-4"
           >
             <div
               className="w-full max-w-2xl max-h-[90vh] overflow-auto bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-2xl"
@@ -338,7 +338,7 @@ export function ProjectEditModal({
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     required
-                    className="w-full px-4 py-3 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
+                    className="w-full px-4 py-3 bg-white/4 border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-hidden focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
                     placeholder="My Awesome Project"
                   />
                 </div>
@@ -353,7 +353,7 @@ export function ProjectEditModal({
                     onChange={(e) => setDescription(e.target.value)}
                     required
                     rows={3}
-                    className="w-full px-4 py-3 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all resize-none"
+                    className="w-full px-4 py-3 bg-white/4 border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-hidden focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all resize-none"
                     placeholder="A brief description of the project..."
                   />
                 </div>
@@ -365,7 +365,7 @@ export function ProjectEditModal({
                     <button
                       type="button"
                       onClick={() => setShowIconPicker(!showIconPicker)}
-                      className="flex items-center gap-3 px-4 py-3 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white hover:border-white/20 transition-colors w-full"
+                      className="flex items-center gap-3 px-4 py-3 bg-white/4 border border-purple-300/12 rounded-lg text-white hover:border-white/20 transition-colors w-full"
                     >
                       <div className="p-2 bg-purple-500/20 rounded-lg">
                         {SelectedIcon && <SelectedIcon className="w-5 h-5 text-purple-300" />}
@@ -395,7 +395,7 @@ export function ProjectEditModal({
                                 className={`p-2 rounded-lg border transition-colors ${
                                   icon === name
                                     ? "bg-purple-500/20 border-purple-500"
-                                    : "bg-white/[0.04] border-white/10 hover:border-white/20"
+                                    : "bg-white/4 border-white/10 hover:border-white/20"
                                 }`}
                               >
                                 <Icon className="w-5 h-5 text-white/70 mx-auto" />
@@ -438,11 +438,11 @@ export function ProjectEditModal({
                               setShowTechDropdown(false);
                             }
                           }}
-                          className="w-full px-4 py-2 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
+                          className="w-full px-4 py-2 bg-white/4 border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-hidden focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
                           placeholder="Search or add technology..."
                         />
                         {showTechDropdown && filteredTechOptions.length > 0 && (
-                          <div className="absolute z-[100] mt-1 w-full max-h-48 overflow-y-auto bg-[#15101f]border border-purple-300/12 rounded-lg shadow-xl">
+                          <div className="absolute z-100 mt-1 w-full max-h-48 overflow-y-auto bg-[#15101f]border border-purple-300/12 rounded-lg shadow-xl">
                             {filteredTechOptions.slice(0, 10).map((tech) => (
                               <button
                                 key={tech}
@@ -491,7 +491,7 @@ export function ProjectEditModal({
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value as "current" | "completed")}
-                      className="w-full px-4 py-3 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
+                      className="w-full px-4 py-3 bg-white/4 border border-purple-300/12 rounded-lg text-white focus:outline-hidden focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
                     >
                       <option value="current" className="bg-[#0d0a16]">
                         Current
@@ -506,7 +506,7 @@ export function ProjectEditModal({
                     <select
                       value={dateMonth}
                       onChange={(e) => setDateMonth(e.target.value)}
-                      className="w-full px-4 py-3 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
+                      className="w-full px-4 py-3 bg-white/4 border border-purple-300/12 rounded-lg text-white focus:outline-hidden focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
                     >
                       {MONTHS.map((month) => (
                         <option key={month} value={month} className="bg-[#0d0a16]">
@@ -524,7 +524,7 @@ export function ProjectEditModal({
                       min="2000"
                       max="2100"
                       required
-                      className="w-full px-4 py-3 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
+                      className="w-full px-4 py-3 bg-white/4 border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-hidden focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
                       placeholder="2025"
                     />
                   </div>
@@ -568,7 +568,7 @@ export function ProjectEditModal({
                       type="url"
                       value={githubUrl}
                       onChange={(e) => setGithubUrl(e.target.value)}
-                      className="w-full px-4 py-3 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
+                      className="w-full px-4 py-3 bg-white/4 border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-hidden focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
                       placeholder="https://github.com/..."
                     />
                   </div>
@@ -580,7 +580,7 @@ export function ProjectEditModal({
                       type="url"
                       value={liveUrl}
                       onChange={(e) => setLiveUrl(e.target.value)}
-                      className="w-full px-4 py-3 bg-white/[0.04] border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
+                      className="w-full px-4 py-3 bg-white/4 border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-hidden focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
                       placeholder="https://..."
                     />
                   </div>
@@ -625,14 +625,14 @@ export function ProjectEditModal({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 px-6 py-3 bg-white/[0.04] hover:bg-white/10 text-white/70 rounded-lg transition-colors"
+                    className="flex-1 px-6 py-3 bg-white/4 hover:bg-white/10 text-white/70 rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={saving || !title || !description}
-                    className="flex-1 px-6 py-3 bg-gradient-to-br from-violet-500 to-pink-500 hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-all"
+                    className="flex-1 px-6 py-3 bg-linear-to-br from-violet-500 to-pink-500 hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-all"
                   >
                     {saving
                       ? "Saving..."

@@ -10,10 +10,10 @@ interface WordmarkProps {
 export function Wordmark({ className = "" }: WordmarkProps) {
   return (
     <span className={`font-display font-bold tracking-tight ${className}`}>
-      <span className="bg-gradient-to-b from-white to-[#cdbdf5] bg-clip-text text-transparent [filter:drop-shadow(0_2px_22px_rgba(167,139,250,0.4))]">
+      <span className="bg-linear-to-b from-white to-[#cdbdf5] bg-clip-text text-transparent filter-[drop-shadow(0_2px_22px_rgba(167,139,250,0.4))]">
         Nindroid
       </span>{" "}
-      <span className="bg-gradient-to-br from-[#d946ef] to-[#8b5cf6] bg-clip-text text-transparent">
+      <span className="bg-linear-to-br from-[#d946ef] to-[#8b5cf6] bg-clip-text text-transparent">
         Systems
       </span>
     </span>

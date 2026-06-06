@@ -20,7 +20,7 @@ export function AdminHosted(): JSX.Element {
         <h1 className="mt-1 font-display text-3xl font-bold text-white sm:text-4xl">Hosted</h1>
       </header>
 
-      <div className="mb-6 rounded-xl border border-amber-500/20 bg-amber-500/[0.06] px-4 py-3 font-mono text-xs text-amber-200/80">
+      <div className="mb-6 rounded-xl border border-amber-500/20 bg-amber-500/6 px-4 py-3 font-mono text-xs text-amber-200/80">
         Show, hide, and reorder the Hosted shelf. To add or edit an entry's details, edit{" "}
         <span className="text-amber-100">src/assets/hostedProjects.ts</span>.
       </div>
@@ -50,7 +50,7 @@ export function AdminHosted(): JSX.Element {
               <li
                 key={override.id}
                 className={`flex items-center gap-3 rounded-xl border border-white/5 px-3 py-2.5 transition-opacity ${
-                  override.visible ? "bg-white/[0.03]" : "bg-white/[0.01] opacity-50"
+                  override.visible ? "bg-white/3" : "bg-white/1 opacity-50"
                 }`}
               >
                 <span className="font-mono text-[11px] text-white/30">{index + 1}</span>
@@ -91,7 +91,7 @@ export function AdminHosted(): JSX.Element {
                 <button
                   type="button"
                   onClick={() => toggleHosted(override.id)}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-purple-300/12 bg-white/[0.04] px-2.5 py-1.5 font-mono text-[11px] text-white/70 transition-colors hover:bg-white/[0.08]"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-purple-300/12 bg-white/4 px-2.5 py-1.5 font-mono text-[11px] text-white/70 transition-colors hover:bg-white/8"
                   aria-label={`${override.visible ? "Hide" : "Show"} ${project.name}`}
                 >
                   {override.visible ? (

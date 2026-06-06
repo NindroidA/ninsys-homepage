@@ -20,12 +20,12 @@ export function ServerRackLoader({
         {/* Stylized rack silhouette */}
         <div className="w-48 h-72 relative">
           {/* Main frame outline */}
-          <div className="absolute inset-0 border-2 border-purple-500/30 rounded-lg bg-gradient-to-b from-purple-900/20 to-indigo-900/20 backdrop-blur-sm">
+          <div className="absolute inset-0 border-2 border-purple-500/30 rounded-lg bg-linear-to-b from-purple-900/20 to-indigo-900/20 backdrop-blur-xs">
             {/* Server slots with shimmer */}
             {[...Array(6)].map((_, i) => (
               <motion.div
                 key={i}
-                className="mx-3 my-2 h-8 rounded bg-gradient-to-r from-purple-500/10 via-purple-400/20 to-purple-500/10"
+                className="mx-3 my-2 h-8 rounded bg-linear-to-r from-purple-500/10 via-purple-400/20 to-purple-500/10"
                 animate={
                   isAnimated ? { backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] } : undefined
                 }
@@ -60,7 +60,7 @@ export function ServerRackLoader({
             {[0, 72, 144, 216, 288].map((angle, i) => (
               <motion.div
                 key={i}
-                className="absolute w-3 h-3 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500"
+                className="absolute w-3 h-3 rounded-full bg-linear-to-r from-cyan-400 to-purple-500"
                 style={{
                   top: "50%",
                   left: "50%",
