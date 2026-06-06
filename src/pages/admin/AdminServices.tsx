@@ -38,7 +38,7 @@ export function AdminServices(): JSX.Element {
           type="button"
           onClick={refresh}
           disabled={loading}
-          className="rounded-lg border border-purple-300/12 bg-white/[0.04] p-2 text-white/70 transition-colors hover:bg-white/[0.08] disabled:opacity-50"
+          className="rounded-lg border border-purple-300/12 bg-white/4 p-2 text-white/70 transition-colors hover:bg-white/8 disabled:opacity-50"
           aria-label="Refresh services"
         >
           <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
@@ -65,7 +65,7 @@ export function AdminServices(): JSX.Element {
             {services.map((s) => {
               const meta = STATUS_META[s.status] ?? STATUS_META.offline;
               return (
-                <tr key={s.id} className="border-b border-white/[0.03] last:border-0">
+                <tr key={s.id} className="border-b border-white/3 last:border-0">
                   <td className="px-4 py-3">
                     <div className="font-medium text-white">{s.name}</div>
                     {s.description && <div className="text-xs text-white/40">{s.description}</div>}

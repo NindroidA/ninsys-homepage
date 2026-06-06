@@ -20,14 +20,12 @@ export function Button({
 
   const variants = {
     primary:
-      "bg-gradient-to-br from-violet-500 to-pink-500 text-white border-transparent shadow-[0_10px_30px_-12px_rgba(236,72,153,0.55)] hover:brightness-110",
-    secondary:
-      "bg-white/[0.04] hover:bg-white/[0.08] text-white/90 border-purple-300/12 backdrop-blur-md",
+      "bg-linear-to-br from-violet-500 to-pink-500 text-white border-transparent shadow-[0_10px_30px_-12px_rgba(236,72,153,0.55)] hover:brightness-110",
+    secondary: "bg-white/4 hover:bg-white/8 text-white/90 border-purple-300/12 backdrop-blur-md",
     ghost: "bg-transparent hover:bg-white/10 text-white/70 hover:text-white border-transparent",
     gradient:
-      "bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500 text-white border-transparent hover:brightness-110 animate-gradient",
-    glass:
-      "bg-white/[0.04] hover:bg-white/[0.08] text-purple-100 border-purple-300/15 backdrop-blur-md",
+      "bg-linear-to-r from-violet-500 via-fuchsia-500 to-pink-500 text-white border-transparent hover:brightness-110 animate-gradient",
+    glass: "bg-white/4 hover:bg-white/8 text-purple-100 border-purple-300/15 backdrop-blur-md",
     outline:
       "bg-transparent hover:bg-purple-500/10 text-purple-200 border-purple-400/40 hover:border-purple-400/70",
   };
@@ -42,9 +40,9 @@ export function Button({
 
   const content = (
     <>
-      {icon && iconPosition === "left" && <span className="flex-shrink-0">{icon}</span>}
+      {icon && iconPosition === "left" && <span className="shrink-0">{icon}</span>}
       {children}
-      {icon && iconPosition === "right" && <span className="flex-shrink-0">{icon}</span>}
+      {icon && iconPosition === "right" && <span className="shrink-0">{icon}</span>}
     </>
   );
 

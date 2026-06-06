@@ -50,7 +50,7 @@ function NavRow({ item }: { item: NavItem }): JSX.Element {
       <span className="flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2 text-sm text-white/25">
         <Icon className="h-4 w-4" />
         <span className="flex-1">{item.label}</span>
-        <span className="rounded bg-white/[0.04] px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-white/30">
+        <span className="rounded bg-white/4 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-white/30">
           soon
         </span>
       </span>
@@ -63,8 +63,8 @@ function NavRow({ item }: { item: NavItem }): JSX.Element {
       className={({ isActive }) =>
         `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
           isActive
-            ? "bg-gradient-to-r from-violet-500/20 to-pink-500/15 text-white"
-            : "text-white/60 hover:bg-white/[0.05] hover:text-white"
+            ? "bg-linear-to-r from-violet-500/20 to-pink-500/15 text-white"
+            : "text-white/60 hover:bg-white/5 hover:text-white"
         }`
       }
     >
@@ -78,15 +78,15 @@ export function AdminLayout(): JSX.Element {
   const { logout, user, expiresAt, isGuestViewMode, toggleGuestView } = useAuth();
 
   return (
-    <div className="min-h-screen bg-[#09060f] text-white [background-image:radial-gradient(rgba(198,188,224,0.04)_1px,transparent_1.6px)] [background-size:26px_26px]">
+    <div className="min-h-screen bg-[#09060f] text-white bg-[radial-gradient(rgba(198,188,224,0.04)_1px,transparent_1.6px)] bg-size-[26px_26px]">
       {/* sidebar (desktop) */}
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-purple-300/10 bg-black/30 backdrop-blur-md lg:flex">
         <div className="flex items-center gap-2 px-5 py-5">
           <span className="font-display text-lg font-bold tracking-tight">
-            <span className="bg-gradient-to-b from-white to-[#cdbdf5] bg-clip-text text-transparent">
+            <span className="bg-linear-to-b from-white to-[#cdbdf5] bg-clip-text text-transparent">
               N
             </span>
-            <span className="bg-gradient-to-br from-[#d946ef] to-[#8b5cf6] bg-clip-text text-transparent">
+            <span className="bg-linear-to-br from-[#d946ef] to-[#8b5cf6] bg-clip-text text-transparent">
               S
             </span>
           </span>
@@ -100,7 +100,7 @@ export function AdminLayout(): JSX.Element {
         <div className="space-y-1 border-t border-white/5 p-3">
           <Link
             to="/"
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-white/60 transition-colors hover:bg-white/[0.05] hover:text-white"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-white/60 transition-colors hover:bg-white/5 hover:text-white"
           >
             <ExternalLink className="h-4 w-4" /> View site
           </Link>
@@ -121,10 +121,10 @@ export function AdminLayout(): JSX.Element {
           {/* mobile brand + nav */}
           <div className="flex min-w-0 items-center gap-3 lg:hidden">
             <span className="font-display text-base font-bold">
-              <span className="bg-gradient-to-b from-white to-[#cdbdf5] bg-clip-text text-transparent">
+              <span className="bg-linear-to-b from-white to-[#cdbdf5] bg-clip-text text-transparent">
                 N
               </span>
-              <span className="bg-gradient-to-br from-[#d946ef] to-[#8b5cf6] bg-clip-text text-transparent">
+              <span className="bg-linear-to-br from-[#d946ef] to-[#8b5cf6] bg-clip-text text-transparent">
                 S
               </span>
             </span>
@@ -161,7 +161,7 @@ export function AdminLayout(): JSX.Element {
               className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
                 isGuestViewMode
                   ? "border-amber-500/30 bg-amber-500/15 text-amber-200"
-                  : "border-purple-300/12 bg-white/[0.04] text-white/70 hover:bg-white/[0.08]"
+                  : "border-purple-300/12 bg-white/4 text-white/70 hover:bg-white/8"
               }`}
             >
               {isGuestViewMode ? "Guest view: on" : "Guest view"}
@@ -169,7 +169,7 @@ export function AdminLayout(): JSX.Element {
             <button
               type="button"
               onClick={logout}
-              className="rounded-lg border border-purple-300/12 bg-white/[0.04] p-2 text-white/70 transition-colors hover:bg-rose-500/10 hover:text-rose-300 lg:hidden"
+              className="rounded-lg border border-purple-300/12 bg-white/4 p-2 text-white/70 transition-colors hover:bg-rose-500/10 hover:text-rose-300 lg:hidden"
               aria-label="Sign out"
             >
               <LogOut className="h-4 w-4" />

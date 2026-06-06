@@ -14,10 +14,10 @@ export function Section({
 }: SectionProps) {
   const backgrounds = {
     none: "",
-    subtle: "bg-gradient-to-b from-white/5 via-transparent to-white/5 backdrop-blur-3xl",
-    gradient: "bg-gradient-to-br from-purple-900/20 via-transparent to-indigo-900/20",
-    dark: "bg-gradient-to-br from-slate-900/50 via-purple-950/50 to-indigo-950/50 backdrop-blur-xl",
-    purple: "bg-gradient-to-br from-purple-500/10 via-pink-500/5 to-purple-500/10 backdrop-blur-xl",
+    subtle: "bg-linear-to-b from-white/5 via-transparent to-white/5 backdrop-blur-3xl",
+    gradient: "bg-linear-to-br from-purple-900/20 via-transparent to-indigo-900/20",
+    dark: "bg-linear-to-br from-slate-900/50 via-purple-950/50 to-indigo-950/50 backdrop-blur-xl",
+    purple: "bg-linear-to-br from-purple-500/10 via-pink-500/5 to-purple-500/10 backdrop-blur-xl",
   };
 
   const paddings = {
@@ -55,7 +55,7 @@ export function Section({
               <div className={`flex items-center gap-3 mb-4 ${centered ? "justify-center" : ""}`}>
                 {titleIcon && <span className="text-2xl">{titleIcon}</span>}
                 <h2 className="font-display text-4xl font-bold tracking-tight md:text-5xl">
-                  <span className="bg-gradient-to-br from-white to-[#cdbdf5] bg-clip-text text-transparent">
+                  <span className="bg-linear-to-br from-white to-[#cdbdf5] bg-clip-text text-transparent">
                     {title}
                   </span>
                 </h2>

@@ -30,7 +30,7 @@ export function AdminLogin(): JSX.Element {
       <BackgroundNet />
       <GlassPanel className="relative z-10 w-full max-w-md rounded-3xl p-8">
         <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-pink-500">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-linear-to-br from-violet-500 to-pink-500">
             <KeyRound className="h-5 w-5 text-white" />
           </div>
           <div>
@@ -66,7 +66,7 @@ export function AdminLogin(): JSX.Element {
             <button
               type="button"
               onClick={devLogin}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-amber-500/25 bg-gradient-to-r from-amber-500/15 to-orange-500/15 px-4 py-3 font-medium text-amber-200 transition-colors hover:from-amber-500/25 hover:to-orange-500/25"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-amber-500/25 bg-linear-to-r from-amber-500/15 to-orange-500/15 px-4 py-3 font-medium text-amber-200 transition-colors hover:from-amber-500/25 hover:to-orange-500/25"
             >
               <Zap className="h-4 w-4" /> Dev Login (skip auth)
             </button>

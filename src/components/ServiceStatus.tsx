@@ -171,7 +171,7 @@ export default function ServiceStatus(): JSX.Element {
             type="button"
             onClick={refresh}
             disabled={loading}
-            className="rounded-lg border border-purple-300/12 bg-white/[0.04] p-2 text-white/70 transition-colors hover:bg-white/[0.08] disabled:opacity-50"
+            className="rounded-lg border border-purple-300/12 bg-white/4 p-2 text-white/70 transition-colors hover:bg-white/8 disabled:opacity-50"
             title="Refresh all services"
             aria-label="Refresh all services"
           >
@@ -210,7 +210,7 @@ export default function ServiceStatus(): JSX.Element {
               <GlassPanel interactive className="flex h-full flex-col rounded-2xl p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="rounded-xl border border-purple-300/12 bg-white/[0.04] p-2.5">
+                    <div className="rounded-xl border border-purple-300/12 bg-white/4 p-2.5">
                       <ServiceIcon className="h-5 w-5 text-purple-200" />
                     </div>
                     <div className="min-w-0">
@@ -237,7 +237,7 @@ export default function ServiceStatus(): JSX.Element {
                 )}
 
                 {hasStats && (
-                  <dl className="mt-4 grid grid-cols-2 gap-2 rounded-xl border border-white/5 bg-white/[0.02] p-3 font-mono text-xs">
+                  <dl className="mt-4 grid grid-cols-2 gap-2 rounded-xl border border-white/5 bg-white/2 p-3 font-mono text-xs">
                     {stats.guilds != null && (
                       <div className="flex flex-col">
                         <dt className="text-white/40">servers</dt>

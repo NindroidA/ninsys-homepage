@@ -57,7 +57,7 @@ export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-[9999] bg-black/70 backdrop-blur-md"
+            className="fixed inset-0 z-9999 bg-black/70 backdrop-blur-md"
           />
 
           <motion.div
@@ -65,7 +65,7 @@ export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+            className="fixed inset-0 z-9999 flex items-center justify-center p-4"
           >
             <div
               className="w-full max-w-md rounded-2xl border border-purple-300/12 bg-[#0d0a16]/95 p-8 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur-xl"
@@ -73,7 +73,7 @@ export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
             >
               <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-pink-500">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-violet-500 to-pink-500">
                     <KeyRound className="h-5 w-5 text-white" />
                   </div>
                   <div>
@@ -121,7 +121,7 @@ export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
                       devLogin();
                       onClose();
                     }}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-amber-500/25 bg-gradient-to-r from-amber-500/15 to-orange-500/15 px-4 py-3 font-medium text-amber-200 transition-colors hover:from-amber-500/25 hover:to-orange-500/25"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-amber-500/25 bg-linear-to-r from-amber-500/15 to-orange-500/15 px-4 py-3 font-medium text-amber-200 transition-colors hover:from-amber-500/25 hover:to-orange-500/25"
                   >
                     <Zap className="h-4 w-4" /> Dev Login (skip auth)
                   </button>

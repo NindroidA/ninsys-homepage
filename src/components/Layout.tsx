@@ -11,10 +11,10 @@ export default function Layout() {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-[#09060f] [background-image:radial-gradient(rgba(198,188,224,0.04)_1px,transparent_1.6px)] [background-size:26px_26px]">
+    <div className="min-h-screen bg-[#09060f] bg-[radial-gradient(rgba(198,188,224,0.04)_1px,transparent_1.6px)] bg-size-[26px_26px]">
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-purple-600 focus:px-4 focus:py-2 focus:text-white"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-100 focus:rounded-lg focus:bg-purple-600 focus:px-4 focus:py-2 focus:text-white"
       >
         Skip to content
       </a>

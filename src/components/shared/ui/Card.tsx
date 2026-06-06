@@ -17,12 +17,12 @@ export function Card({
   // v2 glass: purple-tinted hairline + inner-top highlight, light single blur.
   const variants = {
     default: "bg-white/[0.035] backdrop-blur-md border-purple-300/12",
-    glass: "bg-white/[0.03] backdrop-blur-md border-purple-300/10",
-    elevated: "bg-white/[0.05] backdrop-blur-md border-purple-300/20",
-    minimal: "bg-white/[0.02] backdrop-blur-sm border-white/10",
+    glass: "bg-white/3 backdrop-blur-md border-purple-300/10",
+    elevated: "bg-white/5 backdrop-blur-md border-purple-300/20",
+    minimal: "bg-white/2 backdrop-blur-xs border-white/10",
     gradient:
-      "bg-gradient-to-br from-violet-500/10 to-pink-500/5 backdrop-blur-md border-purple-400/15",
-    bordered: "bg-white/[0.03] backdrop-blur-md border-purple-300/15",
+      "bg-linear-to-br from-violet-500/10 to-pink-500/5 backdrop-blur-md border-purple-400/15",
+    bordered: "bg-white/3 backdrop-blur-md border-purple-300/15",
   };
 
   const paddings = {
@@ -33,7 +33,7 @@ export function Card({
     xl: "p-12",
   };
 
-  const hoverClasses = hover ? "hover:border-purple-300/25 hover:bg-white/[0.055]" : "";
+  const hoverClasses = hover ? "hover:border-purple-300/25 hover:bg-white/5.5" : "";
 
   const classes = `${baseClasses} ${variants[variant]} ${paddings[padding]} ${hoverClasses} ${onClick ? "cursor-pointer" : ""} ${className}`;
 

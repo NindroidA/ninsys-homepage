@@ -61,7 +61,7 @@ export default function Homepage() {
             personal development by a silly guy :3
           </p>
 
-          <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-xl border border-purple-500/20 bg-white/[0.04] px-4 py-2.5 font-mono text-[13px] backdrop-blur-md">
+          <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-xl border border-purple-500/20 bg-white/4 px-4 py-2.5 font-mono text-[13px] backdrop-blur-md">
             <span className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-[linear-gradient(135deg,#5eead4,#10b981)] shadow-[0_0_10px_rgba(52,211,153,0.6)]" />
               <span className="font-semibold text-white">{online}</span>
@@ -72,7 +72,7 @@ export default function Homepage() {
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/projects"
-              className="rounded-xl bg-gradient-to-br from-violet-500 to-pink-500 px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_-12px_rgba(236,72,153,0.55)] transition hover:brightness-110"
+              className="rounded-xl bg-linear-to-br from-violet-500 to-pink-500 px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_-12px_rgba(236,72,153,0.55)] transition hover:brightness-110"
             >
               View Projects
             </Link>
@@ -80,7 +80,7 @@ export default function Homepage() {
               href="https://github.com/NindroidA"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-xl border border-purple-500/20 bg-white/[0.04] px-5 py-3 text-sm font-semibold text-white/90 transition hover:bg-white/[0.08]"
+              className="inline-flex items-center gap-2 rounded-xl border border-purple-500/20 bg-white/4 px-5 py-3 text-sm font-semibold text-white/90 transition hover:bg-white/8"
             >
               <GithubIcon className="h-4 w-4" /> GitHub
             </a>

@@ -240,12 +240,12 @@ export default function Terminal() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-indigo-950 relative overflow-hidden">
+    <div className="min-h-screen bg-linear-to-br from-slate-900 via-purple-950 to-indigo-950 relative overflow-hidden">
       <Navbar variant="minimal" />
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-r from-cyan-400/10 to-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/3 -left-40 w-96 h-96 bg-gradient-to-r from-purple-400/10 to-pink-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-linear-to-r from-cyan-400/10 to-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/3 -left-40 w-96 h-96 bg-linear-to-r from-purple-400/10 to-pink-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
@@ -256,7 +256,7 @@ export default function Terminal() {
           className="w-full max-w-6xl"
         >
           {/* CRT Monitor Frame */}
-          <div className="bg-gradient-to-br from-gray-800 via-gray-900 to-black p-8 rounded-3xl shadow-2xl border border-gray-700">
+          <div className="bg-linear-to-br from-gray-800 via-gray-900 to-black p-8 rounded-3xl shadow-2xl border border-gray-700">
             {/* Screen */}
             <div
               className="relative bg-black rounded-2xl p-8 overflow-hidden"
@@ -315,7 +315,7 @@ export default function Terminal() {
                       filter: "brightness(1.2)",
                     }}
                   >
-                    <pre className="whitespace-pre-wrap break-words">{line.content}</pre>
+                    <pre className="whitespace-pre-wrap wrap-break-word">{line.content}</pre>
                   </motion.div>
                 ))}
 
@@ -329,7 +329,7 @@ export default function Terminal() {
                     onChange={(e) => setCurrentInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     disabled={isProcessing}
-                    className={`flex-1 bg-transparent outline-none ${TERMINAL_CONFIG.COLORS.INPUT} caret-green-400`}
+                    className={`flex-1 bg-transparent outline-hidden ${TERMINAL_CONFIG.COLORS.INPUT} caret-green-400`}
                     style={{
                       textShadow: "0 0 10px currentColor",
                     }}

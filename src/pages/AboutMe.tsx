@@ -252,7 +252,7 @@ export default function AboutMe() {
 
               <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
                 {/* Profile picture */}
-                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center shadow-2xl border-2 border-purple-300/20 overflow-hidden">
+                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-linear-to-br from-violet-500 to-pink-500 flex items-center justify-center shadow-2xl border-2 border-purple-300/20 overflow-hidden">
                   {profile.avatarUrl ? (
                     <img
                       src={profile.avatarUrl}
@@ -282,7 +282,7 @@ export default function AboutMe() {
                         href={profile.social.github}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-3 bg-white/[0.04] hover:bg-white/[0.08] rounded-xl border border-purple-300/12 hover:border-purple-300/25 transition-all duration-200 group"
+                        className="p-3 bg-white/4 hover:bg-white/8 rounded-xl border border-purple-300/12 hover:border-purple-300/25 transition-all duration-200 group"
                       >
                         <GithubIcon className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
                       </a>
@@ -292,7 +292,7 @@ export default function AboutMe() {
                         href={profile.social.linkedin}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-3 bg-white/[0.04] hover:bg-white/[0.08] rounded-xl border border-purple-300/12 hover:border-purple-300/25 transition-all duration-200 group"
+                        className="p-3 bg-white/4 hover:bg-white/8 rounded-xl border border-purple-300/12 hover:border-purple-300/25 transition-all duration-200 group"
                       >
                         <LinkedinIcon className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
                       </a>
@@ -300,7 +300,7 @@ export default function AboutMe() {
                     {profile.social.email && (
                       <a
                         href={`mailto:${profile.social.email}`}
-                        className="p-3 bg-white/[0.04] hover:bg-white/[0.08] rounded-xl border border-purple-300/12 hover:border-purple-300/25 transition-all duration-200 group"
+                        className="p-3 bg-white/4 hover:bg-white/8 rounded-xl border border-purple-300/12 hover:border-purple-300/25 transition-all duration-200 group"
                       >
                         <Mail className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
                       </a>

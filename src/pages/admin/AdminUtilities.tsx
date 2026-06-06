@@ -16,7 +16,7 @@ function maskToken(token: string | null): string {
 
 function Row({ label, value }: { label: string; value: string }): JSX.Element {
   return (
-    <div className="flex items-center justify-between gap-4 border-b border-white/[0.04] py-2 last:border-0">
+    <div className="flex items-center justify-between gap-4 border-b border-white/4 py-2 last:border-0">
       <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/40">
         {label}
       </span>
@@ -74,14 +74,14 @@ export function AdminUtilities(): JSX.Element {
             <button
               type="button"
               onClick={clearCache}
-              className="inline-flex items-center gap-2 rounded-lg border border-purple-300/12 bg-white/[0.04] px-3 py-2 text-sm text-white/80 transition-colors hover:bg-white/[0.08]"
+              className="inline-flex items-center gap-2 rounded-lg border border-purple-300/12 bg-white/4 px-3 py-2 text-sm text-white/80 transition-colors hover:bg-white/8"
             >
               <RefreshCw className="h-4 w-4" /> {cleared ? "Cleared!" : "Clear data cache"}
             </button>
             <button
               type="button"
               onClick={reset}
-              className="inline-flex items-center gap-2 rounded-lg border border-purple-300/12 bg-white/[0.04] px-3 py-2 text-sm text-white/80 transition-colors hover:bg-white/[0.08]"
+              className="inline-flex items-center gap-2 rounded-lg border border-purple-300/12 bg-white/4 px-3 py-2 text-sm text-white/80 transition-colors hover:bg-white/8"
             >
               <Trash2 className="h-4 w-4" /> Reset site config
             </button>
@@ -100,7 +100,7 @@ export function AdminUtilities(): JSX.Element {
             type="button"
             onClick={refresh}
             disabled={loading}
-            className="rounded-lg border border-purple-300/12 bg-white/[0.04] p-2 text-white/70 transition-colors hover:bg-white/[0.08] disabled:opacity-50"
+            className="rounded-lg border border-purple-300/12 bg-white/4 p-2 text-white/70 transition-colors hover:bg-white/8 disabled:opacity-50"
             aria-label="Refresh repositories"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
@@ -120,7 +120,7 @@ export function AdminUtilities(): JSX.Element {
             {repos.map((repo) => (
               <li
                 key={repo.id}
-                className="flex items-start gap-3 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2.5"
+                className="flex items-start gap-3 rounded-lg border border-white/5 bg-white/2 px-3 py-2.5"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">

@@ -25,13 +25,13 @@ export default function NotFound(): JSX.Element {
         </span>
 
         <h1 className="mt-3 font-display text-7xl font-bold leading-none tracking-tight sm:text-8xl">
-          <span className="bg-gradient-to-br from-white to-[#cdbdf5] bg-clip-text text-transparent">
+          <span className="bg-linear-to-br from-white to-[#cdbdf5] bg-clip-text text-transparent">
             4
           </span>
-          <span className="bg-gradient-to-br from-[#d946ef] to-[#8b5cf6] bg-clip-text text-transparent">
+          <span className="bg-linear-to-br from-[#d946ef] to-[#8b5cf6] bg-clip-text text-transparent">
             0
           </span>
-          <span className="bg-gradient-to-br from-white to-[#cdbdf5] bg-clip-text text-transparent">
+          <span className="bg-linear-to-br from-white to-[#cdbdf5] bg-clip-text text-transparent">
             4
           </span>
         </h1>
@@ -52,14 +52,14 @@ export default function NotFound(): JSX.Element {
         <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             to="/"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-violet-500 to-pink-500 px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_-12px_rgba(236,72,153,0.55)] transition hover:brightness-110"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-linear-to-br from-violet-500 to-pink-500 px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_-12px_rgba(236,72,153,0.55)] transition hover:brightness-110"
           >
             <Home className="h-4 w-4" /> Back to Home
           </Link>
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-purple-300/12 bg-white/[0.04] px-5 py-3 text-sm font-semibold text-white/80 transition hover:bg-white/[0.08]"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-purple-300/12 bg-white/4 px-5 py-3 text-sm font-semibold text-white/80 transition hover:bg-white/8"
           >
             <ArrowLeft className="h-4 w-4" /> Go Back
           </button>

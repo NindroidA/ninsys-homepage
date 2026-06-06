@@ -31,7 +31,7 @@ export function DeleteConfirmModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50"
           />
 
           {/* Modal */}
@@ -39,7 +39,7 @@ export function DeleteConfirmModal({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed inset-0 z-[51] flex items-center justify-center p-4"
+            className="fixed inset-0 z-51 flex items-center justify-center p-4"
           >
             <div
               className="w-full max-w-md bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_30px_80px_-40px_rgba(0,0,0,0.9)] p-6"
@@ -63,7 +63,7 @@ export function DeleteConfirmModal({
                     type="button"
                     onClick={onClose}
                     disabled={deleting}
-                    className="flex-1 px-6 py-3 bg-white/[0.04] hover:bg-white/[0.08] border border-purple-300/12 disabled:opacity-50 text-white/70 rounded-lg transition-colors"
+                    className="flex-1 px-6 py-3 bg-white/4 hover:bg-white/8 border border-purple-300/12 disabled:opacity-50 text-white/70 rounded-lg transition-colors"
                   >
                     Cancel
                   </button>

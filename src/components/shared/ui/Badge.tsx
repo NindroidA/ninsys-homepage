@@ -9,7 +9,7 @@ export function Badge({
   pulse = false,
 }: BadgeProps) {
   const variants = {
-    default: "bg-white/[0.06] text-white/80 border-white/10 hover:bg-white/[0.1]",
+    default: "bg-white/6 text-white/80 border-white/10 hover:bg-white/10",
     success: "bg-emerald-500/15 text-emerald-300 border-emerald-500/25 hover:bg-emerald-500/25",
     warning: "bg-amber-500/15 text-amber-300 border-amber-500/25 hover:bg-amber-500/25",
     error: "bg-rose-500/15 text-rose-300 border-rose-500/25 hover:bg-rose-500/25",
@@ -29,7 +29,7 @@ export function Badge({
     <span
       className={`inline-flex items-center rounded-lg border font-medium transition-colors duration-200 ${variants[variant]} ${sizes[size]} ${pulse ? "animate-pulse" : ""} ${className}`}
     >
-      {icon && <span className="flex-shrink-0">{icon}</span>}
+      {icon && <span className="shrink-0">{icon}</span>}
       {children}
     </span>
   );

@@ -15,9 +15,9 @@ const navItems = [
 
 // Shared v2 glass treatment: purple-tinted hairline + light single blur.
 const glass =
-  "border border-purple-300/12 bg-white/[0.04] backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_16px_40px_-28px_rgba(0,0,0,0.8)]";
+  "border border-purple-300/12 bg-white/4 backdrop-blur-md shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_16px_40px_-28px_rgba(0,0,0,0.8)]";
 const activePill =
-  "bg-gradient-to-br from-violet-500 to-pink-500 text-white shadow-[0_8px_24px_-10px_rgba(236,72,153,0.6)]";
+  "bg-linear-to-br from-violet-500 to-pink-500 text-white shadow-[0_8px_24px_-10px_rgba(236,72,153,0.6)]";
 
 export default function Navbar({ variant = "default" }: NavbarProps): JSX.Element {
   const location = useLocation();
@@ -72,10 +72,10 @@ export default function Navbar({ variant = "default" }: NavbarProps): JSX.Elemen
               className="font-display text-lg font-bold tracking-tight transition-opacity hover:opacity-80"
               aria-label="Nindroid Systems — home"
             >
-              <span className="bg-gradient-to-b from-white to-[#cdbdf5] bg-clip-text text-transparent">
+              <span className="bg-linear-to-b from-white to-[#cdbdf5] bg-clip-text text-transparent">
                 N
               </span>
-              <span className="bg-gradient-to-br from-[#d946ef] to-[#8b5cf6] bg-clip-text text-transparent">
+              <span className="bg-linear-to-br from-[#d946ef] to-[#8b5cf6] bg-clip-text text-transparent">
                 S
               </span>
             </Link>
