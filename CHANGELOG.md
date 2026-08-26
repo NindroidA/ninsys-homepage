@@ -5,6 +5,52 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-08-26
+
+### Fixed
+
+- **The brand fonts were not loading in production.** `index.html` linked
+  fonts.googleapis.com, but the CSP served in front of the site allows neither
+  `fonts.googleapis.com` (style-src) nor `fonts.gstatic.com` (font-src), so the
+  stylesheet was refused and no `@font-face` ever registered — measured on the
+  live site as zero loaded families. Space Grotesk, the display face behind the
+  wordmark and every heading, was absent entirely and the site rendered in
+  system fallbacks. All three families are now self-hosted; they are variable
+  fonts, so six files cover every weight and `unicode-range` keeps a typical
+  visitor to the ~100 kB latin subset.
+- **Click-outside-to-close never worked in any of the six modals.** The backdrop
+  carried the handler, but the centring wrapper is a sibling at an equal or
+  higher z-index covering the same area, so it swallowed every click. The
+  wrapper now dismisses on its own clicks only.
+- The 404 route is marked `noindex`. The SPA fallback answers 200 for every
+  unknown URL, so it was an indexable soft 404.
+- nginx: the four security headers were declared only at server level while both
+  cache locations declared their own `add_header`, and nginx resets header
+  inheritance whenever a level declares any — so they were missing from every
+  HTML and asset response. Also scoped the one-year immutable cache to hashed
+  `/assets/` output (it was matching by extension and pinning unhashed `public/`
+  files), gave `site.webmanifest` its correct MIME type, removed duplicate
+  `Cache-Control` headers, hid the nginx version, and dropped an unreachable
+  `error_page 404`.
+
+### Changed
+
+- Vite 7 → 8 (Rolldown is now the default bundler) and `@vitejs/plugin-react`
+  5 → 6. Both build hooks the homepage's critical JS depends on still apply, and
+  the 3D device gate was re-verified: phones still never fetch the three chunk.
+  Build time drops from ~7s to ~750ms.
+- framer-motion 12 → 13. Its only breaking change — removal of the optional
+  `@emotion/is-prop-valid` dependency — does not apply here.
+- Bun is now 1.3.13 in package.json and CI. CI had been pinned to 1.2.17 while
+  the production image builds on `oven/bun:1-alpine`, so CI was the only place
+  running a Bun a year behind what ships.
+- Biome warnings went from 95 to 0, and CI now runs
+  `biome ci --error-on-warnings` so the backlog cannot silently refill.
+- Config drift: `tsconfig.json` referenced a `tailwind.config.js` that Tailwind 4
+  deleted, `tsconfig.node.json` was orphaned, the web manifest's colours matched
+  nothing in the app, `robots.txt` allowed `/admin`, and `biome.json` carried a
+  CSS-only override that could never fire.
+
 ## [2.2.0] - 2026-08-26
 
 ### Fixed
