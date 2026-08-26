@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { IS_DEV } from "../../context/AuthContext";
 import { useAuth } from "../../hooks/useAuth";
+import { useModalA11y } from "../../hooks/useModalA11y";
 import { TotpInput } from "./TotpInput";
 
 interface AdminLoginModalProps {
@@ -18,6 +19,7 @@ export function AdminLoginModal({ isOpen, onClose, onSuccess }: AdminLoginModalP
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [clearSignal, setClearSignal] = useState(0);
+  const panelRef = useModalA11y(isOpen, onClose);
 
   // Reset transient state each time the modal opens.
   useEffect(() => {
@@ -27,15 +29,6 @@ export function AdminLoginModal({ isOpen, onClose, onSuccess }: AdminLoginModalP
       setClearSignal((s) => s + 1);
     }
   }, [isOpen]);
-
-  // Close on Escape.
-  useEffect(() => {
-    const onKey = (e: globalThis.KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [isOpen, onClose]);
 
   const submit = async (code: string) => {
     setLoading(true);
@@ -71,6 +64,11 @@ export function AdminLoginModal({ isOpen, onClose, onSuccess }: AdminLoginModalP
             className="fixed inset-0 z-9999 flex items-center justify-center p-4"
           >
             <div
+              ref={panelRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="admin-login-modal-title"
+              tabIndex={-1}
               className="w-full max-w-md rounded-2xl border border-purple-300/12 bg-[#0d0a16]/95 p-8 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur-xl"
               onClick={(e) => e.stopPropagation()}
             >
@@ -80,7 +78,12 @@ export function AdminLoginModal({ isOpen, onClose, onSuccess }: AdminLoginModalP
                     <KeyRound className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h2 className="font-display text-xl font-bold text-white">Admin Login</h2>
+                    <h2
+                      id="admin-login-modal-title"
+                      className="font-display text-xl font-bold text-white"
+                    >
+                      Admin Login
+                    </h2>
                     <p className="font-mono text-xs uppercase tracking-[0.16em] text-white/40">
                       enter your totp code
                     </p>

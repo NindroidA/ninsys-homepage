@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ImagePlus, Link2, Plus, Trash2, Upload, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useModalA11y } from "../../hooks/useModalA11y";
 import type { AboutProfile } from "../../types/about";
 
 interface ProfileEditModalProps {
@@ -29,6 +30,7 @@ export function ProfileEditModal({
   const [linkedin, setLinkedin] = useState("");
   const [email, setEmail] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useModalA11y(isOpen, onClose);
 
   // Reset form when modal opens
   useEffect(() => {
@@ -125,17 +127,28 @@ export function ProfileEditModal({
             exit={{ opacity: 0, scale: 0.95 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
+            {/* biome-ignore lint/a11y/useKeyWithClickEvents: keyboard handling lives in useModalA11y; this only stops clicks reaching the backdrop */}
             <div
+              ref={panelRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="profile-edit-title"
+              tabIndex={-1}
               className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-auto bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
               <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
-                <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white">
+                <h2
+                  id="profile-edit-title"
+                  className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white"
+                >
                   Edit Profile
                 </h2>
                 <button
+                  type="button"
                   onClick={onClose}
+                  aria-label="Close profile editor"
                   className="p-2 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors"
                 >
                   <X className="w-5 h-5" />
@@ -146,8 +159,14 @@ export function ProfileEditModal({
                 {/* Name and Tagline */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-white/70 mb-2">Name</label>
+                    <label
+                      htmlFor="profile-edit-name"
+                      className="block text-sm font-medium text-white/70 mb-2"
+                    >
+                      Name
+                    </label>
                     <input
+                      id="profile-edit-name"
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -157,8 +176,14 @@ export function ProfileEditModal({
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-white/70 mb-2">Location</label>
+                    <label
+                      htmlFor="profile-edit-location"
+                      className="block text-sm font-medium text-white/70 mb-2"
+                    >
+                      Location
+                    </label>
                     <input
+                      id="profile-edit-location"
                       type="text"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
@@ -170,8 +195,14 @@ export function ProfileEditModal({
 
                 {/* Tagline */}
                 <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">Tagline</label>
+                  <label
+                    htmlFor="profile-edit-tagline"
+                    className="block text-sm font-medium text-white/70 mb-2"
+                  >
+                    Tagline
+                  </label>
                   <input
+                    id="profile-edit-tagline"
                     type="text"
                     value={tagline}
                     onChange={(e) => setTagline(e.target.value)}
@@ -181,8 +212,14 @@ export function ProfileEditModal({
                 </div>
 
                 {/* Avatar with Preview */}
-                <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">Avatar</label>
+                {/* biome-ignore lint/a11y/useSemanticElements: fieldset/legend would change the layout */}
+                <div role="group" aria-labelledby="profile-edit-avatar-label">
+                  <span
+                    id="profile-edit-avatar-label"
+                    className="block text-sm font-medium text-white/70 mb-2"
+                  >
+                    Avatar
+                  </span>
                   <div className="flex gap-4">
                     {/* Preview */}
                     <div className="shrink-0">
@@ -233,7 +270,9 @@ export function ProfileEditModal({
                       {/* URL input */}
                       {avatarInputMode === "url" && (
                         <input
+                          id="profile-edit-avatar-url"
                           type="url"
+                          aria-label="Avatar image URL"
                           value={avatarUrl.startsWith("data:") ? "" : avatarUrl}
                           onChange={(e) => setAvatarUrl(e.target.value)}
                           className="w-full px-4 py-2 bg-white/4 border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-hidden focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 text-sm"
@@ -245,9 +284,11 @@ export function ProfileEditModal({
                       {avatarInputMode === "file" && (
                         <div>
                           <input
+                            id="profile-edit-avatar-file"
                             ref={fileInputRef}
                             type="file"
                             accept="image/*"
+                            aria-label="Avatar image file"
                             onChange={handleFileChange}
                             className="hidden"
                           />
@@ -281,12 +322,20 @@ export function ProfileEditModal({
                 </div>
 
                 {/* Bio paragraphs */}
-                <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">Bio</label>
+                {/* biome-ignore lint/a11y/useSemanticElements: fieldset/legend would change the layout */}
+                <div role="group" aria-labelledby="profile-edit-bio-label">
+                  <span
+                    id="profile-edit-bio-label"
+                    className="block text-sm font-medium text-white/70 mb-2"
+                  >
+                    Bio
+                  </span>
                   <div className="space-y-3">
                     {bio.map((paragraph, i) => (
                       <div key={i} className="flex gap-2">
                         <textarea
+                          id={`profile-edit-bio-${i}`}
+                          aria-label={`Bio paragraph ${i + 1}`}
                           value={paragraph}
                           onChange={(e) => handleUpdateBio(i, e.target.value)}
                           rows={2}
@@ -296,6 +345,7 @@ export function ProfileEditModal({
                         <button
                           type="button"
                           onClick={() => handleRemoveBio(i)}
+                          aria-label={`Remove bio paragraph ${i + 1}`}
                           className="p-2 h-fit bg-white/4 hover:bg-red-500/20 text-white/40 hover:text-red-400 rounded-lg transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -314,14 +364,21 @@ export function ProfileEditModal({
                 </div>
 
                 {/* Social links */}
-                <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">
+                {/* biome-ignore lint/a11y/useSemanticElements: fieldset/legend would change the layout */}
+                <div role="group" aria-labelledby="profile-edit-social-label">
+                  <span
+                    id="profile-edit-social-label"
+                    className="block text-sm font-medium text-white/70 mb-2"
+                  >
                     Social Links
-                  </label>
+                  </span>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
-                      <span className="text-white/50 w-20">GitHub</span>
+                      <label htmlFor="profile-edit-github" className="text-white/50 w-20">
+                        GitHub
+                      </label>
                       <input
+                        id="profile-edit-github"
                         type="url"
                         value={github}
                         onChange={(e) => setGithub(e.target.value)}
@@ -330,8 +387,11 @@ export function ProfileEditModal({
                       />
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="text-white/50 w-20">LinkedIn</span>
+                      <label htmlFor="profile-edit-linkedin" className="text-white/50 w-20">
+                        LinkedIn
+                      </label>
                       <input
+                        id="profile-edit-linkedin"
                         type="url"
                         value={linkedin}
                         onChange={(e) => setLinkedin(e.target.value)}
@@ -340,8 +400,11 @@ export function ProfileEditModal({
                       />
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="text-white/50 w-20">Email</span>
+                      <label htmlFor="profile-edit-email" className="text-white/50 w-20">
+                        Email
+                      </label>
                       <input
+                        id="profile-edit-email"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}

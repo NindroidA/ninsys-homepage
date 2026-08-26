@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Plus, Star, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useModalA11y } from "../../hooks/useModalA11y";
 import type { CreateProjectInput, Project, UpdateProjectInput } from "../../types/projects";
 import { getLucideIcon, PROJECT_ICONS } from "../../utils/iconUtils";
 
@@ -136,6 +137,7 @@ export function ProjectEditModal({
   saving,
   error,
 }: ProjectEditModalProps) {
+  const panelRef = useModalA11y(isOpen, onClose);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [technologies, setTechnologies] = useState<string[]>([]);
@@ -312,16 +314,26 @@ export function ProjectEditModal({
             className="fixed inset-0 z-52 flex items-center justify-center p-4"
           >
             <div
+              ref={panelRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="project-edit-modal-title"
+              tabIndex={-1}
               className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-auto bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
               <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
-                <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white">
+                <h2
+                  id="project-edit-modal-title"
+                  className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white"
+                >
                   {project ? "Edit Project" : initialData ? "Import Project" : "New Project"}
                 </h2>
                 <button
+                  type="button"
                   onClick={onClose}
+                  aria-label="Close dialog"
                   className="p-2 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors"
                 >
                   <X className="w-5 h-5" />
@@ -332,8 +344,14 @@ export function ProjectEditModal({
               <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                 {/* Title */}
                 <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">Title</label>
+                  <label
+                    htmlFor="project-title"
+                    className="block text-sm font-medium text-white/70 mb-2"
+                  >
+                    Title
+                  </label>
                   <input
+                    id="project-title"
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
@@ -345,10 +363,14 @@ export function ProjectEditModal({
 
                 {/* Description */}
                 <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">
+                  <label
+                    htmlFor="project-description"
+                    className="block text-sm font-medium text-white/70 mb-2"
+                  >
                     Description
                   </label>
                   <textarea
+                    id="project-description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     required
@@ -360,17 +382,24 @@ export function ProjectEditModal({
 
                 {/* Icon Picker */}
                 <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">Icon</label>
+                  <span
+                    id="project-icon-label"
+                    className="block text-sm font-medium text-white/70 mb-2"
+                  >
+                    Icon
+                  </span>
                   <div className="relative" ref={iconPickerRef}>
                     <button
                       type="button"
                       onClick={() => setShowIconPicker(!showIconPicker)}
+                      aria-labelledby="project-icon-label project-icon-value"
+                      aria-expanded={showIconPicker}
                       className="flex items-center gap-3 px-4 py-3 bg-white/4 border border-purple-300/12 rounded-lg text-white hover:border-white/20 transition-colors w-full"
                     >
                       <div className="p-2 bg-purple-500/20 rounded-lg">
                         {SelectedIcon && <SelectedIcon className="w-5 h-5 text-purple-300" />}
                       </div>
-                      <span className="flex-1 text-left">
+                      <span id="project-icon-value" className="flex-1 text-left">
                         {PROJECT_ICONS.find((i) => i.name === icon)?.label || "Folder"}
                       </span>
                       <ChevronDown
@@ -392,6 +421,7 @@ export function ProjectEditModal({
                                   setShowIconPicker(false);
                                 }}
                                 title={label}
+                                aria-label={label}
                                 className={`p-2 rounded-lg border transition-colors ${
                                   icon === name
                                     ? "bg-purple-500/20 border-purple-500"
@@ -410,13 +440,17 @@ export function ProjectEditModal({
 
                 {/* Technologies with dropdown */}
                 <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">
+                  <label
+                    htmlFor="project-technologies"
+                    className="block text-sm font-medium text-white/70 mb-2"
+                  >
                     Technologies
                   </label>
                   <div className="relative" ref={techDropdownRef}>
                     <div className="flex gap-2 mb-2">
                       <div className="relative flex-1">
                         <input
+                          id="project-technologies"
                           type="text"
                           value={techInput}
                           onChange={(e) => {
@@ -435,6 +469,11 @@ export function ProjectEditModal({
                               }
                             }
                             if (e.key === "Escape") {
+                              // Escape closes the open suggestion list first; when nothing is
+                              // open here it falls through to the modal's own Escape handler.
+                              if (showTechDropdown && filteredTechOptions.length > 0) {
+                                e.stopPropagation();
+                              }
                               setShowTechDropdown(false);
                             }
                           }}
@@ -459,6 +498,7 @@ export function ProjectEditModal({
                       <button
                         type="button"
                         onClick={handleAddTech}
+                        aria-label="Add technology"
                         className="px-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 rounded-lg transition-colors"
                       >
                         <Plus className="w-5 h-5" />
@@ -475,6 +515,7 @@ export function ProjectEditModal({
                         <button
                           type="button"
                           onClick={() => handleRemoveTech(tech)}
+                          aria-label={`Remove ${tech}`}
                           className="p-0.5 hover:bg-white/10 rounded-full"
                         >
                           <X className="w-3 h-3" />
@@ -487,8 +528,14 @@ export function ProjectEditModal({
                 {/* Category, Date row */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-white/70 mb-2">Category</label>
+                    <label
+                      htmlFor="project-category"
+                      className="block text-sm font-medium text-white/70 mb-2"
+                    >
+                      Category
+                    </label>
                     <select
+                      id="project-category"
                       value={category}
                       onChange={(e) => setCategory(e.target.value as "current" | "completed")}
                       className="w-full px-4 py-3 bg-white/4 border border-purple-300/12 rounded-lg text-white focus:outline-hidden focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
@@ -502,8 +549,14 @@ export function ProjectEditModal({
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-white/70 mb-2">Month</label>
+                    <label
+                      htmlFor="project-date-month"
+                      className="block text-sm font-medium text-white/70 mb-2"
+                    >
+                      Month
+                    </label>
                     <select
+                      id="project-date-month"
                       value={dateMonth}
                       onChange={(e) => setDateMonth(e.target.value)}
                       className="w-full px-4 py-3 bg-white/4 border border-purple-300/12 rounded-lg text-white focus:outline-hidden focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
@@ -516,8 +569,14 @@ export function ProjectEditModal({
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-white/70 mb-2">Year</label>
+                    <label
+                      htmlFor="project-date-year"
+                      className="block text-sm font-medium text-white/70 mb-2"
+                    >
+                      Year
+                    </label>
                     <input
+                      id="project-date-year"
                       type="number"
                       value={dateYear}
                       onChange={(e) => setDateYear(e.target.value)}
@@ -561,10 +620,14 @@ export function ProjectEditModal({
                 {/* URLs */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-white/70 mb-2">
+                    <label
+                      htmlFor="project-github-url"
+                      className="block text-sm font-medium text-white/70 mb-2"
+                    >
                       GitHub URL (optional)
                     </label>
                     <input
+                      id="project-github-url"
                       type="url"
                       value={githubUrl}
                       onChange={(e) => setGithubUrl(e.target.value)}
@@ -573,10 +636,14 @@ export function ProjectEditModal({
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-white/70 mb-2">
+                    <label
+                      htmlFor="project-live-url"
+                      className="block text-sm font-medium text-white/70 mb-2"
+                    >
                       Live URL (optional)
                     </label>
                     <input
+                      id="project-live-url"
                       type="url"
                       value={liveUrl}
                       onChange={(e) => setLiveUrl(e.target.value)}
