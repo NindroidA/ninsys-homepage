@@ -233,6 +233,7 @@ export default function Projects() {
         ) : (
           <ProjectDragList
             projects={filteredProjects}
+            allProjects={projects}
             isEditing={isEditing}
             onReorder={reorderProjects}
             onEdit={handleEditProject}

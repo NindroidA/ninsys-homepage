@@ -53,6 +53,26 @@ export interface SystemHealth {
  * Authentication: Uses JWT tokens stored in sessionStorage ('ninsys_auth_token').
  * All mutating operations (POST, PUT, DELETE) require authentication.
  */
+/** Dispatched on `window` when the API rejects our token, so AuthContext can log out. */
+export const UNAUTHORIZED_EVENT = "ninsys:unauthorized";
+
+/**
+ * Prefer the server's own error message over a bare status code — the previous
+ * `API Error: 401` discarded the body and told the user nothing.
+ */
+async function describeError(response: Response): Promise<string> {
+  try {
+    const body = await response.clone().json();
+    const message = body?.error ?? body?.message;
+    if (typeof message === "string" && message) {
+      return `${message} (${response.status})`;
+    }
+  } catch {
+    // non-JSON body; fall through to the status line
+  }
+  return `API Error: ${response.status}`;
+}
+
 class NinSysAPI {
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const { headers, ...restOptions } = options || {};
@@ -66,10 +86,25 @@ class NinSysAPI {
     });
 
     if (!response.ok) {
-      throw new Error(`API Error: ${response.status}`);
+      // A rejected token has to reach AuthContext, otherwise the UI keeps
+      // claiming the user is signed in while every mutation silently fails.
+      if (response.status === 401) {
+        sessionStorage.removeItem("ninsys_auth_token");
+        sessionStorage.removeItem("ninsys_auth_expires");
+        window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
+      }
+      throw new Error(await describeError(response));
     }
 
-    return response.json();
+    // 204 No Content (and any other empty body) is a success, but response.json()
+    // throws on it — which used to surface as a failed delete/reorder for an
+    // operation the server had already applied.
+    if (response.status === 204 || response.headers.get("content-length") === "0") {
+      return undefined as T;
+    }
+
+    const text = await response.text();
+    return (text ? JSON.parse(text) : undefined) as T;
   }
 
   // Authenticated request - adds JWT token from sessionStorage

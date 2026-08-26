@@ -9,9 +9,11 @@ import { TotpInput } from "./TotpInput";
 interface AdminLoginModalProps {
   isOpen: boolean;
   onClose: () => void;
+  /** Called after a successful login, so the caller can navigate to the panel. */
+  onSuccess?: () => void;
 }
 
-export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
+export function AdminLoginModal({ isOpen, onClose, onSuccess }: AdminLoginModalProps) {
   const { login, devLogin } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -42,6 +44,7 @@ export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
     setLoading(false);
     if (result.success) {
       onClose();
+      onSuccess?.();
     } else {
       setError(result.error || "Authentication failed");
       setClearSignal((s) => s + 1);
@@ -119,6 +122,7 @@ export function AdminLoginModal({ isOpen, onClose }: AdminLoginModalProps) {
                     type="button"
                     onClick={() => {
                       devLogin();
+                      onSuccess?.();
                       onClose();
                     }}
                     className="flex w-full items-center justify-center gap-2 rounded-xl border border-amber-500/25 bg-linear-to-r from-amber-500/15 to-orange-500/15 px-4 py-3 font-medium text-amber-200 transition-colors hover:from-amber-500/25 hover:to-orange-500/25"

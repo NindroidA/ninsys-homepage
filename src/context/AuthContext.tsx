@@ -1,6 +1,7 @@
 import { createContext, type ReactNode, useCallback, useEffect, useState } from "react";
 import type { AuthContextValue, AuthState, LoginResponse } from "../types/auth";
 import { API_BASE } from "../utils/apiBase";
+import { UNAUTHORIZED_EVENT } from "../utils/ninsysAPI";
 
 // Dev mode check - allows bypassing auth on localhost
 export const IS_DEV =
@@ -133,6 +134,41 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     setState(initialState);
   }, []);
+
+  /**
+   * Drop auth state without calling the logout endpoint. Used when the session
+   * has already stopped being valid — the token expired, or the API rejected it.
+   */
+  const clearSession = useCallback(() => {
+    sessionStorage.removeItem(STORAGE_KEYS.TOKEN);
+    sessionStorage.removeItem(STORAGE_KEYS.EXPIRES);
+    localStorage.removeItem(STORAGE_KEYS.GUEST_VIEW);
+    setState(initialState);
+  }, []);
+
+  // Expiry used to be evaluated exactly once, on mount: a tab left open past the
+  // token's lifetime stayed "authenticated" while every request 401'd. Re-check
+  // on a timer, when the tab regains focus, and whenever the API reports a 401.
+  useEffect(() => {
+    const dropIfInvalid = () => {
+      if (sessionStorage.getItem(STORAGE_KEYS.TOKEN) && !checkSession()) {
+        clearSession();
+      }
+    };
+    const onUnauthorized = () => clearSession();
+    const onVisible = () => {
+      if (!document.hidden) dropIfInvalid();
+    };
+
+    const timer = window.setInterval(dropIfInvalid, 60_000);
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener(UNAUTHORIZED_EVENT, onUnauthorized);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener(UNAUTHORIZED_EVENT, onUnauthorized);
+    };
+  }, [checkSession, clearSession]);
 
   // Toggle guest view mode
   const toggleGuestView = useCallback(() => {

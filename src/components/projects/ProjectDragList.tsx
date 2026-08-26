@@ -18,7 +18,14 @@ import { Grid } from "../shared/ui";
 import { ProjectCard } from "./ProjectCard";
 
 interface ProjectDragListProps {
+  /** The projects actually rendered — may be a filtered subset of `allProjects`. */
   projects: Project[];
+  /**
+   * Every project, unfiltered. Reordering happens on the visible subset, but both
+   * the query cache and the reorder endpoint expect the complete list — writing
+   * back only the subset would drop the hidden projects.
+   */
+  allProjects: Project[];
   isEditing: boolean;
   onReorder: (projectIds: string[]) => Promise<boolean>;
   onEdit: (project: Project) => void;
@@ -28,6 +35,7 @@ interface ProjectDragListProps {
 
 export function ProjectDragList({
   projects,
+  allProjects,
   isEditing,
   onReorder,
   onEdit,
@@ -45,50 +53,48 @@ export function ProjectDragList({
     }),
   );
 
+  /**
+   * Fold a reordered *visible* list back into the full list, by refilling the
+   * slots the visible projects occupied. Projects hidden by the active filter
+   * keep their positions, so reordering under a filter no longer drops them
+   * from the cache or from the ids sent to the server.
+   */
+  const mergeIntoAll = (reorderedVisible: Project[]): Project[] => {
+    const visibleIds = new Set(projects.map((p) => p.id));
+    let next = 0;
+    return allProjects.map((p) => (visibleIds.has(p.id) ? (reorderedVisible[next++] ?? p) : p));
+  };
+
+  const persistReorder = async (reorderedVisible: Project[]) => {
+    const newAll = mergeIntoAll(reorderedVisible);
+    const previous = allProjects; // for rollback
+
+    setLocalProjects(newAll); // optimistic
+    const success = await onReorder(newAll.map((p) => p.id));
+    if (!success) {
+      setLocalProjects(previous);
+    }
+  };
+
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
+    if (!over || active.id === over.id) return;
 
-    if (over && active.id !== over.id) {
-      const oldIndex = projects.findIndex((p) => p.id === active.id);
-      const newIndex = projects.findIndex((p) => p.id === over.id);
+    const oldIndex = projects.findIndex((p) => p.id === active.id);
+    const newIndex = projects.findIndex((p) => p.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
 
-      const previousProjects = [...projects]; // Store for rollback
-      const newProjects = arrayMove(projects, oldIndex, newIndex);
-
-      // Optimistic update
-      setLocalProjects(newProjects);
-
-      // Persist to backend
-      const projectIds = newProjects.map((p) => p.id);
-      const success = await onReorder(projectIds);
-
-      // Rollback on failure
-      if (!success) {
-        setLocalProjects(previousProjects);
-      }
-    }
+    await persistReorder(arrayMove(projects, oldIndex, newIndex));
   };
 
   const handleMoveUp = async (index: number) => {
     if (index === 0) return;
-    const previousProjects = [...projects];
-    const newProjects = arrayMove(projects, index, index - 1);
-    setLocalProjects(newProjects);
-    const success = await onReorder(newProjects.map((p) => p.id));
-    if (!success) {
-      setLocalProjects(previousProjects);
-    }
+    await persistReorder(arrayMove(projects, index, index - 1));
   };
 
   const handleMoveDown = async (index: number) => {
     if (index === projects.length - 1) return;
-    const previousProjects = [...projects];
-    const newProjects = arrayMove(projects, index, index + 1);
-    setLocalProjects(newProjects);
-    const success = await onReorder(newProjects.map((p) => p.id));
-    if (!success) {
-      setLocalProjects(previousProjects);
-    }
+    await persistReorder(arrayMove(projects, index, index + 1));
   };
 
   if (!isEditing) {

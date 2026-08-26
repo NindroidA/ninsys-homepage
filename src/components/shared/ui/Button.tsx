@@ -46,12 +46,14 @@ export function Button({
     </>
   );
 
+  // Presentational only. The click handler belongs on the real <button>/<a>:
+  // keyboard activation dispatches its click on that element, which never
+  // reaches a handler bound to a descendant.
   const motionContent = (
     <motion.div
       whileHover={disabled ? {} : { scale: 1.02 }}
       whileTap={disabled ? {} : { scale: 0.98 }}
       className={classes}
-      onClick={disabled ? undefined : onClick}
     >
       {content}
     </motion.div>
@@ -62,6 +64,8 @@ export function Button({
       <a
         href={href}
         target={target}
+        rel={target === "_blank" ? "noopener noreferrer" : undefined}
+        onClick={disabled ? undefined : onClick}
         className="inline-block"
         style={{ width: fullWidth ? "100%" : "auto" }}
       >
@@ -74,6 +78,7 @@ export function Button({
     <button
       type={type}
       disabled={disabled}
+      onClick={disabled ? undefined : onClick}
       className="inline-block"
       style={{ width: fullWidth ? "100%" : "auto" }}
     >

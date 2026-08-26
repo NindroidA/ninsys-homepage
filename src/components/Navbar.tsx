@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
-import { FolderGit2, Home, Info } from "lucide-react";
+import { FolderGit2, Home, Info, LayoutDashboard } from "lucide-react";
 import type { JSX } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 interface NavbarProps {
   variant?: "default" | "minimal";
@@ -21,6 +22,14 @@ const activePill =
 
 export default function Navbar({ variant = "default" }: NavbarProps): JSX.Element {
   const location = useLocation();
+  const { isAuthenticated, isGuestViewMode } = useAuth();
+
+  // The admin panel had no entry point anywhere in the app — you had to type the
+  // URL. Surface it once signed in, but respect guest view.
+  const items =
+    isAuthenticated && !isGuestViewMode
+      ? [...navItems, { path: "/admin", label: "Admin", icon: LayoutDashboard }]
+      : navItems;
 
   if (variant === "minimal") {
     return (
@@ -33,9 +42,12 @@ export default function Navbar({ variant = "default" }: NavbarProps): JSX.Elemen
         <div className="mx-auto flex max-w-7xl justify-center">
           <div className={`rounded-full px-2 py-1.5 ${glass}`}>
             <div className="flex items-center gap-1">
-              {navItems.map((item) => {
+              {items.map((item) => {
                 const Icon = item.icon;
-                const isActive = location.pathname === item.path;
+                const isActive =
+                  item.path === "/admin"
+                    ? location.pathname.startsWith("/admin")
+                    : location.pathname === item.path;
                 return (
                   <Link
                     key={item.path}
@@ -81,9 +93,12 @@ export default function Navbar({ variant = "default" }: NavbarProps): JSX.Elemen
             </Link>
 
             <div className="flex items-center gap-1.5">
-              {navItems.map((item) => {
+              {items.map((item) => {
                 const Icon = item.icon;
-                const isActive = location.pathname === item.path;
+                const isActive =
+                  item.path === "/admin"
+                    ? location.pathname.startsWith("/admin")
+                    : location.pathname === item.path;
                 return (
                   <Link
                     key={item.path}

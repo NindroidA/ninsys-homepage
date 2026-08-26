@@ -14,7 +14,10 @@ export interface BadgeProps {
 export interface ButtonProps {
   children: ReactNode;
   onClick?: () => void;
-  variant?: "primary" | "secondary" | "ghost" | "gradient" | "glass" | "outline-solid";
+  // "outline" — not "outline-solid". The Tailwind v3->v4 codemod rewrote this
+  // union member as if it were a utility class, leaving it pointing at a key the
+  // variants map never had (which rendered the literal string "undefined").
+  variant?: "primary" | "secondary" | "ghost" | "gradient" | "glass" | "outline";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   className?: string;
