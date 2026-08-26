@@ -241,6 +241,7 @@ export default function AboutMe() {
               {isEditing && (
                 <div className="flex justify-end mb-4">
                   <button
+                    type="button"
                     onClick={() => setProfileModalOpen(true)}
                     className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-purple-500/20 text-white/60 hover:text-purple-300 rounded-lg transition-colors text-sm"
                   >
@@ -315,6 +316,7 @@ export default function AboutMe() {
               {profile.bio.length > 0 && (
                 <div className="mt-5 pt-5 sm:mt-6 sm:pt-6 md:mt-8 md:pt-8 border-t border-white/10 space-y-3 md:space-y-4">
                   {profile.bio.map((paragraph, index) => (
+                    // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
                     <p key={index} className="text-white/70 leading-relaxed">
                       {paragraph}
                     </p>

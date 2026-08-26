@@ -47,7 +47,6 @@ export function TotpInput({ onSubmit, disabled, clearSignal = 0 }: TotpInputProp
   };
 
   return (
-    // biome-ignore lint/a11y/noStaticElementInteractions: group-level paste handler is intentional
     <div className="flex justify-center gap-2.5" onPaste={onPaste}>
       {code.map((digit, index) => (
         <input

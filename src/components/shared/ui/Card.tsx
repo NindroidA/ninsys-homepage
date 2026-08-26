@@ -56,6 +56,8 @@ export function Card({
   }
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: click-to-dismiss dialog overlay; Escape is handled by useModalA11y
+    // biome-ignore lint/a11y/noStaticElementInteractions: click-to-dismiss dialog overlay; Escape is handled by useModalA11y
     <div className={classes} onClick={onClick}>
       {children}
     </div>

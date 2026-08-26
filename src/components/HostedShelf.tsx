@@ -119,7 +119,7 @@ function HostedCard({ project }: { project: HostedProject }): JSX.Element {
   );
 }
 
-export default function HostedShelf(): JSX.Element {
+export default function HostedShelf(): JSX.Element | null {
   const { config } = useSiteConfig();
   const byId = new Map(hostedProjects.map((p) => [p.id, p]));
   // Render in the admin-configured order, hiding any toggled off.
@@ -128,7 +128,7 @@ export default function HostedShelf(): JSX.Element {
     .map((h) => byId.get(h.id))
     .filter((p): p is HostedProject => Boolean(p));
 
-  if (visible.length === 0) return <></>;
+  if (visible.length === 0) return null;
 
   return (
     <motion.div

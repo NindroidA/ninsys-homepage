@@ -6,6 +6,9 @@ export default function Layout() {
   const location = useLocation();
 
   // scroll to top on route change
+  // trigger dependency, not a value read inside the callback. Biome's autofix drops
+  // it, which makes this run once on mount and silently breaks scroll-to-top.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: trigger dependency, not a value read in the callback - the autofix breaks it
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);

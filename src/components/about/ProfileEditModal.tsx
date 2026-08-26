@@ -126,8 +126,11 @@ export function ProfileEditModal({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            onClick={(e) => {
+              // Dismiss only when the overlay itself is clicked, never a descendant.
+              if (e.target === e.currentTarget) onClose();
+            }}
           >
-            {/* biome-ignore lint/a11y/useKeyWithClickEvents: keyboard handling lives in useModalA11y; this only stops clicks reaching the backdrop */}
             <div
               ref={panelRef}
               role="dialog"
@@ -135,7 +138,6 @@ export function ProfileEditModal({
               aria-labelledby="profile-edit-title"
               tabIndex={-1}
               className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-auto bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
               <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
@@ -332,6 +334,7 @@ export function ProfileEditModal({
                   </span>
                   <div className="space-y-3">
                     {bio.map((paragraph, i) => (
+                      // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
                       <div key={i} className="flex gap-2">
                         <textarea
                           id={`profile-edit-bio-${i}`}

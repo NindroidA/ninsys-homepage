@@ -43,6 +43,10 @@ export function DeleteConfirmModal({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             className="fixed inset-0 z-51 flex items-center justify-center p-4"
+            onClick={(e) => {
+              // Dismiss only when the overlay itself is clicked, never a descendant.
+              if (e.target === e.currentTarget) onClose();
+            }}
           >
             <div
               ref={panelRef}
@@ -52,7 +56,6 @@ export function DeleteConfirmModal({
               aria-describedby="delete-confirm-description"
               tabIndex={-1}
               className="w-full max-w-md bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_30px_80px_-40px_rgba(0,0,0,0.9)] p-6"
-              onClick={(e) => e.stopPropagation()}
             >
               <div className="flex flex-col items-center text-center">
                 <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-rose-500/15 border border-rose-500/25 flex items-center justify-center mb-3 sm:mb-4">

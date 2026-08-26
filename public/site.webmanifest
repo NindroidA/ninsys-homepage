@@ -4,8 +4,8 @@
   "description": "Personal portfolio and homelab of Andrew Curtis (NindroidA).",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f0a1e",
-  "theme_color": "#1e1b4b",
+  "background_color": "#09060f",
+  "theme_color": "#09060f",
   "icons": [
     {
       "src": "/favicon.svg",
