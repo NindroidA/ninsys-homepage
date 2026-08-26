@@ -312,12 +312,12 @@ export function ProjectEditModal({
             className="fixed inset-0 z-52 flex items-center justify-center p-4"
           >
             <div
-              className="w-full max-w-2xl max-h-[90vh] overflow-auto bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-2xl"
+              className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-auto bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-white/10">
-                <h2 className="font-display text-2xl font-bold text-white">
+              <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
+                <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white">
                   {project ? "Edit Project" : initialData ? "Import Project" : "New Project"}
                 </h2>
                 <button
@@ -329,7 +329,7 @@ export function ProjectEditModal({
               </div>
 
               {/* Form */}
-              <form onSubmit={handleSubmit} className="p-6 space-y-6">
+              <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                 {/* Title */}
                 <div>
                   <label className="block text-sm font-medium text-white/70 mb-2">Title</label>

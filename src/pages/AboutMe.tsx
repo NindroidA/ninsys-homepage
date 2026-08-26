@@ -199,14 +199,14 @@ export default function AboutMe() {
       <FloatingElements variant="purple" intensity="low" />
 
       {/* Main content */}
-      <div className="relative z-10 pt-8 pb-20 px-4 md:px-8">
+      <div className="relative z-10 pt-6 pb-10 md:pt-8 md:pb-20 px-4 md:px-8">
         <div className="max-w-5xl mx-auto">
           {/* Admin controls */}
           {isAdminVisible && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex gap-3 justify-center mb-8"
+              className="flex flex-wrap gap-2 sm:gap-3 justify-center mb-6 sm:mb-8"
             >
               <Button
                 onClick={() => setIsEditing(!isEditing)}
@@ -250,7 +250,7 @@ export default function AboutMe() {
                 </div>
               )}
 
-              <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
+              <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-8">
                 {/* Profile picture */}
                 <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-linear-to-br from-violet-500 to-pink-500 flex items-center justify-center shadow-2xl border-2 border-purple-300/20 overflow-hidden">
                   {profile.avatarUrl ? (
@@ -266,11 +266,13 @@ export default function AboutMe() {
 
                 {/* Info */}
                 <div className="flex-1 text-center md:text-left">
-                  <h1 className="font-display text-4xl md:text-5xl font-bold tracking-tight mb-3">
+                  <h1 className="font-display text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight mb-2 md:mb-3">
                     <GradientText variant="primary">{profile.name}</GradientText>
                   </h1>
-                  <p className="text-lg text-white/60 mb-4">{profile.tagline}</p>
-                  <div className="flex items-center justify-center md:justify-start gap-2 text-white/60 mb-6">
+                  <p className="text-sm sm:text-base md:text-lg text-white/60 mb-2 md:mb-4">
+                    {profile.tagline}
+                  </p>
+                  <div className="flex items-center justify-center md:justify-start gap-2 text-sm sm:text-base text-white/60 mb-4 md:mb-6">
                     <MapPin className="w-4 h-4" />
                     <span>{profile.location}</span>
                   </div>
@@ -311,7 +313,7 @@ export default function AboutMe() {
 
               {/* Bio */}
               {profile.bio.length > 0 && (
-                <div className="mt-8 pt-8 border-t border-white/10 space-y-4">
+                <div className="mt-5 pt-5 sm:mt-6 sm:pt-6 md:mt-8 md:pt-8 border-t border-white/10 space-y-3 md:space-y-4">
                   {profile.bio.map((paragraph, index) => (
                     <p key={index} className="text-white/70 leading-relaxed">
                       {paragraph}
@@ -330,7 +332,7 @@ export default function AboutMe() {
               onDragEnd={handleDragEnd}
             >
               <SortableContext items={sections.map((s) => s.id)} strategy={rectSortingStrategy}>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
                   {sections.map((section, index) => (
                     <SectionCard
                       key={section.id}

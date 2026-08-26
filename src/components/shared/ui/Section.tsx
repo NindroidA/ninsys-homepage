@@ -22,11 +22,11 @@ export function Section({
 
   const paddings = {
     none: "py-0 px-0",
-    sm: "py-12 px-6",
-    md: "py-16 px-8",
-    lg: "py-20 px-8",
-    xl: "py-32 px-8",
-    "2xl": "py-40 px-8",
+    sm: "py-8 px-4 sm:py-12 sm:px-6",
+    md: "py-10 px-4 sm:py-16 sm:px-8",
+    lg: "py-12 px-4 sm:px-6 md:py-20 md:px-8",
+    xl: "py-16 px-4 sm:py-24 sm:px-8 md:py-32",
+    "2xl": "py-20 px-4 sm:py-32 sm:px-8 md:py-40",
   };
 
   const maxWidths = {
@@ -49,12 +49,14 @@ export function Section({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className={`mb-12 ${centered ? "text-center" : ""}`}
+            className={`mb-8 md:mb-12 ${centered ? "text-center" : ""}`}
           >
             {title && (
-              <div className={`flex items-center gap-3 mb-4 ${centered ? "justify-center" : ""}`}>
+              <div
+                className={`flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 ${centered ? "justify-center" : ""}`}
+              >
                 {titleIcon && <span className="text-2xl">{titleIcon}</span>}
-                <h2 className="font-display text-4xl font-bold tracking-tight md:text-5xl">
+                <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl md:text-5xl">
                   <span className="bg-linear-to-br from-white to-[#cdbdf5] bg-clip-text text-transparent">
                     {title}
                   </span>
@@ -63,7 +65,7 @@ export function Section({
             )}
             {subtitle && (
               <p
-                className={`text-lg text-white/55 ${centered ? "max-w-2xl mx-auto" : ""} leading-relaxed`}
+                className={`text-sm sm:text-base md:text-lg text-white/55 ${centered ? "max-w-2xl mx-auto" : ""} leading-relaxed`}
               >
                 {subtitle}
               </p>

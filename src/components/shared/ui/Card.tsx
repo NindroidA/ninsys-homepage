@@ -25,12 +25,15 @@ export function Card({
     bordered: "bg-white/3 backdrop-blur-md border-purple-300/15",
   };
 
+  // Mobile-first: phones get a tighter box, desktop keeps the original scale.
+  // These are plain template-string concatenations (no twMerge), so a caller's
+  // `className` cannot reliably override a base-breakpoint conflict here.
   const paddings = {
     none: "p-0",
-    sm: "p-4",
-    md: "p-6",
-    lg: "p-8",
-    xl: "p-12",
+    sm: "p-3 sm:p-4",
+    md: "p-4 sm:p-6",
+    lg: "p-5 sm:p-6 md:p-8",
+    xl: "p-6 sm:p-8 md:p-12",
   };
 
   const hoverClasses = hover ? "hover:border-purple-300/25 hover:bg-white/5.5" : "";

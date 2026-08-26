@@ -11,7 +11,7 @@ import {
   type SectionSize,
 } from "../../types/about";
 import { getLucideIcon } from "../../utils/iconUtils";
-import { Badge, Card, Grid } from "../shared/ui";
+import { Badge, Card } from "../shared/ui";
 import { SkillVial } from "./SkillVial";
 
 interface SectionCardProps {
@@ -121,9 +121,11 @@ export function SectionCard({
         )}
 
         {/* Section header */}
-        <div className="flex items-center gap-3 mb-6">
-          {IconComponent && <IconComponent className="w-6 h-6 text-purple-300" />}
-          <h2 className="font-display text-2xl font-bold text-white">{section.title}</h2>
+        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+          {IconComponent && <IconComponent className="w-5 h-5 sm:w-6 sm:h-6 text-purple-300" />}
+          <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white">
+            {section.title}
+          </h2>
         </div>
 
         {/* Section content */}
@@ -140,7 +142,7 @@ function SectionContent({ section }: { section: AboutSection }) {
   // Skills section with vials
   if (type === "skills" && isSkillsContent(content)) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-1 md:gap-2">
         {content.skills.map((skill, i) => (
           <SkillVial
             key={i}
@@ -157,23 +159,25 @@ function SectionContent({ section }: { section: AboutSection }) {
   // Interests section
   if (type === "interests" && isInterestsContent(content)) {
     return (
-      <Grid cols={2} gap="sm">
+      <div className="flex flex-wrap gap-1.5 sm:gap-2">
         {content.interests.map((interest, i) => (
           <Badge key={i} variant="default" size="sm">
             {interest.emoji} {interest.label}
           </Badge>
         ))}
-      </Grid>
+      </div>
     );
   }
 
   // Experience section
   if (type === "experience" && isExperienceContent(content)) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {content.items.map((exp, i) => (
-          <div key={i} className="border-l-2 border-purple-400/30 pl-6">
-            <h3 className="text-xl font-semibold text-white mb-1">{exp.title}</h3>
+          <div key={i} className="border-l-2 border-purple-400/30 pl-3 sm:pl-6">
+            <h3 className="text-base sm:text-lg md:text-xl font-semibold text-white mb-1">
+              {exp.title}
+            </h3>
             <div className="text-purple-300 mb-2">
               {exp.company} &bull; {exp.period}
             </div>
@@ -187,10 +191,12 @@ function SectionContent({ section }: { section: AboutSection }) {
   // Education section
   if (type === "education" && isEducationContent(content)) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {content.items.map((edu, i) => (
-          <div key={i} className="border-l-2 border-emerald-400/30 pl-6">
-            <h3 className="text-xl font-semibold text-white mb-1">{edu.degree}</h3>
+          <div key={i} className="border-l-2 border-emerald-400/30 pl-3 sm:pl-6">
+            <h3 className="text-base sm:text-lg md:text-xl font-semibold text-white mb-1">
+              {edu.degree}
+            </h3>
             <div className="text-emerald-300 mb-2">
               {edu.school} &bull; {edu.period}
             </div>

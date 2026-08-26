@@ -46,7 +46,7 @@ const statusStyle: Record<HostedStatus, { gradient: string; glow: string; label:
 function StatusPill({ status }: { status: HostedStatus }): JSX.Element {
   const s = statusStyle[status];
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-white/60">
+    <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-black/20 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-white/60 sm:gap-1.5 sm:px-2.5 sm:py-1 sm:tracking-[0.16em]">
       <span
         aria-hidden="true"
         className={`h-1.5 w-1.5 rounded-full ${status === "building" ? "motion-safe:animate-pulse" : ""}`}
@@ -61,19 +61,23 @@ function HostedCard({ project }: { project: HostedProject }): JSX.Element {
   const Icon = iconMap[project.icon] ?? Server;
 
   return (
-    <GlassPanel className="flex h-full flex-col rounded-2xl p-5">
+    <GlassPanel className="flex h-full flex-col rounded-xl p-3.5 sm:rounded-2xl sm:p-5">
       <div className="flex items-start justify-between gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-purple-300/15 bg-linear-to-br from-violet-500/25 to-pink-500/20">
-          <Icon className="h-5 w-5 text-purple-100" />
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-purple-300/15 bg-linear-to-br from-violet-500/25 to-pink-500/20 sm:h-11 sm:w-11 sm:rounded-xl">
+          <Icon className="h-4 w-4 text-purple-100 sm:h-5 sm:w-5" />
         </div>
         <StatusPill status={project.status} />
       </div>
 
-      <h3 className="mt-4 font-display text-lg font-bold text-white">{project.name}</h3>
-      <p className="mt-1.5 flex-1 text-sm leading-relaxed text-white/55">{project.description}</p>
+      <h3 className="mt-3 font-display text-base font-bold text-white sm:mt-4 sm:text-lg">
+        {project.name}
+      </h3>
+      <p className="mt-1 flex-1 text-[13px] leading-snug text-white/55 line-clamp-2 sm:mt-1.5 sm:text-sm sm:leading-relaxed sm:line-clamp-none">
+        {project.description}
+      </p>
 
       {project.stack && project.stack.length > 0 && (
-        <ul className="mt-4 flex flex-wrap gap-1.5">
+        <ul className="mt-2.5 hidden flex-wrap gap-1.5 sm:mt-4 sm:flex">
           {project.stack.map((tag) => (
             <li
               key={tag}
@@ -85,19 +89,19 @@ function HostedCard({ project }: { project: HostedProject }): JSX.Element {
         </ul>
       )}
 
-      <div className="mt-5 flex items-center gap-3 border-t border-white/5 pt-4">
+      <div className="mt-3 flex items-center gap-3 border-t border-white/5 pt-3 sm:mt-5 sm:pt-4">
         {project.url ? (
           <a
             href={project.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 font-mono text-sm text-purple-200 transition-colors hover:text-white"
+            className="inline-flex items-center gap-1.5 font-mono text-[13px] text-purple-200 transition-colors hover:text-white sm:text-sm"
           >
             Visit
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
         ) : project.status === "building" ? (
-          <span className="font-mono text-sm text-white/35">In progress</span>
+          <span className="font-mono text-[13px] text-white/35 sm:text-sm">In progress</span>
         ) : null}
         {project.repoUrl && (
           <a
@@ -137,10 +141,12 @@ export default function HostedShelf(): JSX.Element {
         <span className="font-mono text-xs uppercase tracking-[0.18em] text-white/40">
           {"// running on the homelab"}
         </span>
-        <h2 className="mt-1 font-display text-3xl font-bold text-white sm:text-4xl">Hosted</h2>
+        <h2 className="mt-1 font-display text-2xl font-bold text-white sm:text-3xl md:text-4xl">
+          Hosted
+        </h2>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
         {visible.map((project) => (
           <HostedCard key={project.id} project={project} />
         ))}

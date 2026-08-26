@@ -26,8 +26,8 @@ export function LiveOpsRack({ online, total }: LiveOpsRackProps): JSX.Element {
   const allOnline = total > 0 && online === total;
 
   return (
-    <GlassPanel className="relative overflow-hidden rounded-3xl">
-      <div className="h-[300px] sm:h-[380px]">
+    <GlassPanel className="relative overflow-hidden rounded-2xl sm:rounded-3xl">
+      <div className="h-[220px] sm:h-[380px]">
         {render3D && !failed ? (
           <Suspense fallback={<ServerRackLoader />}>
             <ServerRackScene onError={() => setFailed(true)} />
@@ -38,7 +38,7 @@ export function LiveOpsRack({ online, total }: LiveOpsRackProps): JSX.Element {
       </div>
 
       {/* live overlay */}
-      <div className="pointer-events-none absolute left-4 top-4 flex items-center gap-2 rounded-full border border-purple-300/12 bg-black/30 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.16em] backdrop-blur-md">
+      <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 rounded-full border border-purple-300/12 bg-black/30 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] backdrop-blur-md sm:left-4 sm:top-4 sm:px-3 sm:py-1.5 sm:text-[11px]">
         <span
           className="h-2 w-2 rounded-full bg-[linear-gradient(135deg,#5eead4,#10b981)] shadow-[0_0_10px_rgba(52,211,153,0.7)] motion-safe:animate-pulse"
           aria-hidden="true"

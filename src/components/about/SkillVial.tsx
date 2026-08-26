@@ -30,8 +30,8 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
   const validLevel = level && level in SKILL_LEVEL_PERCENT ? level : "intermediate";
   const percent = SKILL_LEVEL_PERCENT[validLevel];
   const gradient = LEVEL_GRADIENTS[validLevel];
-  const vialHeight = compact ? 60 : 80;
-  const vialWidth = compact ? 24 : 32;
+  const vialHeight = compact ? 46 : 80;
+  const vialWidth = compact ? 20 : 32;
   const liquidHeight = (percent / 100) * (vialHeight - 16); // -16 for top/bottom padding
 
   // Sanitize name for valid SVG IDs (remove spaces and special characters)
@@ -64,7 +64,7 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
 
   return (
     <div
-      className={`flex items-center gap-3 ${compact ? "py-1" : "py-2"}`}
+      className={`flex items-center gap-2 sm:gap-3 ${compact ? "py-0.5" : "py-2"}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

@@ -18,14 +18,14 @@ export function ServerRackLoader({
     <div className="w-full h-full flex items-center justify-center">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative">
         {/* Stylized rack silhouette */}
-        <div className="w-48 h-72 relative">
+        <div className="w-32 h-48 relative sm:w-48 sm:h-72">
           {/* Main frame outline */}
           <div className="absolute inset-0 border-2 border-purple-500/30 rounded-lg bg-linear-to-b from-purple-900/20 to-indigo-900/20 backdrop-blur-xs">
             {/* Server slots with shimmer */}
             {[...Array(6)].map((_, i) => (
               <motion.div
                 key={i}
-                className="mx-3 my-2 h-8 rounded bg-linear-to-r from-purple-500/10 via-purple-400/20 to-purple-500/10"
+                className="mx-2 my-1 h-6 rounded bg-linear-to-r from-purple-500/10 via-purple-400/20 to-purple-500/10 sm:mx-3 sm:my-2 sm:h-8"
                 animate={
                   isAnimated ? { backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] } : undefined
                 }
@@ -53,18 +53,21 @@ export function ServerRackLoader({
 
           {/* Orbiting nodes */}
           <motion.div
-            className="absolute -inset-8"
+            className="absolute -inset-6 [--orbit-r:56px] sm:-inset-8 sm:[--orbit-r:80px]"
             animate={isAnimated ? { rotate: 360 } : undefined}
             transition={isAnimated ? { duration: 20, repeat: Infinity, ease: "linear" } : undefined}
           >
             {[0, 72, 144, 216, 288].map((angle, i) => (
               <motion.div
                 key={i}
-                className="absolute w-3 h-3 rounded-full bg-linear-to-r from-cyan-400 to-purple-500"
+                className="absolute w-2 h-2 rounded-full bg-linear-to-r from-cyan-400 to-purple-500 sm:w-3 sm:h-3"
                 style={{
                   top: "50%",
                   left: "50%",
-                  transform: `rotate(${angle}deg) translateX(80px) translateY(-50%)`,
+                  // Radius comes from --orbit-r on the parent so it tracks the frame,
+                  // which halves on phones — a fixed 80px would fling the nodes
+                  // outside the shrunken rack.
+                  transform: `rotate(${angle}deg) translateX(var(--orbit-r)) translateY(-50%)`,
                 }}
                 animate={isAnimated ? { opacity: [0.4, 1, 0.4] } : undefined}
                 transition={

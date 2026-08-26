@@ -28,7 +28,7 @@ export default function Navbar({ variant = "default" }: NavbarProps): JSX.Elemen
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="sticky top-0 z-50 px-4 pb-4 pt-6"
+        className="sticky top-0 z-50 px-4 pb-3 pt-3 sm:pb-4 sm:pt-6"
       >
         <div className="mx-auto flex max-w-7xl justify-center">
           <div className={`rounded-full px-2 py-1.5 ${glass}`}>
@@ -62,10 +62,10 @@ export default function Navbar({ variant = "default" }: NavbarProps): JSX.Elemen
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="sticky top-0 z-50 px-4 pb-4 pt-6"
+      className="sticky top-0 z-50 px-4 pb-3 pt-3 sm:pb-4 sm:pt-6"
     >
       <div className="mx-auto max-w-2xl">
-        <div className={`rounded-2xl px-4 py-3 ${glass}`}>
+        <div className={`rounded-2xl px-3 py-2 sm:px-4 sm:py-3 ${glass}`}>
           <div className="flex items-center justify-between gap-4">
             <Link
               to="/"
@@ -88,7 +88,7 @@ export default function Navbar({ variant = "default" }: NavbarProps): JSX.Elemen
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`flex items-center gap-2 rounded-xl px-3.5 py-2 transition-all duration-200 ${
+                    className={`flex items-center gap-2 rounded-xl px-2.5 py-2 transition-all duration-200 sm:px-3.5 ${
                       isActive ? activePill : "text-white/60 hover:bg-white/10 hover:text-white"
                     }`}
                   >

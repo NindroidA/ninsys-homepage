@@ -147,12 +147,12 @@ export default function ServiceStatus(): JSX.Element {
       className="mx-auto w-full max-w-6xl"
     >
       {/* header */}
-      <div className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+      <div className="mb-5 flex flex-col items-start justify-between gap-3 sm:mb-8 sm:flex-row sm:items-end sm:gap-4">
         <div>
           <span className="font-mono text-xs uppercase tracking-[0.18em] text-white/40">
             {"// what's up right now"}
           </span>
-          <h2 className="mt-1 font-display text-3xl font-bold text-white sm:text-4xl">
+          <h2 className="mt-1 font-display text-2xl font-bold text-white sm:text-4xl">
             System Status
           </h2>
         </div>
@@ -171,7 +171,7 @@ export default function ServiceStatus(): JSX.Element {
             type="button"
             onClick={refresh}
             disabled={loading}
-            className="rounded-lg border border-purple-300/12 bg-white/4 p-2 text-white/70 transition-colors hover:bg-white/8 disabled:opacity-50"
+            className="rounded-lg border border-purple-300/12 bg-white/4 p-2.5 text-white/70 transition-colors hover:bg-white/8 disabled:opacity-50 sm:p-2"
             title="Refresh all services"
             aria-label="Refresh all services"
           >
@@ -192,7 +192,7 @@ export default function ServiceStatus(): JSX.Element {
       </div>
 
       {/* service cards */}
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 md:gap-5 md:grid-cols-2">
         {services.map((service, index) => {
           const style = getStatusStyle(service.status);
           const ServiceIcon = getServiceIcon(service.icon);
@@ -207,11 +207,11 @@ export default function ServiceStatus(): JSX.Element {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: Math.min(index * 0.06, 0.3) }}
             >
-              <GlassPanel interactive className="flex h-full flex-col rounded-2xl p-5">
+              <GlassPanel interactive className="flex h-full flex-col rounded-2xl p-4 sm:p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="rounded-xl border border-purple-300/12 bg-white/4 p-2.5">
-                      <ServiceIcon className="h-5 w-5 text-purple-200" />
+                    <div className="rounded-xl border border-purple-300/12 bg-white/4 p-2 sm:p-2.5">
+                      <ServiceIcon className="h-4 w-4 text-purple-200 sm:h-5 sm:w-5" />
                     </div>
                     <div className="min-w-0">
                       <h3 className="font-display text-base font-semibold leading-tight text-white">
@@ -231,7 +231,7 @@ export default function ServiceStatus(): JSX.Element {
                 </div>
 
                 {service.description && (
-                  <p className="mt-3 text-sm leading-relaxed text-white/55">
+                  <p className="mt-2.5 text-sm leading-snug text-white/55 sm:mt-3 sm:leading-relaxed">
                     {service.description}
                   </p>
                 )}
@@ -259,7 +259,7 @@ export default function ServiceStatus(): JSX.Element {
                   </dl>
                 )}
 
-                <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-3 font-mono text-[11px] text-white/40">
+                <div className="mt-3 flex items-center justify-between border-t border-white/5 pt-2.5 font-mono text-[11px] text-white/40 sm:mt-4 sm:pt-3">
                   <span>{service.uptime ? `uptime ${service.uptime}` : " "}</span>
                   {service.lastUpdated && <span>{formatLastChecked(service.lastUpdated)}</span>}
                 </div>
