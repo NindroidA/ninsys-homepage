@@ -10,6 +10,13 @@ import { useEffect, useRef } from "react";
  */
 const SILVER: [number, number, number] = [206, 214, 232];
 const EDGE = 132;
+// Motion is authored in "units per 60fps frame" and scaled by a delta-time factor
+// so the scene runs at the same speed on 60Hz, 120Hz and 144Hz displays. The factor
+// is clamped: a backgrounded tab or a long GC pause must not teleport the scene.
+const FRAME_MS = 1000 / 60;
+// Clamped at ~100ms so anything from 10fps upward stays real-time; past that the
+// scene slows down rather than teleporting after a stall.
+const MAX_STEP = 6;
 const GRAIN =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
 
@@ -52,9 +59,18 @@ export function BackgroundNet() {
     const DPR = Math.min(window.devicePixelRatio || 1, 2);
     let W = 0;
     let H = 0;
-    let mx = -999;
-    let my = -999;
+    // Pointer position in *viewport* coords, plus the canvas origin needed to map it
+    // into canvas-local space. The canvas is absolutely positioned inside the hero, so
+    // once the page scrolls its origin no longer matches the viewport's and the cursor
+    // reach would trail the real cursor by exactly scrollY. The origin is re-read only
+    // when scroll/resize marks it stale, so pointermove stays layout-read free.
+    let cx = -9999;
+    let cy = -9999;
+    let originX = 0;
+    let originY = 0;
+    let originStale = true;
     let raf = 0;
+    let last = 0;
     let lastW = -1;
     let nodes: Node[] = [];
     let stars: Star[] = [];
@@ -87,7 +103,16 @@ export function BackgroundNet() {
       bits = [];
     };
 
-    const draw = (now: number) => {
+    const draw = (now: number, step: number) => {
+      if (originStale) {
+        const rect = canvas.getBoundingClientRect();
+        originX = rect.left;
+        originY = rect.top;
+        originStale = false;
+      }
+      const mx = cx - originX;
+      const my = cy - originY;
+
       ctx.clearRect(0, 0, W, H);
       // stars
       for (const s of stars) {
@@ -100,8 +125,8 @@ export function BackgroundNet() {
       // drift
       if (!STATIC) {
         for (const p of nodes) {
-          p.x += p.vx;
-          p.y += p.vy;
+          p.x += p.vx * step;
+          p.y += p.vy * step;
           if (p.x < -20) p.x = W + 20;
           if (p.x > W + 20) p.x = -20;
           if (p.y < -20) p.y = H + 20;
@@ -152,7 +177,9 @@ export function BackgroundNet() {
       }
       // silver binary drizzle (animated only)
       if (!STATIC) {
-        if (Math.random() < 0.07) {
+        // Spawn odds scale with the step so the drizzle keeps the same rate per
+        // second rather than per frame.
+        if (Math.random() < 0.07 * step) {
           const p = nodes[(Math.random() * nodes.length) | 0];
           if (p) {
             const big = Math.random() < 0.35;
@@ -171,8 +198,8 @@ export function BackgroundNet() {
         for (let k = bits.length - 1; k >= 0; k--) {
           const b = bits[k];
           if (!b) continue;
-          b.life++;
-          b.y += b.vy;
+          b.life += step;
+          b.y += b.vy * step;
           const a = Math.sin(Math.min(b.life / 55, 1) * Math.PI);
           ctx.font = `${b.size | 0}px "JetBrains Mono", monospace`;
           if (b.big) {
@@ -190,8 +217,16 @@ export function BackgroundNet() {
     };
 
     const loop = (now: number) => {
-      if (!document.hidden) draw(now);
       raf = requestAnimationFrame(loop);
+      if (document.hidden) {
+        // Skip the frame *and* the elapsed time, so resuming doesn't fast-forward.
+        last = now;
+        return;
+      }
+      if (!last) last = now;
+      const step = Math.min((now - last) / FRAME_MS, MAX_STEP);
+      last = now;
+      draw(now, step);
     };
 
     const resize = () => {
@@ -209,23 +244,41 @@ export function BackgroundNet() {
         lastW = W;
         seed();
       }
-      if (STATIC) draw(0);
+      originStale = true;
+      if (STATIC) draw(0, 0);
     };
 
     const onMove = (e: PointerEvent) => {
-      mx = e.clientX;
-      my = e.clientY;
+      cx = e.clientX;
+      cy = e.clientY;
+    };
+
+    // Park the cursor reach off-canvas when the pointer leaves the page, otherwise the
+    // highlight freezes wherever it was last seen. `pointerleave` on the root element
+    // doesn't bubble, so it fires only on a real exit — not on every element boundary.
+    const onLeave = () => {
+      cx = -9999;
+      cy = -9999;
+    };
+    const root = document.documentElement;
+
+    const invalidateOrigin = () => {
+      originStale = true;
     };
 
     resize();
     window.addEventListener("resize", resize);
     if (!STATIC) {
       window.addEventListener("pointermove", onMove);
+      root.addEventListener("pointerleave", onLeave);
+      window.addEventListener("scroll", invalidateOrigin, { passive: true });
       raf = requestAnimationFrame(loop);
     }
     return () => {
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onMove);
+      root.removeEventListener("pointerleave", onLeave);
+      window.removeEventListener("scroll", invalidateOrigin);
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
