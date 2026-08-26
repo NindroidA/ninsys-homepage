@@ -5,6 +5,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
+    // Bind all interfaces so the dev server is reachable when the repo is worked
+    // on from a headless box over SSH (otherwise Vite listens on localhost only).
+    host: true,
   },
   build: {
     // Never <link modulepreload> the heavy three.js chunk: it's loaded lazily and
