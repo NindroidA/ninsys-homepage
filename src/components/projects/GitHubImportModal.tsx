@@ -128,14 +128,16 @@ export function GitHubImportModal({
             className="fixed inset-0 z-53 flex items-center justify-center p-4"
           >
             <div
-              className="w-full max-w-3xl h-[80vh] flex flex-col bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-2xl"
+              className="w-full max-w-3xl h-[80dvh] max-h-[calc(100dvh-2rem)] flex flex-col bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-white/10 shrink-0">
                 <div className="flex items-center gap-3">
                   <GithubIcon className="w-6 h-6 text-white" />
-                  <h2 className="font-display text-2xl font-bold text-white">Import from GitHub</h2>
+                  <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white">
+                    Import from GitHub
+                  </h2>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -203,7 +205,7 @@ export function GitHubImportModal({
                             : "bg-white/4 border-white/10 hover:border-purple-500/30"
                         }`}
                       >
-                        <div className="flex items-start justify-between gap-4">
+                        <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-3 sm:gap-4">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
                               <h3 className="font-semibold text-white truncate">{repo.name}</h3>
@@ -245,7 +247,7 @@ export function GitHubImportModal({
                             )}
                           </div>
 
-                          <div className="flex flex-col gap-2 shrink-0">
+                          <div className="flex flex-row sm:flex-col gap-2 shrink-0 w-full sm:w-auto">
                             {imported ? (
                               <span className="px-3 py-1.5 bg-green-500/20 text-green-300 rounded-lg text-sm font-medium">
                                 Already Imported

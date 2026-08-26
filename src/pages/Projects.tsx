@@ -142,14 +142,14 @@ export default function Projects() {
         subtitle="A showcase of things I've built and am currently working on"
         padding="lg"
         maxWidth="6xl"
-        className="pt-8"
+        className="pt-6 md:pt-8"
       >
         {/* Admin controls */}
         {isAdminVisible && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex gap-3 justify-center mb-8"
+            className="flex flex-wrap gap-2 sm:gap-3 justify-center mb-6 sm:mb-8"
           >
             <Button
               onClick={handleToggleEdit}
@@ -187,14 +187,15 @@ export default function Projects() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.15 }}
-          className="flex gap-4 justify-center flex-wrap mb-12"
+          className="flex gap-2 sm:gap-4 justify-center flex-wrap mb-6 sm:mb-12"
         >
           {(["all", "current", "completed"] as const).map((category) => (
             <Button
               key={category}
               onClick={() => setFilter(category)}
               variant={filter === category ? "primary" : "secondary"}
-              size="md"
+              size="sm"
+              className="sm:px-6 sm:py-3 sm:text-base"
             >
               {category.charAt(0).toUpperCase() + category.slice(1)}
             </Button>

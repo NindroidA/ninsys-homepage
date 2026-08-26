@@ -17,10 +17,10 @@ export function Grid({
   };
 
   const gapClasses = {
-    sm: "gap-4",
-    md: "gap-6",
-    lg: "gap-8",
-    xl: "gap-12",
+    sm: "gap-2 sm:gap-4",
+    md: "gap-3 sm:gap-6",
+    lg: "gap-4 sm:gap-6 lg:gap-8",
+    xl: "gap-6 sm:gap-8 lg:gap-12",
   };
 
   return (

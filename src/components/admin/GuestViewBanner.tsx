@@ -15,7 +15,7 @@ export function GuestViewBanner() {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="fixed top-0 left-0 right-0 z-100 flex justify-center pt-2 px-4 pointer-events-none"
+      className="relative z-100 flex justify-center px-4 pt-2 pointer-events-none"
     >
       <div className="bg-amber-500/90 backdrop-blur-xs rounded-full px-4 py-1.5 shadow-lg border border-amber-400/50 pointer-events-auto flex items-center gap-2">
         <Eye className="w-4 h-4 text-amber-900" />

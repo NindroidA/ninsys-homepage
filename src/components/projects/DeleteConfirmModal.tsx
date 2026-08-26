@@ -46,8 +46,8 @@ export function DeleteConfirmModal({
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 rounded-full bg-rose-500/15 border border-rose-500/25 flex items-center justify-center mb-4">
-                  <AlertTriangle className="w-8 h-8 text-rose-300" />
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-rose-500/15 border border-rose-500/25 flex items-center justify-center mb-3 sm:mb-4">
+                  <AlertTriangle className="w-6 h-6 sm:w-8 sm:h-8 text-rose-300" />
                 </div>
 
                 <h2 className="font-display text-xl font-bold text-white mb-2">Delete Project?</h2>

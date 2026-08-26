@@ -141,13 +141,15 @@ export function ProjectCard({
 
         {/* Project header */}
         <div className="flex items-start justify-between mb-4">
-          <div className="flex items-start gap-4">
-            <div className="p-3 bg-linear-to-br from-violet-500/25 to-pink-500/20 rounded-xl border border-purple-300/15 shrink-0">
-              <ProjectIcon className="w-6 h-6 text-purple-100" />
+          <div className="flex items-start gap-3 sm:gap-4">
+            <div className="p-2 sm:p-3 bg-linear-to-br from-violet-500/25 to-pink-500/20 rounded-lg sm:rounded-xl border border-purple-300/15 shrink-0">
+              <ProjectIcon className="w-5 h-5 sm:w-6 sm:h-6 text-purple-100" />
             </div>
             <div className="flex-1">
-              <h3 className="font-display text-2xl font-bold text-white mb-2">{project.title}</h3>
-              <div className="flex items-center gap-3 text-sm text-white/60">
+              <h3 className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white mb-1.5 sm:mb-2">
+                {project.title}
+              </h3>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm text-white/60">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
                   {formatDate(project.date)}
@@ -170,7 +172,9 @@ export function ProjectCard({
         </div>
 
         {/* Description */}
-        <p className="text-white/70 mb-6 leading-relaxed">{project.description}</p>
+        <p className="text-sm sm:text-base text-white/70 mb-4 sm:mb-6 leading-relaxed">
+          {project.description}
+        </p>
 
         {/* Technologies */}
         <div className="mb-6">
@@ -193,7 +197,7 @@ export function ProjectCard({
         </div>
 
         {/* Links */}
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-2 sm:gap-3">
           {project.githubUrl && (
             <Button
               href={project.githubUrl}
