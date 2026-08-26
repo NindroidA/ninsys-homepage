@@ -38,10 +38,10 @@ export interface SystemHealth {
   success: boolean;
   timestamp: string;
   data: {
-    status: string;
+    status: "healthy" | "degraded" | "unhealthy";
     uptime: number;
-    memory: any;
-    services: any;
+    memory: { used: number; total: number };
+    services: Record<string, boolean>;
   };
 }
 

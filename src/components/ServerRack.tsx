@@ -23,6 +23,7 @@ export function ServerRack() {
 
       {/* server units */}
       {Array.from({ length: 12 }, (_, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
         <group key={i} position={[0, 1.8 - i * 0.35, 0]}>
           <mesh position={[0, 0, 0.9]}>
             <boxGeometry args={[2.5, 0.22, 0.25]} />
@@ -31,6 +32,7 @@ export function ServerRack() {
 
           {/* LED indicators */}
           {Array.from({ length: 4 }, (_, j) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
             <mesh key={j} position={[0.75 - j * 0.5, 0, 1.02]}>
               <sphereGeometry args={[0.025]} />
               <meshStandardMaterial
@@ -65,6 +67,7 @@ export function ServerRack() {
 
       {/* ventilation grills */}
       {Array.from({ length: 8 }, (_, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
         <mesh key={i} position={[-1.5, 1.5 - i * 0.4, 0.3]}>
           <boxGeometry args={[0.03, 0.5, 0.3]} />
           <meshStandardMaterial color="#4b5563" metalness={0.8} roughness={0.2} />
@@ -131,6 +134,7 @@ export function NetworkNodes() {
   return (
     <group ref={nodesRef}>
       {nodeData.map((node, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
         <Float key={i} speed={node.speed} rotationIntensity={0.4} floatIntensity={0.7}>
           <mesh position={[node.x, node.y, node.z]}>
             <octahedronGeometry args={[node.size]} />

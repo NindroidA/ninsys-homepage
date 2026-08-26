@@ -21,6 +21,7 @@ export function GuestViewBanner() {
         <Eye className="w-4 h-4 text-amber-900" />
         <span className="text-sm font-medium text-amber-900">Viewing as Guest</span>
         <button
+          type="button"
           onClick={toggleGuestView}
           className="ml-1 p-1 hover:bg-amber-600/30 rounded-full transition-colors"
           title="Exit Guest View"

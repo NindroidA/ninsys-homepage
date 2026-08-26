@@ -128,6 +128,10 @@ export function GitHubImportModal({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             className="fixed inset-0 z-53 flex items-center justify-center p-4"
+            onClick={(e) => {
+              // Dismiss only when the overlay itself is clicked, never a descendant.
+              if (e.target === e.currentTarget) onClose();
+            }}
           >
             <div
               ref={panelRef}
@@ -136,7 +140,6 @@ export function GitHubImportModal({
               aria-labelledby="github-import-title"
               tabIndex={-1}
               className="w-full max-w-3xl h-[80dvh] max-h-[calc(100dvh-2rem)] flex flex-col bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-white/10 shrink-0">

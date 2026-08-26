@@ -85,6 +85,7 @@ export function SectionCard({
               </button>
               {/* Move up/down buttons (always visible, more touch-friendly) */}
               <button
+                type="button"
                 onClick={onMoveUp}
                 disabled={isFirst}
                 className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-white/60 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
@@ -93,6 +94,7 @@ export function SectionCard({
                 <ChevronUp className="w-4 h-4" />
               </button>
               <button
+                type="button"
                 onClick={onMoveDown}
                 disabled={isLast}
                 className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-white/60 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
@@ -103,6 +105,7 @@ export function SectionCard({
             </div>
             <div className="flex gap-2">
               <button
+                type="button"
                 onClick={() => onEdit?.(section)}
                 className="p-2 rounded bg-white/5 hover:bg-purple-500/20 text-white/60 hover:text-purple-300 transition-colors"
                 title="Edit section"
@@ -110,6 +113,7 @@ export function SectionCard({
                 <Edit2 className="w-4 h-4" />
               </button>
               <button
+                type="button"
                 onClick={() => onDelete?.(section)}
                 className="p-2 rounded bg-white/5 hover:bg-red-500/20 text-white/60 hover:text-red-300 transition-colors"
                 title="Delete section"
@@ -145,6 +149,7 @@ function SectionContent({ section }: { section: AboutSection }) {
       <div className="grid grid-cols-2 gap-x-3 gap-y-1 md:gap-2">
         {content.skills.map((skill, i) => (
           <SkillVial
+            // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
             key={i}
             name={skill.name}
             level={skill.level}
@@ -161,6 +166,7 @@ function SectionContent({ section }: { section: AboutSection }) {
     return (
       <div className="flex flex-wrap gap-1.5 sm:gap-2">
         {content.interests.map((interest, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
           <Badge key={i} variant="default" size="sm">
             {interest.emoji} {interest.label}
           </Badge>
@@ -174,6 +180,7 @@ function SectionContent({ section }: { section: AboutSection }) {
     return (
       <div className="space-y-4 sm:space-y-6">
         {content.items.map((exp, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
           <div key={i} className="border-l-2 border-purple-400/30 pl-3 sm:pl-6">
             <h3 className="text-base sm:text-lg md:text-xl font-semibold text-white mb-1">
               {exp.title}
@@ -193,6 +200,7 @@ function SectionContent({ section }: { section: AboutSection }) {
     return (
       <div className="space-y-4 sm:space-y-6">
         {content.items.map((edu, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
           <div key={i} className="border-l-2 border-emerald-400/30 pl-3 sm:pl-6">
             <h3 className="text-base sm:text-lg md:text-xl font-semibold text-white mb-1">
               {edu.degree}
@@ -212,6 +220,7 @@ function SectionContent({ section }: { section: AboutSection }) {
     return (
       <div
         className="prose prose-invert max-w-none"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: static app-authored markup; no user input reaches this string
         dangerouslySetInnerHTML={{ __html: content.html }}
       />
     );

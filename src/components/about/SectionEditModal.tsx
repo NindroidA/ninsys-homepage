@@ -190,6 +190,10 @@ export function SectionEditModal({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            onClick={(e) => {
+              // Dismiss only when the overlay itself is clicked, never a descendant.
+              if (e.target === e.currentTarget) onClose();
+            }}
           >
             <div
               ref={panelRef}
@@ -198,7 +202,6 @@ export function SectionEditModal({
               aria-labelledby="section-edit-title"
               tabIndex={-1}
               className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-auto bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
               <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
@@ -464,7 +467,7 @@ function SkillSlider({
         max="4"
         value={currentIndex}
         onChange={(e) => {
-          const idx = parseInt(e.target.value);
+          const idx = parseInt(e.target.value, 10);
           const newLevel = SKILL_LEVELS[idx];
           if (newLevel) onChange(newLevel);
         }}
@@ -513,6 +516,7 @@ function SkillsEditor({
       </span>
       <div className="space-y-3 mb-4">
         {skills.map((skill, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
           <div key={i} className="p-3 bg-white/4 rounded-lg space-y-2">
             <div className="flex items-center justify-between gap-2">
               <span className="font-medium text-white">{skill.name}</span>
@@ -545,7 +549,12 @@ function SkillsEditor({
             aria-label="New skill name"
             placeholder="New skill name..."
             className="flex-1 px-3 py-2 bg-white/4 border border-purple-300/12 rounded-lg text-white text-sm"
-            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), onAdd())}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                onAdd();
+              }
+            }}
           />
           <button
             type="button"
@@ -592,6 +601,7 @@ function InterestsEditor({
       </span>
       <div className="flex flex-wrap gap-2 mb-4">
         {interests.map((interest, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
           <div key={i} className="flex items-center gap-1 px-3 py-1 bg-white/10 rounded-full">
             <span>{interest.emoji}</span>
             <span className="text-white text-sm">{interest.label}</span>
@@ -625,7 +635,12 @@ function InterestsEditor({
           aria-label="New interest label"
           placeholder="Interest label"
           className="flex-1 px-3 py-2 bg-white/4 border border-purple-300/12 rounded-lg text-white text-sm"
-          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), onAdd())}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              onAdd();
+            }
+          }}
         />
         <button
           type="button"
@@ -661,6 +676,7 @@ function ExperienceEditor({
       </span>
       <div className="space-y-4">
         {items.map((item, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
           <div key={i} className="p-4 bg-white/4 rounded-lg space-y-3">
             <div className="flex justify-between">
               <span className="text-xs text-white/40">Experience #{i + 1}</span>
@@ -743,6 +759,7 @@ function EducationEditor({
       </span>
       <div className="space-y-4">
         {items.map((item, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
           <div key={i} className="p-4 bg-white/4 rounded-lg space-y-3">
             <div className="flex justify-between">
               <span className="text-xs text-white/40">Education #{i + 1}</span>

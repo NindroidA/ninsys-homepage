@@ -49,6 +49,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               {this.state.error?.message || "An unexpected error occurred"}
             </p>
             <button
+              type="button"
               onClick={this.handleRetry}
               className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-purple-500 to-pink-500 text-white font-medium rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-200"
             >
@@ -78,6 +79,7 @@ export function ApiErrorFallback({ error, onRetry, compact = false }: ApiErrorFa
         <span className="text-red-300 text-sm flex-1">{error || "Failed to load data"}</span>
         {onRetry && (
           <button
+            type="button"
             onClick={onRetry}
             className="p-2 hover:bg-white/10 rounded-lg transition-colors"
             title="Retry"
@@ -97,6 +99,7 @@ export function ApiErrorFallback({ error, onRetry, compact = false }: ApiErrorFa
       <p className="text-white/70 mb-4">{error || "Failed to load data"}</p>
       {onRetry && (
         <button
+          type="button"
           onClick={onRetry}
           className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white/80 rounded-lg transition-colors"
         >

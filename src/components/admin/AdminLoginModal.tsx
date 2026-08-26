@@ -62,6 +62,10 @@ export function AdminLoginModal({ isOpen, onClose, onSuccess }: AdminLoginModalP
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-9999 flex items-center justify-center p-4"
+            onClick={(e) => {
+              // Dismiss only when the overlay itself is clicked, never a descendant.
+              if (e.target === e.currentTarget) onClose();
+            }}
           >
             <div
               ref={panelRef}
@@ -70,7 +74,6 @@ export function AdminLoginModal({ isOpen, onClose, onSuccess }: AdminLoginModalP
               aria-labelledby="admin-login-modal-title"
               tabIndex={-1}
               className="w-full max-w-md rounded-2xl border border-purple-300/12 bg-[#0d0a16]/95 p-8 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur-xl"
-              onClick={(e) => e.stopPropagation()}
             >
               <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">

@@ -10,6 +10,7 @@ import Pages from "./pages/index.tsx";
 
 // ErrorBoundary wraps the providers: without it any render throw unmounts the
 // whole tree and leaves a blank page.
+// biome-ignore lint/style/noNonNullAssertion: the #root element is guaranteed by index.html
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ErrorBoundary>

@@ -11,7 +11,7 @@ export default function NotFound(): JSX.Element {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
-      <Seo title="Page Not Found" />
+      <Seo title="Page Not Found" noindex />
       <BackgroundNet />
 
       <motion.div

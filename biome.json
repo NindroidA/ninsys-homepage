@@ -55,8 +55,7 @@
         "noArrayIndexKey": "warn",
         "noConfusingVoidType": "warn",
         "noExplicitAny": "warn",
-        "noGlobalIsNan": "warn",
-        "noUnknownAtRules": "off"
+        "noGlobalIsNan": "warn"
       }
     }
   },

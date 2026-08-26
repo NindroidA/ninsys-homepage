@@ -47,6 +47,7 @@ export function FloatingElements({
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {elements.map((element, index) => (
         <motion.div
+          // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
           key={index}
           initial={{ opacity: maxOpacity * 0.5 }}
           animate={{

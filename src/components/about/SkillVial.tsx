@@ -56,13 +56,15 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
   // Create wave paths with sloshing effect (tilt: positive = higher on left, negative = higher on right)
   const createWavePath = (tilt: number) => {
     // Ensure y is always a valid number to prevent "undefined" in path
-    const y = typeof liquidTop === "number" && !isNaN(liquidTop) ? liquidTop : vialHeight - 8;
+    const y =
+      typeof liquidTop === "number" && !Number.isNaN(liquidTop) ? liquidTop : vialHeight - 8;
     const leftY = y - tilt;
     const rightY = y + tilt;
     return `M 4 ${leftY} Q ${vialWidth / 2} ${y + 2}, ${vialWidth - 4} ${rightY} L ${vialWidth - 4} ${vialHeight + 10} L 4 ${vialHeight + 10} Z`;
   };
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: click-to-dismiss dialog overlay; Escape is handled by useModalA11y
     <div
       className={`flex items-center gap-2 sm:gap-3 ${compact ? "py-0.5" : "py-2"}`}
       onMouseEnter={() => setIsHovered(true)}
@@ -71,6 +73,7 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
       {/* Vial SVG */}
       <div className="relative" style={{ width: vialWidth, height: vialHeight }}>
         <svg
+          aria-hidden="true"
           width={vialWidth}
           height={vialHeight}
           viewBox={`0 0 ${vialWidth} ${vialHeight}`}
@@ -324,6 +327,7 @@ export function SkillVial({ name, level, category, compact = false }: SkillVialP
             {/* Hover bubbles with pop effect */}
             {bubbles.map((bubble, i) => (
               <motion.circle
+                // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
                 key={i}
                 cx={bubble.x}
                 r={bubble.size}

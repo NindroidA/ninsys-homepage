@@ -24,6 +24,7 @@ export function ServerRackLoader({
             {/* Server slots with shimmer */}
             {[...Array(6)].map((_, i) => (
               <motion.div
+                // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
                 key={i}
                 className="mx-2 my-1 h-6 rounded bg-linear-to-r from-purple-500/10 via-purple-400/20 to-purple-500/10 sm:mx-3 sm:my-2 sm:h-8"
                 animate={
@@ -41,6 +42,7 @@ export function ServerRackLoader({
           <div className="absolute top-2 right-2 flex flex-col gap-2">
             {[...Array(3)].map((_, i) => (
               <motion.div
+                // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
                 key={i}
                 className="w-2 h-2 rounded-full bg-cyan-400"
                 animate={isAnimated ? { opacity: [0.3, 1, 0.3] } : undefined}
@@ -59,6 +61,7 @@ export function ServerRackLoader({
           >
             {[0, 72, 144, 216, 288].map((angle, i) => (
               <motion.div
+                // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length positional list that is never reordered - the index is the stable identity
                 key={i}
                 className="absolute w-2 h-2 rounded-full bg-linear-to-r from-cyan-400 to-purple-500 sm:w-3 sm:h-3"
                 style={{

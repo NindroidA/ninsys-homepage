@@ -312,6 +312,10 @@ export function ProjectEditModal({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             className="fixed inset-0 z-52 flex items-center justify-center p-4"
+            onClick={(e) => {
+              // Dismiss only when the overlay itself is clicked, never a descendant.
+              if (e.target === e.currentTarget) onClose();
+            }}
           >
             <div
               ref={panelRef}
@@ -320,7 +324,6 @@ export function ProjectEditModal({
               aria-labelledby="project-edit-modal-title"
               tabIndex={-1}
               className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-auto bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
               <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">

@@ -104,6 +104,7 @@ export function ProjectCard({
               </button>
               {/* Move up/down buttons (always visible, more touch-friendly) */}
               <button
+                type="button"
                 onClick={onMoveUp}
                 disabled={isFirst}
                 className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-white/60 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
@@ -112,6 +113,7 @@ export function ProjectCard({
                 <ChevronUp className="w-4 h-4" />
               </button>
               <button
+                type="button"
                 onClick={onMoveDown}
                 disabled={isLast}
                 className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-white/60 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
@@ -122,6 +124,7 @@ export function ProjectCard({
             </div>
             <div className="flex gap-2">
               <button
+                type="button"
                 onClick={() => onEdit?.(project)}
                 className="p-2 rounded bg-white/5 hover:bg-purple-500/20 text-white/60 hover:text-purple-300 transition-colors"
                 title="Edit project"
@@ -129,6 +132,7 @@ export function ProjectCard({
                 <Edit2 className="w-4 h-4" />
               </button>
               <button
+                type="button"
                 onClick={() => onDelete?.(project)}
                 className="p-2 rounded bg-white/5 hover:bg-red-500/20 text-white/60 hover:text-red-300 transition-colors"
                 title="Delete project"

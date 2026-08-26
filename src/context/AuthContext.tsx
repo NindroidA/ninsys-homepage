@@ -191,7 +191,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     // Create a fake token that expires in 24 hours
-    const fakeToken = "dev_token_" + Date.now();
+    const fakeToken = `dev_token_${Date.now()}`;
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     sessionStorage.setItem(STORAGE_KEYS.TOKEN, fakeToken);
