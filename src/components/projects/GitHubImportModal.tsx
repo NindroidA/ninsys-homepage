@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ExternalLink, Import, Loader2, RefreshCw, Search, Star, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useModalA11y } from "../../hooks/useModalA11y";
 import type { GitHubRepo } from "../../types/projects";
 import { GithubIcon } from "../icons/BrandIcons";
 
@@ -71,6 +72,7 @@ export function GitHubImportModal({
   onImport,
   existingProjectUrls,
 }: GitHubImportModalProps) {
+  const panelRef = useModalA11y(isOpen, onClose);
   const [search, setSearch] = useState("");
 
   // Clear search when modal closes
@@ -128,6 +130,11 @@ export function GitHubImportModal({
             className="fixed inset-0 z-53 flex items-center justify-center p-4"
           >
             <div
+              ref={panelRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="github-import-title"
+              tabIndex={-1}
               className="w-full max-w-3xl h-[80dvh] max-h-[calc(100dvh-2rem)] flex flex-col bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
@@ -135,22 +142,29 @@ export function GitHubImportModal({
               <div className="flex items-center justify-between p-6 border-b border-white/10 shrink-0">
                 <div className="flex items-center gap-3">
                   <GithubIcon className="w-6 h-6 text-white" />
-                  <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white">
+                  <h2
+                    id="github-import-title"
+                    className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white"
+                  >
                     Import from GitHub
                   </h2>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
+                    type="button"
                     onClick={onRefresh}
                     disabled={loading}
                     className="p-2 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors disabled:opacity-50"
                     title="Refresh repos"
+                    aria-label="Refresh repos"
                   >
                     <RefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
                   </button>
                   <button
+                    type="button"
                     onClick={onClose}
                     className="p-2 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors"
+                    aria-label="Close GitHub import"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -162,10 +176,12 @@ export function GitHubImportModal({
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40" />
                   <input
+                    id="github-import-search"
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search repositories..."
+                    aria-label="Search repositories"
                     className="w-full pl-12 pr-4 py-3 bg-white/4 border border-purple-300/12 rounded-lg text-white placeholder-white/30 focus:outline-hidden focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
                   />
                 </div>
@@ -182,6 +198,7 @@ export function GitHubImportModal({
                   <div className="flex flex-col items-center justify-center h-full text-red-400">
                     <p className="mb-4">{error}</p>
                     <button
+                      type="button"
                       onClick={onRefresh}
                       className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
                     >
@@ -254,8 +271,10 @@ export function GitHubImportModal({
                               </span>
                             ) : (
                               <button
+                                type="button"
                                 onClick={() => handleImport(repo)}
                                 className="flex items-center gap-2 px-3 py-1.5 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 rounded-lg text-sm font-medium transition-colors"
+                                aria-label={`Import ${repo.name}`}
                               >
                                 <Import className="w-4 h-4" />
                                 Import
@@ -266,6 +285,7 @@ export function GitHubImportModal({
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center gap-1.5 px-3 py-1.5 bg-white/4 hover:bg-white/10 text-white/60 rounded-lg text-sm transition-colors"
+                              aria-label={`View ${repo.name} on GitHub`}
                             >
                               <ExternalLink className="w-3 h-3" />
                               View

@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useModalA11y } from "../../hooks/useModalA11y";
 import {
   type AboutSection,
   type EducationContent,
@@ -54,6 +55,8 @@ export function SectionEditModal({
   section,
   saving,
 }: SectionEditModalProps) {
+  const panelRef = useModalA11y(isOpen, onClose);
+
   const [formData, setFormData] = useState<PartialSection>(DEFAULT_SECTION);
 
   // Skills specific state
@@ -189,16 +192,26 @@ export function SectionEditModal({
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
             <div
+              ref={panelRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="section-edit-title"
+              tabIndex={-1}
               className="w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-auto bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
               <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
-                <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white">
+                <h2
+                  id="section-edit-title"
+                  className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white"
+                >
                   {section ? "Edit Section" : "New Section"}
                 </h2>
                 <button
+                  type="button"
                   onClick={onClose}
+                  aria-label="Close section editor"
                   className="p-2 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors"
                 >
                   <X className="w-5 h-5" />
@@ -208,10 +221,18 @@ export function SectionEditModal({
               <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                 {/* Section Type */}
                 <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">
+                  <span
+                    id="section-type-label"
+                    className="block text-sm font-medium text-white/70 mb-2"
+                  >
                     Section Type
-                  </label>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  </span>
+                  {/* biome-ignore lint/a11y/useSemanticElements: labelled control group; a fieldset would change the layout */}
+                  <div
+                    role="group"
+                    aria-labelledby="section-type-label"
+                    className="grid grid-cols-2 md:grid-cols-4 gap-2"
+                  >
                     {(["skills", "interests", "experience", "education"] as const).map((type) => (
                       <button
                         key={type}
@@ -231,8 +252,14 @@ export function SectionEditModal({
 
                 {/* Title */}
                 <div>
-                  <label className="block text-sm font-medium text-white/70 mb-2">Title</label>
+                  <label
+                    htmlFor="section-title-input"
+                    className="block text-sm font-medium text-white/70 mb-2"
+                  >
+                    Title
+                  </label>
                   <input
+                    id="section-title-input"
                     type="text"
                     value={formData.title}
                     onChange={(e) =>
@@ -250,8 +277,18 @@ export function SectionEditModal({
                 {/* Icon and Size */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-white/70 mb-2">Icon</label>
-                    <div className="flex flex-wrap gap-2">
+                    <span
+                      id="section-icon-label"
+                      className="block text-sm font-medium text-white/70 mb-2"
+                    >
+                      Icon
+                    </span>
+                    {/* biome-ignore lint/a11y/useSemanticElements: labelled control group; a fieldset would change the layout */}
+                    <div
+                      role="group"
+                      aria-labelledby="section-icon-label"
+                      className="flex flex-wrap gap-2"
+                    >
                       {SECTION_ICONS.slice(0, 10).map(({ name }) => {
                         const Icon = getLucideIcon(name);
                         return Icon ? (
@@ -259,6 +296,7 @@ export function SectionEditModal({
                             key={name}
                             type="button"
                             onClick={() => setFormData((prev) => ({ ...prev, icon: name }))}
+                            aria-label={`Use ${name} icon`}
                             className={`p-2 rounded-lg border transition-colors ${
                               formData.icon === name
                                 ? "bg-purple-500/20 border-purple-500"
@@ -272,8 +310,14 @@ export function SectionEditModal({
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-white/70 mb-2">Size</label>
+                    <label
+                      htmlFor="section-size-select"
+                      className="block text-sm font-medium text-white/70 mb-2"
+                    >
+                      Size
+                    </label>
                     <select
+                      id="section-size-select"
                       value={formData.size}
                       onChange={(e) =>
                         setFormData((prev) => ({
@@ -401,9 +445,11 @@ const LEVEL_COLORS: Record<SkillLevel, string> = {
 function SkillSlider({
   level,
   onChange,
+  label,
 }: {
   level: SkillLevel;
   onChange: (level: SkillLevel) => void;
+  label: string;
 }) {
   const currentIndex = SKILL_LEVELS.indexOf(level);
   const percent = SKILL_LEVEL_PERCENT[level];
@@ -413,6 +459,7 @@ function SkillSlider({
     <div className="flex-1 flex items-center gap-3">
       <input
         type="range"
+        aria-label={label}
         min="0"
         max="4"
         value={currentIndex}
@@ -459,8 +506,11 @@ function SkillsEditor({
   };
 
   return (
-    <div>
-      <label className="block text-sm font-medium text-white/70 mb-2">Skills</label>
+    // biome-ignore lint/a11y/useSemanticElements: labelled control group; a fieldset would change the layout
+    <div role="group" aria-labelledby="skills-editor-label">
+      <span id="skills-editor-label" className="block text-sm font-medium text-white/70 mb-2">
+        Skills
+      </span>
       <div className="space-y-3 mb-4">
         {skills.map((skill, i) => (
           <div key={i} className="p-3 bg-white/4 rounded-lg space-y-2">
@@ -469,6 +519,7 @@ function SkillsEditor({
               <button
                 type="button"
                 onClick={() => setSkills(skills.filter((_, idx) => idx !== i))}
+                aria-label={`Remove skill ${skill.name}`}
                 className="p-1 hover:bg-red-500/20 rounded text-white/40 hover:text-red-400"
               >
                 <Trash2 className="w-4 h-4" />
@@ -477,6 +528,7 @@ function SkillsEditor({
             <SkillSlider
               level={skill.level}
               onChange={(newLevel) => updateSkillLevel(i, newLevel)}
+              label={`Skill level for ${skill.name}`}
             />
           </div>
         ))}
@@ -486,9 +538,11 @@ function SkillsEditor({
       <div className="p-3 border border-dashed border-white/20 rounded-lg space-y-3">
         <div className="flex gap-2">
           <input
+            id="new-skill-name"
             type="text"
             value={newSkillName}
             onChange={(e) => setNewSkillName(e.target.value)}
+            aria-label="New skill name"
             placeholder="New skill name..."
             className="flex-1 px-3 py-2 bg-white/4 border border-purple-300/12 rounded-lg text-white text-sm"
             onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), onAdd())}
@@ -497,12 +551,17 @@ function SkillsEditor({
             type="button"
             onClick={onAdd}
             disabled={!newSkillName.trim()}
+            aria-label="Add skill"
             className="px-4 py-2 bg-purple-500/20 hover:bg-purple-500/30 disabled:bg-white/4 disabled:text-white/30 text-purple-300 rounded-lg transition-colors"
           >
             <Plus className="w-5 h-5" />
           </button>
         </div>
-        <SkillSlider level={newSkillLevel} onChange={setNewSkillLevel} />
+        <SkillSlider
+          level={newSkillLevel}
+          onChange={setNewSkillLevel}
+          label="Skill level for the new skill"
+        />
       </div>
     </div>
   );
@@ -526,8 +585,11 @@ function InterestsEditor({
   onAdd: () => void;
 }) {
   return (
-    <div>
-      <label className="block text-sm font-medium text-white/70 mb-2">Interests</label>
+    // biome-ignore lint/a11y/useSemanticElements: labelled control group; a fieldset would change the layout
+    <div role="group" aria-labelledby="interests-editor-label">
+      <span id="interests-editor-label" className="block text-sm font-medium text-white/70 mb-2">
+        Interests
+      </span>
       <div className="flex flex-wrap gap-2 mb-4">
         {interests.map((interest, i) => (
           <div key={i} className="flex items-center gap-1 px-3 py-1 bg-white/10 rounded-full">
@@ -536,6 +598,7 @@ function InterestsEditor({
             <button
               type="button"
               onClick={() => setInterests(interests.filter((_, idx) => idx !== i))}
+              aria-label={`Remove interest ${interest.label}`}
               className="p-0.5 hover:bg-red-500/20 rounded-full text-white/40 hover:text-red-400"
             >
               <X className="w-3 h-3" />
@@ -545,17 +608,21 @@ function InterestsEditor({
       </div>
       <div className="flex gap-2">
         <input
+          id="new-interest-emoji"
           type="text"
           value={newEmoji}
           onChange={(e) => setNewEmoji(e.target.value)}
+          aria-label="New interest emoji"
           placeholder="Emoji"
           className="w-16 px-3 py-2 bg-white/4 border border-purple-300/12 rounded-lg text-white text-center"
           maxLength={4}
         />
         <input
+          id="new-interest-label"
           type="text"
           value={newLabel}
           onChange={(e) => setNewLabel(e.target.value)}
+          aria-label="New interest label"
           placeholder="Interest label"
           className="flex-1 px-3 py-2 bg-white/4 border border-purple-300/12 rounded-lg text-white text-sm"
           onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), onAdd())}
@@ -563,6 +630,7 @@ function InterestsEditor({
         <button
           type="button"
           onClick={onAdd}
+          aria-label="Add interest"
           className="px-3 py-2 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 rounded-lg"
         >
           <Plus className="w-5 h-5" />
@@ -586,8 +654,11 @@ function ExperienceEditor({
   };
 
   return (
-    <div>
-      <label className="block text-sm font-medium text-white/70 mb-2">Experience</label>
+    // biome-ignore lint/a11y/useSemanticElements: labelled control group; a fieldset would change the layout
+    <div role="group" aria-labelledby="experience-editor-label">
+      <span id="experience-editor-label" className="block text-sm font-medium text-white/70 mb-2">
+        Experience
+      </span>
       <div className="space-y-4">
         {items.map((item, i) => (
           <div key={i} className="p-4 bg-white/4 rounded-lg space-y-3">
@@ -596,6 +667,7 @@ function ExperienceEditor({
               <button
                 type="button"
                 onClick={() => setItems(items.filter((_, idx) => idx !== i))}
+                aria-label={`Delete experience ${i + 1}`}
                 className="text-white/40 hover:text-red-400"
               >
                 <Trash2 className="w-4 h-4" />
@@ -605,6 +677,7 @@ function ExperienceEditor({
               type="text"
               value={item.title}
               onChange={(e) => updateItem(i, "title", e.target.value)}
+              aria-label={`Experience ${i + 1} job title`}
               placeholder="Job Title"
               className="w-full px-3 py-2 bg-white/4 border border-purple-300/12 rounded text-white text-sm"
             />
@@ -613,6 +686,7 @@ function ExperienceEditor({
                 type="text"
                 value={item.company}
                 onChange={(e) => updateItem(i, "company", e.target.value)}
+                aria-label={`Experience ${i + 1} company`}
                 placeholder="Company"
                 className="px-3 py-2 bg-white/4 border border-purple-300/12 rounded text-white text-sm"
               />
@@ -620,6 +694,7 @@ function ExperienceEditor({
                 type="text"
                 value={item.period}
                 onChange={(e) => updateItem(i, "period", e.target.value)}
+                aria-label={`Experience ${i + 1} period`}
                 placeholder="Period (e.g., 2020 - Present)"
                 className="px-3 py-2 bg-white/4 border border-purple-300/12 rounded text-white text-sm"
               />
@@ -627,6 +702,7 @@ function ExperienceEditor({
             <textarea
               value={item.description}
               onChange={(e) => updateItem(i, "description", e.target.value)}
+              aria-label={`Experience ${i + 1} description`}
               placeholder="Description"
               rows={2}
               className="w-full px-3 py-2 bg-white/4 border border-purple-300/12 rounded text-white text-sm resize-none"
@@ -660,8 +736,11 @@ function EducationEditor({
   };
 
   return (
-    <div>
-      <label className="block text-sm font-medium text-white/70 mb-2">Education</label>
+    // biome-ignore lint/a11y/useSemanticElements: labelled control group; a fieldset would change the layout
+    <div role="group" aria-labelledby="education-editor-label">
+      <span id="education-editor-label" className="block text-sm font-medium text-white/70 mb-2">
+        Education
+      </span>
       <div className="space-y-4">
         {items.map((item, i) => (
           <div key={i} className="p-4 bg-white/4 rounded-lg space-y-3">
@@ -670,6 +749,7 @@ function EducationEditor({
               <button
                 type="button"
                 onClick={() => setItems(items.filter((_, idx) => idx !== i))}
+                aria-label={`Delete education ${i + 1}`}
                 className="text-white/40 hover:text-red-400"
               >
                 <Trash2 className="w-4 h-4" />
@@ -679,6 +759,7 @@ function EducationEditor({
               type="text"
               value={item.degree}
               onChange={(e) => updateItem(i, "degree", e.target.value)}
+              aria-label={`Education ${i + 1} degree`}
               placeholder="Degree"
               className="w-full px-3 py-2 bg-white/4 border border-purple-300/12 rounded text-white text-sm"
             />
@@ -687,6 +768,7 @@ function EducationEditor({
                 type="text"
                 value={item.school}
                 onChange={(e) => updateItem(i, "school", e.target.value)}
+                aria-label={`Education ${i + 1} school`}
                 placeholder="School"
                 className="px-3 py-2 bg-white/4 border border-purple-300/12 rounded text-white text-sm"
               />
@@ -694,6 +776,7 @@ function EducationEditor({
                 type="text"
                 value={item.period}
                 onChange={(e) => updateItem(i, "period", e.target.value)}
+                aria-label={`Education ${i + 1} period`}
                 placeholder="Period (e.g., 2018 - 2022)"
                 className="px-3 py-2 bg-white/4 border border-purple-300/12 rounded text-white text-sm"
               />
@@ -701,6 +784,7 @@ function EducationEditor({
             <textarea
               value={item.description}
               onChange={(e) => updateItem(i, "description", e.target.value)}
+              aria-label={`Education ${i + 1} description`}
               placeholder="Description"
               rows={2}
               className="w-full px-3 py-2 bg-white/4 border border-purple-300/12 rounded text-white text-sm resize-none"

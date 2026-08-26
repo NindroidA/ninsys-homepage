@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle, Loader2 } from "lucide-react";
+import { useModalA11y } from "../../hooks/useModalA11y";
 
 interface DeleteConfirmModalProps {
   isOpen: boolean;
@@ -16,6 +17,8 @@ export function DeleteConfirmModal({
   title,
   deleting,
 }: DeleteConfirmModalProps) {
+  const panelRef = useModalA11y(isOpen, onClose);
+
   const handleConfirm = async () => {
     await onConfirm();
     onClose();
@@ -42,6 +45,12 @@ export function DeleteConfirmModal({
             className="fixed inset-0 z-51 flex items-center justify-center p-4"
           >
             <div
+              ref={panelRef}
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="delete-confirm-title"
+              aria-describedby="delete-confirm-description"
+              tabIndex={-1}
               className="w-full max-w-md bg-[#0d0a16]/95 backdrop-blur-xl rounded-2xl border border-purple-300/12 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_30px_80px_-40px_rgba(0,0,0,0.9)] p-6"
               onClick={(e) => e.stopPropagation()}
             >
@@ -50,9 +59,14 @@ export function DeleteConfirmModal({
                   <AlertTriangle className="w-6 h-6 sm:w-8 sm:h-8 text-rose-300" />
                 </div>
 
-                <h2 className="font-display text-xl font-bold text-white mb-2">Delete Project?</h2>
+                <h2
+                  id="delete-confirm-title"
+                  className="font-display text-xl font-bold text-white mb-2"
+                >
+                  Delete Project?
+                </h2>
 
-                <p className="text-white/60 mb-6">
+                <p id="delete-confirm-description" className="text-white/60 mb-6">
                   Are you sure you want to delete{" "}
                   <span className="text-white font-medium">&quot;{title}&quot;</span>? This action
                   cannot be undone.
