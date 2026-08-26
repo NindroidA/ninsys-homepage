@@ -16,6 +16,11 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      # The immutable digest of the image just pushed. The deploy pulls by digest
+      # rather than by tag: metadata-action's `type=sha` emits a *short* sha, so
+      # referencing github.sha directly resolves to a tag that was never pushed.
+      digest: ${{ steps.build.outputs.digest }}
 
     steps:
       - name: Checkout repository
@@ -38,6 +43,7 @@ jobs:
             type=raw,value=latest
 
       - name: Build and push Docker image
+        id: build
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -54,30 +60,25 @@ jobs:
         uses: appleboy/ssh-action@v1.2.5
         env:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          SHA: ${{ github.sha }}
+          DIGEST: ${{ needs.build-and-push.outputs.digest }}
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
-          envs: IMAGE,SHA
+          envs: IMAGE,DIGEST
           script: |
             # Fail loudly. Without this the pull could fail, compose would leave the
             # old container running, and the job still reported success — which is
             # exactly how the site sat on a stale build for months.
             set -euo pipefail
 
-            echo "Pulling ${IMAGE}:${SHA} ..."
+            echo "Pulling ${IMAGE}@${DIGEST} ..."
             # The package is public, but a stale ghcr entry in ~/.docker/config.json
             # makes Docker send bad credentials and get "denied" instead of falling
             # back to anonymous. Drop any cached entry first.
             docker logout ghcr.io >/dev/null 2>&1 || true
-            docker pull "${IMAGE}:${SHA}"
-
-            # Pin the compose service to the exact digest we just pulled, so this can
-            # never silently reuse whatever :latest happened to resolve to before.
-            DIGEST=$(docker image inspect --format '{{index .RepoDigests 0}}' "${IMAGE}:${SHA}")
-            echo "Pulled digest: ${DIGEST}"
+            docker pull "${IMAGE}@${DIGEST}"
 
             # v2 is a docker plugin, v1 a standalone binary; support whichever is here.
             if docker compose version >/dev/null 2>&1; then
@@ -95,26 +96,26 @@ jobs:
             docker image prune -f
 
             RUNNING=$(docker inspect --format '{{.Image}}' ninsys-homepage)
-            EXPECTED=$(docker image inspect --format '{{.Id}}' "${IMAGE}:${SHA}")
+            EXPECTED=$(docker image inspect --format '{{.Id}}' "${IMAGE}@${DIGEST}")
             if [ "$RUNNING" != "$EXPECTED" ]; then
-              echo "::error::Container is running ${RUNNING} but ${SHA} is ${EXPECTED}."
+              echo "::error::Container is running ${RUNNING}, expected ${EXPECTED}."
               echo "The deploy did not take effect."
               exit 1
             fi
-            echo "Container is running the image built from ${SHA}."
+            echo "Container is running the image at ${DIGEST}."
 
       - name: Verify the live site serves this build
         uses: appleboy/ssh-action@v1.2.5
         env:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          SHA: ${{ github.sha }}
+          DIGEST: ${{ needs.build-and-push.outputs.digest }}
           SITE: https://nindroidsystems.com
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
-          envs: IMAGE,SHA,SITE
+          envs: IMAGE,DIGEST,SITE
           script: |
             set -euo pipefail
 
@@ -122,7 +123,7 @@ jobs:
             # which is why every stale deploy still reported "Site is live".
             # Compare the hashed asset the live HTML references against the one
             # baked into the image we just deployed.
-            EXPECTED=$(docker run --rm --entrypoint sh "${IMAGE}:${SHA}" -c \
+            EXPECTED=$(docker run --rm --entrypoint sh "${IMAGE}@${DIGEST}" -c \
               "grep -oE 'assets/index-[A-Za-z0-9_-]+\.css' /usr/share/nginx/html/index.html | head -1")
             echo "This build references: ${EXPECTED}"
 
