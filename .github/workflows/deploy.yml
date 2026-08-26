@@ -52,36 +52,90 @@ jobs:
     steps:
       - name: Deploy to Homelab
         uses: appleboy/ssh-action@v1.2.5
+        env:
+          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          SHA: ${{ github.sha }}
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
+          envs: IMAGE,SHA
           script: |
-            echo "Pulling latest image..."
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            # Fail loudly. Without this the pull could fail, compose would leave the
+            # old container running, and the job still reported success — which is
+            # exactly how the site sat on a stale build for months.
+            set -euo pipefail
 
-            echo "Restarting container..."
+            echo "Pulling ${IMAGE}:${SHA} ..."
+            # The package is public, but a stale ghcr entry in ~/.docker/config.json
+            # makes Docker send bad credentials and get "denied" instead of falling
+            # back to anonymous. Drop any cached entry first.
+            docker logout ghcr.io >/dev/null 2>&1 || true
+            docker pull "${IMAGE}:${SHA}"
+
+            # Pin the compose service to the exact digest we just pulled, so this can
+            # never silently reuse whatever :latest happened to resolve to before.
+            DIGEST=$(docker image inspect --format '{{index .RepoDigests 0}}' "${IMAGE}:${SHA}")
+            echo "Pulled digest: ${DIGEST}"
+
+            # v2 is a docker plugin, v1 a standalone binary; support whichever is here.
+            if docker compose version >/dev/null 2>&1; then
+              compose() { docker compose "$@"; }
+            else
+              compose() { docker-compose "$@"; }
+            fi
+
+            echo "Recreating container..."
             cd /opt/docker
-            docker-compose up -d ninsys-homepage
+            compose pull ninsys-homepage
+            compose up -d --force-recreate ninsys-homepage
 
             echo "Cleaning up old images..."
             docker image prune -f
 
-            echo "Deployment complete!"
+            RUNNING=$(docker inspect --format '{{.Image}}' ninsys-homepage)
+            EXPECTED=$(docker image inspect --format '{{.Id}}' "${IMAGE}:${SHA}")
+            if [ "$RUNNING" != "$EXPECTED" ]; then
+              echo "::error::Container is running ${RUNNING} but ${SHA} is ${EXPECTED}."
+              echo "The deploy did not take effect."
+              exit 1
+            fi
+            echo "Container is running the image built from ${SHA}."
 
-      - name: Verify deployment
+      - name: Verify the live site serves this build
         uses: appleboy/ssh-action@v1.2.5
+        env:
+          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          SHA: ${{ github.sha }}
+          SITE: https://nindroidsystems.com
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
+          envs: IMAGE,SHA,SITE
           script: |
-            echo "Testing deployment..."
-            sleep 5
-            if curl -f -s https://nindroidsystems.com > /dev/null; then
-              echo "Site is live at https://nindroidsystems.com"
-            else
-              echo "Warning: Site might still be starting up"
-            fi
+            set -euo pipefail
+
+            # A plain 200 proves nothing: the previous container answers 200 too,
+            # which is why every stale deploy still reported "Site is live".
+            # Compare the hashed asset the live HTML references against the one
+            # baked into the image we just deployed.
+            EXPECTED=$(docker run --rm --entrypoint sh "${IMAGE}:${SHA}" -c \
+              "grep -oE 'assets/index-[A-Za-z0-9_-]+\.css' /usr/share/nginx/html/index.html | head -1")
+            echo "This build references: ${EXPECTED}"
+
+            for attempt in $(seq 1 12); do
+              LIVE=$(curl -fsS "${SITE}/" \
+                | grep -oE 'assets/index-[A-Za-z0-9_-]+\.css' | head -1 || true)
+              if [ "$LIVE" = "$EXPECTED" ]; then
+                echo "Live site is serving this build (${LIVE})."
+                exit 0
+              fi
+              echo "attempt ${attempt}: live=${LIVE} expected=${EXPECTED}"
+              sleep 10
+            done
+
+            echo "::error::Live site is serving ${LIVE}, expected ${EXPECTED}."
+            exit 1
