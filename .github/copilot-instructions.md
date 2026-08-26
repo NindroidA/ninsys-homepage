@@ -2,71 +2,80 @@
 
 ## Project Overview
 
-**NinSys Homepage** is a modern personal portfolio site built with React 19 and TypeScript. It features an admin panel for content management, 3D visualizations, an interactive terminal interface, and real-time service monitoring.
+**NinSys Homepage** is a modern personal portfolio site built with React 19 and TypeScript. It features an admin panel for content management, 3D visualizations, and real-time service monitoring.
 
 **Purpose**: Personal portfolio website for [nindroidsystems.com](https://nindroidsystems.com) with editable projects, about page, and custom interactive features.
 
 ## Tech Stack
 
-- **Frontend**: React 19, TypeScript, Vite 5
-- **Package Manager**: Bun (npm-compatible)
-- **Styling**: Tailwind CSS 3, Tailwind Merge, Tailwind Animate
+- **Frontend**: React 19, TypeScript 6, Vite 7
+- **Package Manager**: Bun (this repo is Bun-only — `bun.lock` is the single lockfile)
+- **Styling**: Tailwind CSS 4 (CSS-first config — tokens live in `src/index.css`, there is no `tailwind.config.js`), Tailwind Merge, Tailwind Animate
+- **Data layer**: TanStack Query 5
 - **Animation**: Framer Motion
 - **3D Graphics**: Three.js, React Three Fiber, Drei
 - **Drag & Drop**: @dnd-kit/core, @dnd-kit/sortable
-- **Icons**: Lucide React
+- **Icons**: Lucide React 1
 - **Routing**: React Router DOM 7
-- **Linting**: ESLint 9 with TypeScript ESLint, unused-imports plugin
+- **Lint + format**: Biome 2 (ESLint and Prettier were removed in v2.0.0)
 
 ## Getting Started
 
 ### Development Commands
 
 ```bash
-# Install dependencies
-bun install  # or npm install
+# Install dependencies (Bun only)
+bun install
 
-# Start dev server (http://localhost:3000)
-npm run dev
+# Start dev server (http://localhost:3000, bound to all interfaces)
+bun run dev
 
 # Build for production
-npm run build  # Runs TypeScript compiler then Vite build
+bun run build  # Runs TypeScript compiler then Vite build
 
-# Lint code
-npm run lint  # Check for issues
-npm run lint:fix  # Auto-fix issues
+# Type check without emitting
+bun run typecheck
 
-# Format code
-npm run format  # Prettier formatting
+# Lint + format (Biome)
+bun run lint      # Check for issues
+bun run lint:fix  # Auto-fix issues
+bun run format    # Format
 
 # Preview production build
-npm run preview
+bun run preview
 ```
 
 ### Project Structure
 
 ```
 src/
-├── assets/           # Static data, terminal configs
-├── components/       # UI components
+├── _archive/         # Retired features (terminal, railways) — excluded from build/lint/typecheck
+├── assets/           # Static data (navigationCards, hostedProjects)
+├── components/
 │   ├── about/        # About page (SkillVial, SectionCard, etc.)
-│   ├── admin/        # Admin UI (login, guest banner)
+│   ├── admin/        # Admin UI (login modal, guest banner, TOTP input)
+│   ├── background/   # BackgroundNet hero canvas
 │   ├── projects/     # Projects page (cards, modals, drag list)
-│   └── shared/       # Shared UI (Button, Card, Section)
-├── context/          # React context (AuthContext)
-├── hooks/            # Custom hooks (useProjects, useGitHubRepos)
-├── pages/            # Route pages (Homepage, Projects, Terminal, etc.)
+│   ├── shared/ui/    # Older generic primitives (Button, Card, Section, Grid, Badge)
+│   └── ui/           # Current v2 primitives (GlassPanel, Wordmark)
+├── context/          # AuthContext, SiteConfigContext
+├── hooks/            # useProjects, useAboutData, useGithubRepos, useLiveServices, useModalA11y
+├── lib/              # queryClient (TanStack Query)
+├── pages/            # Route pages, plus pages/admin/ for the admin panel
 ├── types/            # TypeScript interfaces
-└── utils/            # API utilities (ninsysAPI.ts)
+└── utils/            # API client (ninsysAPI.ts), apiBase, cn
 ```
 
 ### Routes
 
-- `/` - Homepage with 3D server rack
-- `/terminal` - Interactive terminal with TOTP auth
-- `/projects` - Portfolio projects (admin editable)
-- `/railways` - Interactive minecart game
-- `/about` - Personal bio with skill vials (admin editable)
+- `/` - Homepage: hero, live service status (3D server rack), hosted shelf, nav cards
+- `/projects` - Portfolio projects (admin editable inline)
+- `/about` - Personal bio with skill vials (admin editable inline)
+- `/admin/*` - Admin panel (TOTP-gated): Overview, Services, Site Config, Hosted, Projects, Utilities
+- `*` - 404
+
+`/terminal` and `/railways` were retired to `src/_archive/` and have no route.
+See `src/_archive/README.md` before restoring either.
 
 ## API Integration
 
@@ -175,7 +184,7 @@ const handleToggle = useCallback(() => setIsOpen(prev => !prev), []);
 - Explicit return types on exported functions
 - Prefer `interface` over `type` for object shapes
 - Use `const` for immutable values
-- Avoid `any` unless necessary (allowed but discouraged by convention; not enforced by ESLint)
+- Avoid `any` unless necessary (Biome warns via `lint/suspicious/noExplicitAny`)
 
 **Example**:
 ```tsx
@@ -441,7 +450,7 @@ if (repo.full_name === existingProject.repoPath)
 ## Code Review Checklist
 
 ### Code Quality
-- [ ] No unused imports or variables (enforced by ESLint)
+- [ ] No unused imports or variables (enforced by Biome)
 - [ ] TypeScript types are correct and complete
 - [ ] No anti-patterns or code smells
 - [ ] Consistent naming conventions (PascalCase components, camelCase variables)
@@ -478,9 +487,9 @@ if (repo.full_name === existingProject.repoPath)
 - [ ] Large lists use proper keys and avoid unnecessary re-renders
 
 ### Testing & Validation
-- [ ] Lint passes: `npm run lint`
-- [ ] Build succeeds: `npm run build`
-- [ ] Manual testing in dev server: `npm run dev`
+- [ ] Lint passes: `bun run lint` (CI runs `bunx biome ci .`)
+- [ ] Build succeeds: `bun run build`
+- [ ] Manual testing in dev server: `bun run dev`
 - [ ] Check for console errors/warnings in browser
 - [ ] Test both admin and guest views if applicable
 
@@ -495,7 +504,7 @@ if (repo.full_name === existingProject.repoPath)
 ### Feature Components
 - `src/pages/Projects.tsx` - Projects page with admin controls
 - `src/pages/AboutMe.tsx` - About page with editable sections
-- `src/pages/Terminal.tsx` - Interactive terminal interface
+- `src/pages/admin/AdminApp.tsx` - Admin panel router
 - `src/pages/Homepage.tsx` - Landing page with 3D server rack
 
 ### Reusable Components
@@ -523,14 +532,14 @@ if (repo.full_name === existingProject.repoPath)
 - Uses Vite HMR for fast refresh
 
 ### Production
-- Built with `npm run build` (outputs to `dist/`)
+- Built with `bun run build` (outputs to `dist/`)
 - API calls go to `https://nindroidsystems.com`
 - Served via Docker container with nginx (see `Dockerfile`, `nginx.conf`)
 
 ### Configuration Files
 - `vite.config.ts` - Vite configuration (React plugin, port 3000)
 - `tsconfig.json` - TypeScript configuration (strict mode, ESNext)
-- `eslint.config.mjs` - ESLint rules (unused-imports, TypeScript)
+- `biome.json` - Biome lint + format rules (2-space indent, 100 cols, double quotes)
 - `tailwind.config.js` - Tailwind CSS customization
 - `package.json` - Dependencies and scripts
 

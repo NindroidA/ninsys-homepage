@@ -12,7 +12,6 @@ reviews:
     drafts: false
     base_branches:
       - main
-      - dev
   path_filters:
     - "!dist/**"
     - "!bun.lock"
@@ -22,13 +21,16 @@ reviews:
   path_instructions:
     - path: "src/**/*.{ts,tsx}"
       instructions: >-
-        This is a React 19 + TypeScript + Vite portfolio. Prefer function components
-        and hooks, Tailwind utility classes, and the shared design-system primitives in
-        src/components/shared/ui over hand-rolled markup. Flag: module-scope window/
+        This is a React 19 + TypeScript + Vite portfolio on Tailwind 4. Prefer function
+        components and hooks, mobile-first Tailwind utilities (unprefixed = phone,
+        sm:/md: scale up), and the current v2 primitives in src/components/ui
+        (GlassPanel, Wordmark) over hand-rolled markup. src/components/shared/ui is the
+        older kit and is not where new work goes. Flag: module-scope window/
         sessionStorage access (breaks future SSG/prerender), missing accessibility
         attributes (role, aria-label, focus traps) on interactive elements and modals,
-        duplicated glassmorphism markup that should use shared primitives, and reads
-        that swallow fetch errors into empty data.
+        duplicated glassmorphism markup that should use GlassPanel, desktop-only sizing
+        with no base-breakpoint value, and reads that swallow fetch errors into empty
+        data.
     - path: ".github/workflows/**"
       instructions: >-
         Flag use of untrusted event input (titles, bodies, refs) directly in run:
