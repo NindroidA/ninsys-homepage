@@ -297,3 +297,176 @@ input[type='range']::-moz-range-thumb {
 input[type='range']::-moz-range-thumb:hover {
   transform: scale(1.1);
 }
+
+/* Antenna mark (src/components/ui/AntennaMark.tsx): boot → idle animation.
+   Geometry and timings come from the brand handoff; keep them exact. The burst ring
+   must stay `forwards` (with `both` its first keyframe shows during the delay), and the
+   idle pulse starts and ends at full opacity so the resting frame matches the static mark. */
+.ns-antenna .pole {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+.ns-antenna .tip,
+.ns-antenna .a1,
+.ns-antenna .a2,
+.ns-antenna .burst,
+.ns-antenna .hl {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+
+.ns-antenna .rim {
+  stroke-dasharray: 82px;
+  stroke-dashoffset: 0;
+}
+
+.ns-antenna .burst {
+  opacity: 0;
+}
+
+.ns-antenna .hl {
+  opacity: 0.6;
+}
+
+@keyframes ns-pole {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes ns-tip {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes ns-rim {
+  from {
+    stroke-dashoffset: 82px;
+  }
+  to {
+    stroke-dashoffset: 0px;
+  }
+}
+
+@keyframes ns-flash {
+  0% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.7);
+  }
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+}
+
+@keyframes ns-burst {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.3);
+  }
+}
+
+@keyframes ns-arc {
+  from {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes ns-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes ns-breathe {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.ns-antenna.boot .pole {
+  animation: ns-pole 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.ns-antenna.boot .tip {
+  animation: ns-tip 0.38s 0.35s both;
+}
+
+.ns-antenna.boot .rim {
+  animation: ns-rim 0.45s 0.6s ease-out both;
+}
+
+.ns-antenna.boot .hl {
+  animation:
+    ns-flash 0.5s 0.95s both,
+    ns-breathe 2.4s 2.1s ease-in-out infinite;
+}
+
+.ns-antenna.boot .burst {
+  animation: ns-burst 0.6s 1s ease-out forwards;
+}
+
+.ns-antenna.boot .a1 {
+  animation:
+    ns-arc 0.5s 1.05s cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    ns-pulse 2.4s 2.1s ease-in-out infinite;
+}
+
+.ns-antenna.boot .a2 {
+  animation:
+    ns-arc 0.5s 1.3s cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    ns-pulse 2.4s 2.4s ease-in-out infinite;
+}
+
+.ns-antenna.idle .hl {
+  animation: ns-breathe 2.4s ease-in-out infinite;
+}
+
+.ns-antenna.idle .a1 {
+  animation: ns-pulse 2.4s ease-in-out infinite;
+}
+
+.ns-antenna.idle .a2 {
+  animation: ns-pulse 2.4s 0.3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ns-antenna * {
+    animation: none !important;
+  }
+}
