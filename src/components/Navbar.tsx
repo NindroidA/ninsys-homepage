@@ -3,6 +3,7 @@ import { FolderGit2, Home, Info, LayoutDashboard } from "lucide-react";
 import type { JSX } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { Logo } from "./ui/Logo";
 
 interface NavbarProps {
   variant?: "default" | "minimal";
@@ -84,11 +85,12 @@ export default function Navbar({ variant = "default" }: NavbarProps): JSX.Elemen
               className="font-display text-lg font-bold tracking-tight transition-opacity hover:opacity-80"
               aria-label="Nindroid Systems — home"
             >
-              <span className="bg-linear-to-b from-white to-[#cdbdf5] bg-clip-text text-transparent">
-                N
+              {/* The full lockup doesn't fit next to the nav icons on phones. */}
+              <span className="flex sm:hidden">
+                <Logo variant="compact" animate="boot" />
               </span>
-              <span className="bg-linear-to-br from-[#d946ef] to-[#8b5cf6] bg-clip-text text-transparent">
-                S
+              <span className="hidden sm:flex">
+                <Logo variant="horizontal" animate="boot" />
               </span>
             </Link>
 
