@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.1] - 2026-10-01
+
+### Added
+
+- **The antenna brand mark.** New `AntennaMark` and `Logo` components in
+  `src/components/ui/`: the antenna as an inline SVG with a boot → idle
+  animation that plays once per page load and stays static under
+  `prefers-reduced-motion`, plus horizontal and compact lockups sized by the
+  parent font-size. The navbar's "NS" monogram is now the horizontal lockup
+  (compact "NinSys" below `sm`), and the homepage title shows the antenna next
+  to the wordmark. (#78, #79)
+- **Antenna favicon and app icons.** A pixel-exact 16×16 `favicon.svg`,
+  `favicon.ico` (16/32/48), `apple-touch-icon.png`, and 192/512 PNG app icons
+  in `site.webmanifest` (512 also as `maskable`). (#77)
+
+### Changed
+
+- The homepage title is a step smaller on tablets (60 → 56px at `sm`,
+  72 → 68px at `md`; 72px again from `lg`), so the wider logo lockup stays on
+  one line at 640px and 768px.
+
+### Fixed
+
+- **Cloudflare kept serving the old favicon after the new icons deployed.**
+  nginx gives `favicon.svg` a one-day `Cache-Control`, so Cloudflare answered
+  with its cached Sep 25 copy and browsers, which prefer the SVG icon, kept
+  showing the old one. The icon links in `index.html` and `site.webmanifest`
+  now carry a `?v=` version, which is a new cache key; bump it whenever the
+  icon files change.
+
 ## [2.3.0] - 2026-08-26
 
 ### Fixed
