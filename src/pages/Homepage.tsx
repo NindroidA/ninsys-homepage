@@ -8,7 +8,7 @@ import HostedShelf from "../components/HostedShelf";
 import { GithubIcon } from "../components/icons/BrandIcons";
 import NavigationCards from "../components/NavigationCards";
 import ServiceStatus from "../components/ServiceStatus";
-import { Wordmark } from "../components/ui/Wordmark";
+import { Logo } from "../components/ui/Logo";
 import { useLiveServices } from "../hooks/useLiveServices";
 import { useSiteConfig } from "../hooks/useSiteConfig";
 import type { HomeSectionId } from "../types/siteConfig";
@@ -53,8 +53,10 @@ export default function Homepage() {
             <span className="inline-block h-3 w-1.5 translate-y-0.5 bg-emerald-400 motion-safe:animate-[blink_1.1s_steps(1)_infinite] sm:h-3.5 sm:w-2" />
           </span>
 
-          <h1 className="mt-3 text-[2rem] leading-none sm:mt-4 sm:text-6xl md:text-7xl">
-            <Wordmark />
+          {/* The lockup is ~10em wide, so the sm/md sizes sit a step under 6xl/7xl to keep
+              it on one line at 640px and 768px. */}
+          <h1 className="mt-3 text-[2rem] leading-none sm:mt-4 sm:text-[3.5rem] md:text-[4.25rem] lg:text-7xl">
+            <Logo variant="horizontal" animate="boot" />
           </h1>
 
           <p className="mx-auto mt-3 max-w-xl text-sm text-white/60 sm:mt-4 sm:text-lg">
