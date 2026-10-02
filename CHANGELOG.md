@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.2] - 2026-10-02
+
+### Changed
+
+- **Dependency updates come from Renovate instead of Dependabot.** Dependabot's
+  `npm_and_yarn` job failed on main because it can't update `bun.lock` (#74).
+  `renovate.json` extends the shared repo-ops preset and carries over what
+  `.github/dependabot.yml` did: the `dev-dependencies`, `react` and `three`
+  groups (`@types/react` and `@types/three` now ship with their packages
+  instead of in the dev group), and no major PRs for tailwindcss, typescript,
+  vite, `@vitejs/plugin-react` or lucide-react until one is requested from the
+  Dependency Dashboard. Dependabot alerts are a repo setting and stay on.
+
+### Added
+
+- `CLAUDE.md` and `.github/pull_request_template.md` from the repo-ops
+  onboarding templates.
+
 ## [2.3.1] - 2026-10-01
 
 ### Added
