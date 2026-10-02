@@ -1,0 +1,41 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["github>NindroidA/repo-ops:renovate-preset"],
+  "packageRules": [
+    {
+      "description": "Deliberate migrations, carried over from dependabot.yml's ignores: no major PR until it's requested from the Dependency Dashboard",
+      "matchPackageNames": [
+        "tailwindcss",
+        "typescript",
+        "vite",
+        "@vitejs/plugin-react",
+        "lucide-react"
+      ],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "Dev dependencies minor/patch in one PR, keeping the migration packages out of it (dependabot.yml's dev-dependencies group)",
+      "matchDepTypes": ["devDependencies"],
+      "matchPackageNames": ["!tailwindcss", "!typescript", "!vite", "!@vitejs/plugin-react"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "dev dependencies"
+    },
+    {
+      "description": "React and its types move together (dependabot.yml's react group). After the dev group so @types/react lands here",
+      "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
+      "groupName": "react"
+    },
+    {
+      "description": "three, its types and react-three move together (dependabot.yml's three group). After the dev group so @types/three lands here",
+      "matchPackageNames": ["three", "@types/three", "@react-three/*"],
+      "groupName": "three"
+    },
+    {
+      "description": "Merging to main deploys to the homelab, so the deploy workflow's action updates get their own PR and wait for a human merge",
+      "matchFileNames": [".github/workflows/deploy.yml"],
+      "groupName": "deploy workflow actions",
+      "automerge": false
+    }
+  ]
+}
