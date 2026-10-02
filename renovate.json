@@ -30,12 +30,6 @@
       "description": "three, its types and react-three move together (dependabot.yml's three group). After the dev group so @types/three lands here",
       "matchPackageNames": ["three", "@types/three", "@react-three/*"],
       "groupName": "three"
-    },
-    {
-      "description": "Merging to main deploys to the homelab, so the deploy workflow's action updates get their own PR and wait for a human merge",
-      "matchFileNames": [".github/workflows/deploy.yml"],
-      "groupName": "deploy workflow actions",
-      "automerge": false
     }
   ]
 }

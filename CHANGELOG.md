@@ -16,8 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   groups (`@types/react` and `@types/three` now ship with their packages
   instead of in the dev group), and no major PRs for tailwindcss, typescript,
   vite, `@vitejs/plugin-react` or lucide-react until one is requested from the
-  Dependency Dashboard. Action updates in the deploy workflow get their own PR
-  and never automerge. Dependabot alerts are a repo setting and stay on.
+  Dependency Dashboard. Dependabot alerts are a repo setting and stay on.
 
 ### Added
 
