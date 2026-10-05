@@ -10,13 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **The Status section's WebGL server rack is now the animated home-lab
-  mount** from the brand kit: the antenna on the isometric layer cube, over a
-  faint isometric floor. When it scrolls into view the three layers stack, the
-  LEDs come on and the antenna boots with the navbar logo's keyframes; then
-  the antenna pulses, the LEDs chase and a signal ripple crosses the floor
-  every 4.8s. The loop pauses while the rack is off screen, and
-  `prefers-reduced-motion` gets the static art. An offline service turns one
-  LED rose. (#86)
+  rack** from the brand kit: the isometric layer cube over a faint isometric
+  floor, with the antenna as a small accent seated in a socket at the back
+  left of the top. Its three LEDs sit flat on the front panel with soft glows
+  (power steady, activity flickering, status breathing; an offline service
+  turns the status LED rose). When it scrolls into view the layers stack, the
+  LEDs light, the socket pops in and the antenna boots with the navbar logo's
+  keyframes. Then the rack hovers while the light under it breathes, the
+  antenna pings in time with a ripple across the floor, and a sheen crosses
+  the top every few seconds. The loop pauses while the rack is off screen, and
+  `prefers-reduced-motion` gets the still picture. (#86)
 
 ### Removed
 

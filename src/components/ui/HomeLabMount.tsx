@@ -1,9 +1,10 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useId, useRef, useState } from "react";
+import { cn } from "../../utils/cn";
 import { AntennaGlyph } from "./AntennaMark";
 
 type HomeLabAnimation = "boot" | "idle" | false;
 
-/** What the rack's LEDs report. `degraded` turns the third LED rose and blinks it. */
+/** What the rack's LEDs report. `degraded` turns the status LED rose and blinks it. */
 export type HomeLabStatus = "ok" | "degraded";
 
 interface HomeLabMountProps {
@@ -26,6 +27,11 @@ interface HomeLabMountProps {
 // homepage) start straight in idle.
 let hasBooted = false;
 
+// Everything is drawn in the handoff art's own cube coordinates (mounts/home-lab.svg before
+// its 1.11 scale): the top face is the diamond (0,-46) (39.84,-23) (0,0) (-39.84,-23), and
+// the base sits on the floor at (0,23). The viewBox frames the rack, the antenna and the glow.
+const VIEWBOX = "-60 -62 120 120";
+
 // Shared stroke for the cube faces: the hairline lavender edge from the handoff art.
 const EDGE = {
   stroke: "#cdbdf5",
@@ -34,22 +40,20 @@ const EDGE = {
   strokeLinejoin: "round",
 } as const;
 
-// The floor is laid out in the outer 120×120 space. Its centre is the cube's base (the
-// bottom face's centre), and one grid cell is a quarter of the base diamond, so the cube
-// sits exactly on 2×2 cells.
-const BASE = { x: 60, y: 93.02, halfW: 31.84, halfH: 18.38 };
-const CELL_W = BASE.halfW;
-const CELL_H = BASE.halfH;
-const FLOOR_SPAN = 8; // lines each side of the centre, per direction
+// ── Floor ──────────────────────────────────────────────────────────────────────
+// One grid cell is a quarter of the base diamond, so the rack sits exactly on 2×2 cells.
+const BASE = { x: 0, y: 23, halfW: 39.84, halfH: 23 };
+const CELL_W = BASE.halfW / 2;
+const CELL_H = BASE.halfH / 2;
+const FLOOR_SPAN = 12; // lines each side of the centre, per direction
 
 /** The isometric floor lattice as one path: lines at ±30° through the base, CELL_H apart. */
 function floorPath(): string {
   const reach = CELL_W * (FLOOR_SPAN + 2);
+  const dy = (reach * CELL_H) / CELL_W;
   const parts: string[] = [];
   for (let k = -FLOOR_SPAN; k <= FLOOR_SPAN; k++) {
-    // Each family is the line through (BASE.x, BASE.y + k·CELL_H) with slope ±CELL_H/CELL_W.
     const y0 = BASE.y + k * CELL_H;
-    const dy = (reach * CELL_H) / CELL_W;
     parts.push(`M${BASE.x - reach} ${y0 - dy}L${BASE.x + reach} ${y0 + dy}`);
     parts.push(`M${BASE.x - reach} ${y0 + dy}L${BASE.x + reach} ${y0 - dy}`);
   }
@@ -57,18 +61,80 @@ function floorPath(): string {
 }
 
 const FLOOR_D = floorPath();
-const BASE_DIAMOND = `M${BASE.x} ${BASE.y - BASE.halfH}L${BASE.x + BASE.halfW} ${BASE.y}L${BASE.x} ${BASE.y + BASE.halfH}L${BASE.x - BASE.halfW} ${BASE.y}Z`;
+const BASE_DIAMOND = `M0 0L39.84 23L0 46L-39.84 23Z`;
+
+// ── Antenna mount ──────────────────────────────────────────────────────────────
+// A small accent at the back-left of the top face, seated in a socket. `a` runs along the
+// front-right edge and `b` along the front-left edge, so (1, 1) is the back corner.
+const MOUNT_AT = { a: 0.42, b: 0.9 };
+const P = { x: (MOUNT_AT.a - MOUNT_AT.b) * 39.84, y: -(MOUNT_AT.a + MOUNT_AT.b) * 23 };
+const ANTENNA_SCALE = 0.34; // antenna units → cube units; about 40% of the handoff mount's size
+// The socket is a short cylinder on the top face. Ellipses on the top face are squashed to
+// 0.577 (the isometric ratio), so they read as circles lying flat.
+const COLLAR = { rx: 4.6, ry: 4.6 * 0.577, height: 2.2 };
+const HOLE = { rx: 2.75, ry: 2.75 * 0.577 };
+const CAP = { x: P.x, y: P.y - COLLAR.height };
+// The pole runs on below the socket's front rim; the clip below hides that part, so it reads
+// as set into the rack rather than standing on it.
+const POLE_BOTTOM = CAP.y + 4;
+const ANTENNA_TRANSFORM = `translate(${P.x} ${POLE_BOTTOM - ANTENNA_SCALE}) scale(${ANTENNA_SCALE})`;
+const SOCKET_CLIP = `M-300 -400H300V${CAP.y}H${CAP.x + HOLE.rx}A${HOLE.rx} ${HOLE.ry} 0 0 1 ${CAP.x - HOLE.rx} ${CAP.y}H-300Z`;
+const COLLAR_BODY = `M${CAP.x - COLLAR.rx} ${CAP.y}V${P.y}A${COLLAR.rx} ${COLLAR.ry} 0 0 0 ${CAP.x + COLLAR.rx} ${P.y}V${CAP.y}A${COLLAR.rx} ${COLLAR.ry} 0 0 1 ${CAP.x - COLLAR.rx} ${CAP.y}Z`;
+
+// ── LEDs ───────────────────────────────────────────────────────────────────────
+// Three LEDs on the middle layer's front-right face, at the handoff art's positions. The
+// matrix lays each one flat on that face (isometric), so they read as lights set into the
+// panel rather than stickers on top of it.
+const LEDS = [
+  { cls: "led-1", x: 32.04, y: 4.5, halo: "#e9d5ff" }, // power: steady
+  { cls: "led-2", x: 25.98, y: 8, halo: "#f0abfc" }, // activity: flickers
+  { cls: "led-3", x: 19.92, y: 11.5, halo: "#e9d5ff" }, // status: rose when a service is down
+] as const;
+
+function Led({
+  uid,
+  cls,
+  x,
+  y,
+  halo,
+}: {
+  uid: string;
+  cls: string;
+  x: number;
+  y: number;
+  halo: string;
+}) {
+  return (
+    <g transform={`matrix(.866 -.5 0 1 ${x} ${y})`}>
+      <circle r="2.5" fill="#1d1233" fillOpacity=".55" />
+      <g className={`led ${cls}`}>
+        <circle
+          className="led-halo"
+          r="3.6"
+          fill={halo}
+          fillOpacity=".7"
+          filter={`url(#${uid}-ledblur)`}
+        />
+        <circle className="led-core" r="1.6" fill="#ffffff" />
+        <circle cx="-.55" cy="-.55" r=".55" fill="#ffffff" fillOpacity=".9" />
+      </g>
+    </g>
+  );
+}
 
 /**
- * The "home lab" mount from the ninsys-branding handoff (`mounts/home-lab.svg`): the antenna
- * on the isometric layer cube. The art is used as delivered; the class hooks on its parts
- * drive the `.ns-homelab` keyframes in index.css. Under `prefers-reduced-motion` it renders
- * the static art.
+ * The home-lab rack from the ninsys-branding handoff (`mounts/home-lab.svg`): the isometric
+ * layer cube, here with the antenna as a small accent seated in a socket at the back-left of
+ * the top. Two stacked SVGs: the floor (grid, ground glow, ripple) stays put while the rack
+ * floats above it, so the idle hover is a composited transform with no repaint. The class
+ * hooks drive the `.ns-homelab` keyframes in index.css; under `prefers-reduced-motion` it
+ * renders the static frame.
  *
- * Boot (about 3.3s): the floor fades up, the three layers drop in bottom to top, the middle
- * layer's glow and LEDs come on, the top edge draws, then the antenna runs its own boot
- * sequence with AntennaMark's timings. Idle: the antenna pulse, an LED chase, the middle
- * layer breathing, and a signal ripple across the floor every 4.8s.
+ * Boot (about 3.4s): the floor fades up, the layers drop in bottom to top, the LEDs and the
+ * top edge light, the socket pops in, then the antenna runs AntennaMark's boot. Idle: the
+ * rack hovers while the ground glow breathes under it, the LEDs run (power steady, activity
+ * flickering, status breathing), the antenna pulses and pings in time with a ripple across
+ * the floor, and a sheen crosses the top now and then.
  */
 export function HomeLabMount({
   size,
@@ -79,7 +145,7 @@ export function HomeLabMount({
   title,
 }: HomeLabMountProps) {
   const uid = `hl${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
-  const ref = useRef<SVGSVGElement>(null);
+  const ref = useRef<HTMLSpanElement>(null);
   // "standby" holds the boot at its first frame (parts hidden) until the mount is on screen.
   const [mode, setMode] = useState<"standby" | "boot" | "idle" | false>(() =>
     animate === "boot" ? (hasBooted ? "idle" : "standby") : animate,
@@ -112,187 +178,258 @@ export function HomeLabMount({
     return () => io.disconnect();
   }, [animated]);
 
-  const classes = [
-    "ns-homelab",
-    mode === "standby" ? "boot standby" : mode,
-    animated && mode !== "standby" && !onScreen && "offscreen",
-    status === "degraded" && "degraded",
-    className,
-  ];
   const height = typeof size === "number" ? `${size}px` : size;
-  const a11y = title
-    ? { role: "img", "aria-labelledby": `${uid}-title` }
-    : { "aria-hidden": true as const };
+  const style: CSSProperties | undefined = height ? { height, width: height } : undefined;
+  const a11y = title ? { role: "img", "aria-label": title } : { "aria-hidden": true as const };
 
   return (
-    // biome-ignore lint/a11y/noSvgWithoutTitle: the title is rendered when one is passed, otherwise the svg is aria-hidden
-    <svg
+    <span
       ref={ref}
-      className={classes.filter(Boolean).join(" ")}
-      viewBox="0 0 120 120"
-      overflow="visible"
-      style={height ? { height, width: height } : undefined}
+      className={cn(
+        "ns-homelab relative inline-block",
+        mode === "standby" ? "boot standby" : mode,
+        animated && mode !== "standby" && !onScreen && "offscreen",
+        status === "degraded" && "degraded",
+        className,
+      )}
+      style={style}
       {...a11y}
     >
-      {title && <title id={`${uid}-title`}>{title}</title>}
-      <defs>
-        <filter id={`${uid}-soft`} x="-50%" y="-150%" width="200%" height="400%">
-          <feGaussianBlur stdDeviation="6" />
-        </filter>
-        <filter id={`${uid}-blur`} x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="2.5" />
-        </filter>
-        <linearGradient id={`${uid}-l`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#3a2d5c" />
-          <stop offset="1" stopColor="#231a3a" />
-        </linearGradient>
-        <linearGradient id={`${uid}-r`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#241a3b" />
-          <stop offset="1" stopColor="#161027" />
-        </linearGradient>
-        <linearGradient id={`${uid}-ml`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#e879f9" />
-          <stop offset="1" stopColor="#c026d3" />
-        </linearGradient>
-        <linearGradient id={`${uid}-mr`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#a855f7" />
-          <stop offset="1" stopColor="#7c3aed" />
-        </linearGradient>
-        <linearGradient id={`${uid}-top`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#ffffff" />
-          <stop offset="1" stopColor="#cdbdf5" />
-        </linearGradient>
-        <linearGradient id={`${uid}-cl`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#d9cdf7" />
-          <stop offset="1" stopColor="#b3a3e3" />
-        </linearGradient>
-        <linearGradient id={`${uid}-cr`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#8f7fc4" />
-          <stop offset="1" stopColor="#6c5ba3" />
-        </linearGradient>
-        {floor && (
-          <>
-            {/* Fades the lattice out from the base: an ellipse squashed to the floor's angle. */}
-            <radialGradient
-              id={`${uid}-fade`}
-              gradientUnits="userSpaceOnUse"
-              cx={BASE.x}
-              cy={BASE.y}
-              r="150"
-              gradientTransform={`translate(0 ${BASE.y}) scale(1 .34) translate(0 ${-BASE.y})`}
-            >
-              <stop offset="0" stopColor="#ffffff" />
-              <stop offset=".35" stopColor="#ffffff" stopOpacity=".55" />
-              <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
-            </radialGradient>
-            <mask
-              id={`${uid}-mask`}
-              maskUnits="userSpaceOnUse"
-              x="-300"
-              y="0"
-              width="720"
-              height="200"
-            >
-              <rect x="-300" y="0" width="720" height="200" fill={`url(#${uid}-fade)`} />
-            </mask>
-          </>
-        )}
-      </defs>
-
-      {floor && (
-        <g className="floor">
-          <path
-            d={FLOOR_D}
-            fill="none"
-            stroke="#cdbdf5"
-            strokeWidth=".35"
-            strokeOpacity=".16"
-            mask={`url(#${uid}-mask)`}
-          />
-          <path
-            className="ripple"
-            d={BASE_DIAMOND}
-            fill="none"
-            stroke="#d946ef"
-            strokeWidth="1"
-            strokeLinejoin="round"
-          />
-        </g>
-      )}
-
-      {/* The cube: geometry, paint and draw order exactly as in mounts/home-lab.svg. The
-          outer transform is that file's nested <svg x="16.8" y="31.44" width="86.4"> box. */}
-      <g transform="translate(16.8 31.44) scale(.72)">
-        <g transform="translate(60 60) scale(1.11)">
-          <path
-            className="glow"
-            d="M0 -2L46.77 25L0 52L-46.77 25Z"
-            fill="#c026d3"
-            filter={`url(#${uid}-soft)`}
-            fillOpacity=".42"
-          />
-          <g className="layer layer-b">
-            <path d="M0 -14L39.84 9L0 32L-39.84 9Z" fill="#09060f" {...EDGE} />
-            <path d="M-39.84 9L0 32L0 46L-39.84 23Z" fill={`url(#${uid}-l)`} {...EDGE} />
-            <path d="M39.84 9L0 32L0 46L39.84 23Z" fill={`url(#${uid}-r)`} {...EDGE} />
-          </g>
-          <g className="layer layer-m">
-            <g className="mglow">
-              <path
-                d="M-39.84 -7L0 16L0 30L-39.84 7Z"
-                fill="#d946ef"
-                filter={`url(#${uid}-blur)`}
-              />
-              <path d="M39.84 -7L0 16L0 30L39.84 7Z" fill="#a855f7" filter={`url(#${uid}-blur)`} />
-            </g>
-            <path d="M0 -30L39.84 -7L0 16L-39.84 -7Z" fill="#09060f" {...EDGE} />
-            <path d="M-39.84 -7L0 16L0 30L-39.84 7Z" fill={`url(#${uid}-ml)`} {...EDGE} />
-            <path d="M39.84 -7L0 16L0 30L39.84 7Z" fill={`url(#${uid}-mr)`} {...EDGE} />
-            <circle className="led led-1" cx="32.04" cy="4.5" r="2.3" fill="#ffffff" />
-            <circle
-              className="led led-2"
-              cx="25.98"
-              cy="8"
-              r="2.3"
-              fill="#ffffff"
-              fillOpacity="0.7"
-            />
-            <circle
-              className="led led-3"
-              cx="19.92"
-              cy="11.5"
-              r="2.3"
-              fill="#ffffff"
-              fillOpacity="0.4"
-            />
-          </g>
-          <g className="layer layer-t">
-            <path d="M0 -46L39.84 -23L0 0L-39.84 -23Z" fill={`url(#${uid}-top)`} {...EDGE} />
-            <path d="M-39.84 -23L0 0L0 14L-39.84 -9Z" fill={`url(#${uid}-cl)`} {...EDGE} />
-            <path d="M39.84 -23L0 0L0 14L39.84 -9Z" fill={`url(#${uid}-cr)`} {...EDGE} />
-            <path
-              className="edge"
-              d="M-39.84 -23L0 0L39.84 -23"
-              fill="none"
-              stroke="#ffffff"
-              strokeWidth="1.1"
-              strokeOpacity="0.9"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-            />
-          </g>
-        </g>
-      </g>
-
-      {/* The antenna, placed as in the handoff art (its nested <svg x="36.69" y="8.6"
-          width="46.62" height="50"> box). In idle it reuses AntennaMark's loop; its boot
-          timings are shifted in index.css so it powers up after the rack lands. */}
-      <g
-        className={mode === "idle" ? "ns-antenna idle" : "ns-antenna"}
-        transform="translate(60 57.586) scale(.675652)"
+      <svg
+        className="hl-floor absolute inset-0 h-full w-full"
+        viewBox={VIEWBOX}
+        overflow="visible"
+        aria-hidden="true"
       >
-        <AntennaGlyph uid={uid} />
-      </g>
-    </svg>
+        <defs>
+          <filter id={`${uid}-soft`} x="-50%" y="-150%" width="200%" height="400%">
+            <feGaussianBlur stdDeviation="6" />
+          </filter>
+          <radialGradient id={`${uid}-ambient`}>
+            <stop offset="0" stopColor="#8b5cf6" stopOpacity=".2" />
+            <stop offset="1" stopColor="#8b5cf6" stopOpacity="0" />
+          </radialGradient>
+          {floor && (
+            <>
+              {/* Fades the lattice out from the base: an ellipse squashed to the floor's angle. */}
+              <radialGradient
+                id={`${uid}-fade`}
+                gradientUnits="userSpaceOnUse"
+                cx={BASE.x}
+                cy={BASE.y}
+                r="190"
+                gradientTransform={`translate(0 ${BASE.y}) scale(1 .34) translate(0 ${-BASE.y})`}
+              >
+                <stop offset="0" stopColor="#ffffff" />
+                <stop offset=".35" stopColor="#ffffff" stopOpacity=".55" />
+                <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+              </radialGradient>
+              <mask
+                id={`${uid}-mask`}
+                maskUnits="userSpaceOnUse"
+                x="-380"
+                y="-60"
+                width="760"
+                height="220"
+              >
+                <rect x="-380" y="-60" width="760" height="220" fill={`url(#${uid}-fade)`} />
+              </mask>
+            </>
+          )}
+        </defs>
+
+        <ellipse className="ambient" cx="0" cy="8" rx="78" ry="56" fill={`url(#${uid}-ambient)`} />
+        {floor && (
+          <g className="floor">
+            <path
+              d={FLOOR_D}
+              fill="none"
+              stroke="#cdbdf5"
+              strokeWidth=".45"
+              strokeOpacity=".16"
+              mask={`url(#${uid}-mask)`}
+            />
+            <path
+              className="ripple"
+              d={BASE_DIAMOND}
+              fill="none"
+              stroke="#d946ef"
+              strokeWidth="1"
+              strokeLinejoin="round"
+            />
+          </g>
+        )}
+        {/* The light pooled under the rack, from the art. It dims a little as the rack rises. */}
+        <path
+          className="glow"
+          d="M0 -2L46.77 25L0 52L-46.77 25Z"
+          fill="#c026d3"
+          filter={`url(#${uid}-soft)`}
+          fillOpacity=".42"
+        />
+      </svg>
+
+      <svg
+        className="hl-rack absolute inset-0 h-full w-full"
+        viewBox={VIEWBOX}
+        overflow="visible"
+        aria-hidden="true"
+      >
+        <defs>
+          <filter id={`${uid}-blur`} x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2.5" />
+          </filter>
+          <filter id={`${uid}-ledblur`} x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="1.3" />
+          </filter>
+          <filter id={`${uid}-shadow`} x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="1.4" />
+          </filter>
+          <linearGradient id={`${uid}-l`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#3a2d5c" />
+            <stop offset="1" stopColor="#231a3a" />
+          </linearGradient>
+          <linearGradient id={`${uid}-r`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#241a3b" />
+            <stop offset="1" stopColor="#161027" />
+          </linearGradient>
+          <linearGradient id={`${uid}-ml`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#e879f9" />
+            <stop offset="1" stopColor="#c026d3" />
+          </linearGradient>
+          <linearGradient id={`${uid}-mr`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#a855f7" />
+            <stop offset="1" stopColor="#7c3aed" />
+          </linearGradient>
+          <linearGradient id={`${uid}-top`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#ffffff" />
+            <stop offset="1" stopColor="#cdbdf5" />
+          </linearGradient>
+          <linearGradient id={`${uid}-cl`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#d9cdf7" />
+            <stop offset="1" stopColor="#b3a3e3" />
+          </linearGradient>
+          <linearGradient id={`${uid}-cr`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#8f7fc4" />
+            <stop offset="1" stopColor="#6c5ba3" />
+          </linearGradient>
+          <linearGradient id={`${uid}-collar`} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stopColor="#c9bcef" />
+            <stop offset=".5" stopColor="#9d8ad6" />
+            <stop offset="1" stopColor="#6c5ba3" />
+          </linearGradient>
+          <linearGradient id={`${uid}-cap`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#ffffff" />
+            <stop offset="1" stopColor="#ddd3f8" />
+          </linearGradient>
+          <radialGradient id={`${uid}-spill`}>
+            <stop offset="0" stopColor="#d946ef" stopOpacity=".55" />
+            <stop offset="1" stopColor="#d946ef" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id={`${uid}-tipglow`}>
+            <stop offset="0" stopColor="#d946ef" stopOpacity=".5" />
+            <stop offset="1" stopColor="#d946ef" stopOpacity="0" />
+          </radialGradient>
+          <linearGradient id={`${uid}-band`} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
+            <stop offset=".5" stopColor="#ffffff" stopOpacity=".55" />
+            <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+          </linearGradient>
+          <clipPath id={`${uid}-topface`}>
+            <path d="M0 -46L39.84 -23L0 0L-39.84 -23Z" />
+          </clipPath>
+          <clipPath id={`${uid}-socket`}>
+            <path d={SOCKET_CLIP} />
+          </clipPath>
+        </defs>
+
+        {/* The cube: geometry, paint and draw order as in mounts/home-lab.svg. */}
+        <g className="layer layer-b">
+          <path d="M0 -14L39.84 9L0 32L-39.84 9Z" fill="#09060f" {...EDGE} />
+          <path d="M-39.84 9L0 32L0 46L-39.84 23Z" fill={`url(#${uid}-l)`} {...EDGE} />
+          <path d="M39.84 9L0 32L0 46L39.84 23Z" fill={`url(#${uid}-r)`} {...EDGE} />
+        </g>
+        <g className="layer layer-m">
+          <g className="mglow">
+            <path d="M-39.84 -7L0 16L0 30L-39.84 7Z" fill="#d946ef" filter={`url(#${uid}-blur)`} />
+            <path d="M39.84 -7L0 16L0 30L39.84 7Z" fill="#a855f7" filter={`url(#${uid}-blur)`} />
+          </g>
+          <path d="M0 -30L39.84 -7L0 16L-39.84 -7Z" fill="#09060f" {...EDGE} />
+          <path d="M-39.84 -7L0 16L0 30L-39.84 7Z" fill={`url(#${uid}-ml)`} {...EDGE} />
+          <path d="M39.84 -7L0 16L0 30L39.84 7Z" fill={`url(#${uid}-mr)`} {...EDGE} />
+          {LEDS.map((led) => (
+            <Led key={led.cls} uid={uid} {...led} />
+          ))}
+        </g>
+        <g className="layer layer-t">
+          <path d="M0 -46L39.84 -23L0 0L-39.84 -23Z" fill={`url(#${uid}-top)`} {...EDGE} />
+          <path d="M-39.84 -23L0 0L0 14L-39.84 -9Z" fill={`url(#${uid}-cl)`} {...EDGE} />
+          <path d="M39.84 -23L0 0L0 14L39.84 -9Z" fill={`url(#${uid}-cr)`} {...EDGE} />
+          <path
+            className="edge"
+            d="M-39.84 -23L0 0L39.84 -23"
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="1.1"
+            strokeOpacity="0.9"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          />
+          {/* A light band that crosses the top now and then. Parked off the face at rest. */}
+          <g clipPath={`url(#${uid}-topface)`}>
+            <g transform="rotate(-30 0 -23)">
+              <rect
+                className="sheen"
+                x="-7"
+                y="-90"
+                width="14"
+                height="140"
+                fill={`url(#${uid}-band)`}
+              />
+            </g>
+          </g>
+          {/* The antenna's light on the top, then its socket. */}
+          <g clipPath={`url(#${uid}-topface)`}>
+            <ellipse
+              className="spill"
+              cx={P.x}
+              cy={P.y}
+              rx="13"
+              ry="7.5"
+              fill={`url(#${uid}-spill)`}
+            />
+          </g>
+          <g className="socket">
+            <ellipse
+              cx={P.x}
+              cy={P.y + 0.4}
+              rx={COLLAR.rx + 1.2}
+              ry={COLLAR.ry + 0.9}
+              fill="#2a1d48"
+              fillOpacity=".35"
+              filter={`url(#${uid}-shadow)`}
+            />
+            <path d={COLLAR_BODY} fill={`url(#${uid}-collar)`} {...EDGE} />
+            <ellipse
+              cx={CAP.x}
+              cy={CAP.y}
+              rx={COLLAR.rx}
+              ry={COLLAR.ry}
+              fill={`url(#${uid}-cap)`}
+              {...EDGE}
+            />
+            <ellipse cx={CAP.x} cy={CAP.y} rx={HOLE.rx} ry={HOLE.ry} fill="#3a2d5c" />
+          </g>
+          <g clipPath={`url(#${uid}-socket)`}>
+            <g transform={ANTENNA_TRANSFORM}>
+              <g className="ns-antenna">
+                <circle className="tipglow" cx="0" cy="-50" r="30" fill={`url(#${uid}-tipglow)`} />
+                <AntennaGlyph uid={uid} />
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </span>
   );
 }
