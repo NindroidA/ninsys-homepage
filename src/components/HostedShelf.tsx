@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import {
   Blocks,
   Bot,
@@ -131,12 +130,7 @@ export default function HostedShelf(): JSX.Element | null {
   if (visible.length === 0) return null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="mx-auto w-full max-w-6xl"
-    >
+    <div className="mx-auto w-full max-w-6xl motion-safe:animate-[rise-in_0.5s_ease-out_both]">
       <div className="mb-8">
         <span className="font-mono text-xs uppercase tracking-[0.18em] text-white/40">
           {"// running on the homelab"}
@@ -151,6 +145,6 @@ export default function HostedShelf(): JSX.Element | null {
           <HostedCard key={project.id} project={project} />
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }

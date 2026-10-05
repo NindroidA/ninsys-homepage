@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Eye, X } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -11,12 +10,7 @@ export function GuestViewBanner() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="relative z-100 flex justify-center px-4 pt-2 pointer-events-none"
-    >
+    <div className="relative z-100 flex justify-center px-4 pt-2 pointer-events-none [--rise-from:-20px] motion-safe:animate-[rise-in_0.4s_ease-out_both]">
       <div className="bg-amber-500/90 backdrop-blur-xs rounded-full px-4 py-1.5 shadow-lg border border-amber-400/50 pointer-events-auto flex items-center gap-2">
         <Eye className="w-4 h-4 text-amber-900" />
         <span className="text-sm font-medium text-amber-900">Viewing as Guest</span>
@@ -29,6 +23,6 @@ export function GuestViewBanner() {
           <X className="w-3 h-3 text-amber-900" />
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 }

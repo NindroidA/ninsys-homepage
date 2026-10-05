@@ -266,6 +266,20 @@
   }
 }
 
+/* Mount entrances that used to need framer-motion: the homepage hero and sections and
+   the guest-view banner. Use it as motion-safe:animate-[rise-in_…] so reduced motion
+   shows the element in place; set --rise-from to change the start offset. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise-from, 24px));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Range slider thumb styling */
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;

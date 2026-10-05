@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import {
   Activity,
   Cog,
@@ -140,12 +139,7 @@ export default function ServiceStatus(): JSX.Element {
     .filter((p) => p.count > 0);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="mx-auto w-full max-w-6xl"
-    >
+    <div className="mx-auto w-full max-w-6xl motion-safe:animate-[rise-in_0.5s_ease-out_both]">
       {/* header */}
       <div className="mb-5 flex flex-col items-start justify-between gap-3 sm:mb-8 sm:flex-row sm:items-end sm:gap-4">
         <div>
@@ -201,11 +195,10 @@ export default function ServiceStatus(): JSX.Element {
             stats != null && (stats.guilds != null || stats.users != null || stats.devices != null);
 
           return (
-            <motion.div
+            <div
               key={service.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: Math.min(index * 0.06, 0.3) }}
+              className="[--rise-from:16px] motion-safe:animate-[rise-in_0.4s_ease-out_both]"
+              style={{ animationDelay: `${Math.min(index * 60, 300)}ms` }}
             >
               <GlassPanel interactive className="flex h-full flex-col rounded-2xl p-4 sm:p-5">
                 <div className="flex items-start justify-between gap-3">
@@ -264,10 +257,10 @@ export default function ServiceStatus(): JSX.Element {
                   {service.lastUpdated && <span>{formatLastChecked(service.lastUpdated)}</span>}
                 </div>
               </GlassPanel>
-            </motion.div>
+            </div>
           );
         })}
       </div>
-    </motion.div>
+    </div>
   );
 }
