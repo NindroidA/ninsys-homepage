@@ -50,6 +50,20 @@ export function AntennaMark({
       {...a11y}
     >
       {title && <title id={`${uid}-title`}>{title}</title>}
+      <AntennaGlyph uid={uid} />
+    </svg>
+  );
+}
+
+/**
+ * The antenna's gradients and parts, with the class hooks the `.ns-antenna` keyframes in
+ * index.css target. Render it inside an svg with viewBox "-34.5 -72.5 69 74" and the
+ * `ns-antenna` class. Shared by `AntennaMark` and `HomeLabMount`, so the geometry lives here
+ * once. `uid` must be unique per instance and alphanumeric (it ends up in `url(#…)`).
+ */
+export function AntennaGlyph({ uid }: { uid: string }) {
+  return (
+    <>
       <defs>
         {/* Only the rim uses this. The rim is rotated -90° so its draw-in starts at 12
             o'clock; the +90° here cancels that, keeping magenta top-left like the static mark. */}
@@ -143,6 +157,6 @@ export function AntennaMark({
         />
         <circle className="hl" cx="-4.2" cy="-54.2" r="3.2" fill="#ffffff" />
       </g>
-    </svg>
+    </>
   );
 }

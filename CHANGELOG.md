@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.5] - 2026-10-05
+
+### Changed
+
+- **The Status section's WebGL server rack is now the animated home-lab
+  mount** from the brand kit: the antenna on the isometric layer cube, over a
+  faint isometric floor. When it scrolls into view the three layers stack, the
+  LEDs come on and the antenna boots with the navbar logo's keyframes; then
+  the antenna pulses, the LEDs chase and a signal ripple crosses the floor
+  every 4.8s. The loop pauses while the rack is off screen, and
+  `prefers-reduced-motion` gets the static art. An offline service turns one
+  LED rose. (#86)
+
+### Removed
+
+- three.js, `@react-three/fiber` and `@react-three/drei`, with the 963 kB
+  (259 kB gzip) `three` chunk that desktops rendering the 3D rack downloaded,
+  and the admin Site Config "3D server rack" toggle.
+
+### Fixed
+
+- **A failed lighting download crashed the whole homepage.** The 3D rack's
+  drei `<Environment preset="studio" />` fetched an HDRI from raw.githack.com
+  at runtime. When that request failed (an outage, a content blocker, a
+  firewall), the error reached the app's error boundary, and desktops that
+  render the 3D rack showed "Something went wrong" instead of the site. The
+  new rack fetches nothing.
+
 ## [2.3.2] - 2026-10-02
 
 ### Changed

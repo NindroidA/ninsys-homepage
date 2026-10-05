@@ -470,3 +470,275 @@ input[type='range']::-moz-range-thumb:hover {
     animation: none !important;
   }
 }
+
+/* Home-lab mount (src/components/ui/HomeLabMount.tsx): the antenna on the isometric layer
+   cube, from the brand handoff (mounts/home-lab.svg). Boot (~3.3s) stacks the rack, then
+   boots the antenna with the AntennaMark keyframes above shifted by 1.2s, and flows into
+   the idle loop. `standby` holds the boot at its first frame until the mount is on screen,
+   and `offscreen` pauses everything while it's scrolled away.
+   Every loop starts and ends at the static art's values, so a resting frame matches the
+   handoff file. */
+.ns-homelab .layer,
+.ns-homelab .glow,
+.ns-homelab .mglow,
+.ns-homelab .led,
+.ns-homelab .ripple {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+
+.ns-homelab .floor {
+  transform-box: view-box;
+  transform-origin: 60px 93px;
+}
+
+.ns-homelab .edge {
+  stroke-dasharray: 92px;
+  stroke-dashoffset: 0;
+}
+
+.ns-homelab .ripple {
+  opacity: 0;
+  vector-effect: non-scaling-stroke;
+}
+
+/* A service is offline: the dimmest LED turns rose (the site's offline colour). */
+.ns-homelab.degraded .led-3 {
+  fill: #fb7185;
+  fill-opacity: 1;
+}
+
+.ns-homelab.standby,
+.ns-homelab.standby *,
+.ns-homelab.offscreen,
+.ns-homelab.offscreen * {
+  animation-play-state: paused !important;
+}
+
+@keyframes ns-hl-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ns-hl-floor {
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes ns-hl-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-22px);
+  }
+  30% {
+    opacity: 1;
+  }
+  78% {
+    transform: translateY(1.2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ns-hl-led-on {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes ns-hl-edge {
+  from {
+    stroke-dashoffset: 92px;
+  }
+  to {
+    stroke-dashoffset: 0px;
+  }
+}
+
+@keyframes ns-hl-led {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes ns-hl-alert {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes ns-hl-glow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes ns-hl-ripple {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  6% {
+    opacity: 0.55;
+  }
+  50%,
+  100% {
+    opacity: 0;
+    transform: scale(3.2);
+  }
+}
+
+.ns-homelab.boot .floor {
+  animation: ns-hl-floor 0.9s ease-out both;
+}
+
+.ns-homelab.boot .glow {
+  animation: ns-hl-fade 0.8s 0.05s ease-out both;
+}
+
+.ns-homelab.boot .layer-b {
+  animation: ns-hl-drop 0.52s 0.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.ns-homelab.boot .layer-m {
+  animation: ns-hl-drop 0.52s 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.ns-homelab.boot .layer-t {
+  animation: ns-hl-drop 0.52s 0.54s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.ns-homelab.boot .mglow {
+  animation:
+    ns-hl-fade 0.6s 0.8s ease-out both,
+    ns-hl-glow 4.8s 3.3s ease-in-out infinite;
+}
+
+.ns-homelab.boot .led-1 {
+  animation:
+    ns-hl-led-on 0.3s 0.95s ease-out both,
+    ns-hl-led 2.4s 3.3s ease-in-out infinite;
+}
+
+.ns-homelab.boot .led-2 {
+  animation:
+    ns-hl-led-on 0.3s 1.05s ease-out both,
+    ns-hl-led 2.4s 3.6s ease-in-out infinite;
+}
+
+.ns-homelab.boot .led-3 {
+  animation:
+    ns-hl-led-on 0.3s 1.15s ease-out both,
+    ns-hl-led 2.4s 3.9s ease-in-out infinite;
+}
+
+.ns-homelab.boot.degraded .led-3 {
+  animation:
+    ns-hl-led-on 0.3s 1.15s ease-out both,
+    ns-hl-alert 1.2s 3.3s ease-in-out infinite;
+}
+
+.ns-homelab.boot .edge {
+  animation: ns-hl-edge 0.5s 1s ease-out both;
+}
+
+.ns-homelab.boot .ripple {
+  animation: ns-hl-ripple 4.8s 3.3s ease-out infinite;
+}
+
+.ns-homelab.boot .ns-antenna .pole {
+  animation: ns-pole 0.45s 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.ns-homelab.boot .ns-antenna .tip {
+  animation: ns-tip 0.38s 1.55s both;
+}
+
+.ns-homelab.boot .ns-antenna .rim {
+  animation: ns-rim 0.45s 1.8s ease-out both;
+}
+
+.ns-homelab.boot .ns-antenna .hl {
+  animation:
+    ns-flash 0.5s 2.15s both,
+    ns-breathe 2.4s 3.3s ease-in-out infinite;
+}
+
+.ns-homelab.boot .ns-antenna .burst {
+  animation: ns-burst 0.6s 2.2s ease-out forwards;
+}
+
+.ns-homelab.boot .ns-antenna .a1 {
+  animation:
+    ns-arc 0.5s 2.25s cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    ns-pulse 2.4s 3.3s ease-in-out infinite;
+}
+
+.ns-homelab.boot .ns-antenna .a2 {
+  animation:
+    ns-arc 0.5s 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    ns-pulse 2.4s 3.6s ease-in-out infinite;
+}
+
+.ns-homelab.idle .mglow {
+  animation: ns-hl-glow 4.8s ease-in-out infinite;
+}
+
+.ns-homelab.idle .led-1 {
+  animation: ns-hl-led 2.4s ease-in-out infinite;
+}
+
+.ns-homelab.idle .led-2 {
+  animation: ns-hl-led 2.4s 0.3s ease-in-out infinite;
+}
+
+.ns-homelab.idle .led-3 {
+  animation: ns-hl-led 2.4s 0.6s ease-in-out infinite;
+}
+
+.ns-homelab.idle.degraded .led-3 {
+  animation: ns-hl-alert 1.2s ease-in-out infinite;
+}
+
+.ns-homelab.idle .ripple {
+  animation: ns-hl-ripple 4.8s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ns-homelab * {
+    animation: none !important;
+  }
+}

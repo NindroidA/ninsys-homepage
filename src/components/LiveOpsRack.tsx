@@ -1,40 +1,34 @@
-import { type JSX, lazy, Suspense, useState } from "react";
-import { useRender3D } from "../hooks/useRender3D";
-import { useSiteConfig } from "../hooks/useSiteConfig";
-import { ServerRackLoader } from "./ServerRackLoader";
+import type { JSX } from "react";
 import { GlassPanel } from "./ui/GlassPanel";
-
-const ServerRackScene = lazy(() => import("./ServerRackScene"));
+import { HomeLabMount } from "./ui/HomeLabMount";
 
 interface LiveOpsRackProps {
   /** Services currently reporting online. */
   online: number;
+  /** Services currently reporting offline. */
+  offline: number;
   /** Total services in the registry. */
   total: number;
 }
 
 /**
- * The live ops visual for the Status section — the WebGL server rack relocated
- * out of the old hero. The heavy three.js chunk is lazy-loaded and only fetched
- * on capable devices (see `useRender3D`); everyone else gets the lightweight 2D
- * rack poster. A small overlay ties it to the real online/total service count.
+ * The live ops visual for the Status section: the home-lab mount (the antenna on the
+ * isometric rack) on its floor grid. It boots when it scrolls into view and then idles; an
+ * offline service turns one of its LEDs rose. A small overlay ties it to the real
+ * online/total service count.
  */
-export function LiveOpsRack({ online, total }: LiveOpsRackProps): JSX.Element {
-  const { config } = useSiteConfig();
-  const render3D = useRender3D() && config.enable3DRack;
-  const [failed, setFailed] = useState(false);
+export function LiveOpsRack({ online, offline, total }: LiveOpsRackProps): JSX.Element {
   const allOnline = total > 0 && online === total;
 
   return (
     <GlassPanel className="relative overflow-hidden rounded-2xl sm:rounded-3xl">
-      <div className="h-[220px] sm:h-[380px]">
-        {render3D && !failed ? (
-          <Suspense fallback={<ServerRackLoader />}>
-            <ServerRackScene onError={() => setFailed(true)} />
-          </Suspense>
-        ) : (
-          <ServerRackLoader label="" />
-        )}
+      <div className="flex h-[220px] items-center justify-center sm:h-[380px]">
+        <HomeLabMount
+          animate="boot"
+          floor
+          status={offline > 0 ? "degraded" : "ok"}
+          className="h-[188px] w-[188px] sm:h-[330px] sm:w-[330px]"
+        />
       </div>
 
       {/* live overlay */}
