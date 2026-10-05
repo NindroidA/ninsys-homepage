@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.3] - 2026-10-05
+
+### Security
+
+- **Cleared all 22 `bun audit` findings (12 high, 10 moderate)** with in-range
+  updates: react-router-dom 7.10.1 → 7.18.4, postcss 8.5.6 → 8.5.29, and the
+  transitive fflate copies under drei and `@types/three` → 0.6.11 and 0.8.3.
+  Most of the react-router advisories need server rendering, which this SPA
+  doesn't use, and postcss only runs at build time. GitHub's dependency graph
+  reads only `package.json` here, not `bun.lock`, so Dependabot never raised
+  alerts for these. (#83)
+
 ## [2.3.2] - 2026-10-02
 
 ### Changed
