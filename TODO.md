@@ -17,8 +17,6 @@
 
 ## Worth doing sometime
 
-- [ ] PNG + maskable icons for `site.webmanifest` (only `favicon.svg` ships today,
-      so Android install prompts have no maskable icon) and an `apple-touch-icon`.
 - [ ] `ServerRackScene` uses drei's `<Environment preset="studio" />`, which
       fetches an HDRI from `raw.githack.com` at runtime. Consider self-hosting it
       or replacing with plain lights.
@@ -27,10 +25,14 @@
       let the chunk go lazy.
 - [ ] Prerender/SSG so crawlers get per-route metadata and unknown URLs can
       return a real 404 status instead of a soft 404.
-- [ ] Tests. There is no runner, no test script, and no test files.
 
 ## Done
 
+- [x] Tests. `bun test` runs unit tests for the pure logic (`cn`, the icon
+      lookups, the API origin and error messages, uptime formatting and the
+      service-status mapping, site-config reconciliation), in CI too (#85)
+- [x] PNG + maskable icons for `site.webmanifest` (`icon-192.png` and
+      `icon-512.png`, the 512 also as `maskable`) and an `apple-touch-icon` (#77)
 - [x] Fix the 404 page formatting — rebuilt on the v2 glass system (#38)
 - [x] Cogworks Bot API integration
 - [x] Replace ESLint with Biome (v2.0.0)
