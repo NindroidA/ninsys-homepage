@@ -9,6 +9,18 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#09060f" />
+    <!-- Pre-mount splash (the markup is in #root). It waits 350ms before fading in, so
+         fast loads never flash it, and pulses the antenna's arcs like AntennaMark's idle
+         loop. React replaces #root's contents on its first render. -->
+    <style>
+      html { background: #09060f; }
+      .ns-splash { display: flex; min-height: 100vh; align-items: center; justify-content: center; animation: ns-splash-in 0.4s 0.35s ease-out both; }
+      .ns-splash .a1, .ns-splash .a2 { animation: ns-splash-pulse 2.4s ease-in-out infinite; }
+      .ns-splash .a2 { animation-delay: 0.3s; }
+      @keyframes ns-splash-in { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes ns-splash-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+      @media (prefers-reduced-motion: reduce) { .ns-splash, .ns-splash * { animation: none; } }
+    </style>
     <link rel="manifest" href="/site.webmanifest" />
 
     <title>Nindroid Systems</title>
@@ -38,7 +50,22 @@
     <meta name="twitter:image" content="https://nindroidsystems.com/og-image.png" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="ns-splash" role="status" aria-label="Loading">
+        <svg viewBox="-34.5 -72.5 69 74" width="60" height="64" aria-hidden="true">
+          <defs>
+            <linearGradient id="ns-splash-brand" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d946ef" /><stop offset="1" stop-color="#8b5cf6" /></linearGradient>
+            <linearGradient id="ns-splash-sheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" /><stop offset="1" stop-color="#cdbdf5" /></linearGradient>
+            <linearGradient id="ns-splash-sig" gradientUnits="userSpaceOnUse" x1="-34" y1="-72" x2="34" y2="-28"><stop offset="0" stop-color="#6d28d9" /><stop offset=".55" stop-color="#a855f7" /><stop offset="1" stop-color="#d946ef" /></linearGradient>
+          </defs>
+          <rect x="-5" y="-40" width="10" height="41" rx="5" fill="url(#ns-splash-sheen)" />
+          <path class="a1" d="M15.7 -63.18A20.5 20.5 0 0 1 15.7 -36.82M-15.7 -36.82A20.5 20.5 0 0 1 -15.7 -63.18" fill="none" stroke="url(#ns-splash-sig)" stroke-width="5.5" stroke-linecap="round" />
+          <path class="a2" d="M24.76 -68.66A31 31 0 0 1 24.76 -31.34M-24.76 -31.34A31 31 0 0 1 -24.76 -68.66" fill="none" stroke="url(#ns-splash-sig)" stroke-width="5.5" stroke-linecap="round" stroke-opacity=".85" />
+          <circle cx="0" cy="-50" r="13" fill="#6b5a9e" fill-opacity=".5" stroke="url(#ns-splash-brand)" stroke-width="2" />
+          <circle cx="-4.2" cy="-54.2" r="3.2" fill="#ffffff" fill-opacity=".6" />
+        </svg>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

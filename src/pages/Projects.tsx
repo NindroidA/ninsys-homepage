@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Edit2, Loader2, Plus, X } from "lucide-react";
+import { Edit2, Plus, X } from "lucide-react";
 import { useCallback, useState } from "react";
 import FooterComponent from "../components/Footer";
 import { GithubIcon } from "../components/icons/BrandIcons";
@@ -13,6 +13,7 @@ import {
 import type { ProjectInitialData } from "../components/projects/ProjectEditModal";
 import { Seo } from "../components/Seo";
 import { Button, Card, Section } from "../components/shared/ui";
+import { BrandLoader } from "../components/ui/BrandLoader";
 import { useAdminVisible } from "../hooks/useAuth";
 import { useGitHubRepos } from "../hooks/useGithubRepos";
 import { useProjects } from "../hooks/useProjects";
@@ -205,10 +206,7 @@ export default function Projects() {
         {/* Loading state */}
         {loading ? (
           <Card padding="xl">
-            <div className="flex flex-col items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 text-purple-400 animate-spin mb-4" />
-              <p className="text-white/70">Loading projects...</p>
-            </div>
+            <BrandLoader label="loading projects" />
           </Card>
         ) : error ? (
           <Card padding="xl">
