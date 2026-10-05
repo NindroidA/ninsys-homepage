@@ -32,6 +32,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   firewall), the error reached the app's error boundary, and desktops that
   render the 3D rack showed "Something went wrong" instead of the site. The
   new rack fetches nothing.
+- **React was bundled inside the `motion` chunk**, so every page preloaded
+  framer-motion's chunk even where nothing used it. Rolldown's deprecated
+  `manualChunks` pulls a group's dependencies into it; `vite.config.ts` now
+  uses `codeSplitting` groups with priorities, so React and Vite's preload
+  helper always land in `react-vendor` and `motion` holds only motion.
 
 ## [2.3.2] - 2026-10-02
 

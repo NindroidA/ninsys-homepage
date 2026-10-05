@@ -10,21 +10,26 @@ export default defineConfig({
     host: true,
   },
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        // Keep the animation runtime in its own cacheable chunk so the homepage's
-        // critical JS stays small. React is pinned to its own vendor chunk so shared
-        // React internals don't get hoisted into a lazy chunk (which would force that
-        // chunk to load on every page).
-        manualChunks(id) {
-          // Pin Vite's preload helper to the eager react vendor chunk; otherwise
-          // Rollup may park it inside a lazy chunk and force that chunk to load everywhere.
-          if (id.includes("preload-helper")) return "react-vendor";
-          if (!id.includes("node_modules")) return;
-          if (id.includes("framer-motion")) return "motion";
-          if (/[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/.test(id)) {
-            return "react-vendor";
-          }
+        // Shared vendor code gets its own cacheable chunks so the homepage's critical JS
+        // stays small. Rolldown pulls a group's dependencies into it by default, so with the
+        // old `manualChunks` the motion chunk swallowed React itself and every page
+        // preloaded framer-motion. Higher priority claims modules first: React (and Vite's
+        // preload helper) always land in react-vendor, and motion holds only motion.
+        codeSplitting: {
+          groups: [
+            {
+              name: "react-vendor",
+              test: /preload-helper|[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/,
+              priority: 2,
+            },
+            {
+              name: "motion",
+              test: /[\\/]node_modules[\\/](framer-motion|motion-dom|motion-utils)[\\/]/,
+              priority: 1,
+            },
+          ],
         },
       },
     },
