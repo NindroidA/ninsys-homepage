@@ -6,6 +6,7 @@ import { GlassPanel } from "../../components/ui/GlassPanel";
 import { useAboutData } from "../../hooks/useAboutData";
 import { useLiveServices } from "../../hooks/useLiveServices";
 import { useProjects } from "../../hooks/useProjects";
+import { projectCategoryLabel } from "../../utils/projectCategories";
 
 function StatCard({
   icon: Icon,
@@ -123,8 +124,8 @@ export function AdminOverview(): JSX.Element {
                   >
                     <Star className="h-3.5 w-3.5 fill-current text-amber-300" />
                     <span className="truncate">{p.title}</span>
-                    <span className="ml-auto font-mono text-[11px] capitalize text-white/35">
-                      {p.category}
+                    <span className="ml-auto font-mono text-[11px] text-white/35">
+                      {projectCategoryLabel(p.category)}
                     </span>
                   </li>
                 ))}

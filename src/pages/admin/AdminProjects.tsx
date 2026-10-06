@@ -3,6 +3,7 @@ import type { JSX } from "react";
 import { Link } from "react-router-dom";
 import { GlassPanel } from "../../components/ui/GlassPanel";
 import { useProjects } from "../../hooks/useProjects";
+import { projectCategoryLabel } from "../../utils/projectCategories";
 
 function Stat({ value, label }: { value: number; label: string }): JSX.Element {
   return (
@@ -19,7 +20,7 @@ export function AdminProjects(): JSX.Element {
   const { projects, loading, error } = useProjects();
 
   const current = projects.filter((p) => p.category === "current").length;
-  const completed = projects.filter((p) => p.category === "completed").length;
+  const notable = projects.filter((p) => p.category === "completed").length;
   const featured = projects.filter((p) => p.featured).length;
 
   return (
@@ -50,8 +51,8 @@ export function AdminProjects(): JSX.Element {
       <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Stat value={projects.length} label="Total" />
         <Stat value={featured} label="Featured" />
-        <Stat value={current} label="Current" />
-        <Stat value={completed} label="Completed" />
+        <Stat value={current} label={projectCategoryLabel("current")} />
+        <Stat value={notable} label={projectCategoryLabel("completed")} />
       </div>
 
       <GlassPanel className="rounded-2xl p-5">
@@ -73,8 +74,8 @@ export function AdminProjects(): JSX.Element {
               >
                 {p.featured && <Star className="h-3.5 w-3.5 fill-current text-amber-300" />}
                 <span className="truncate text-sm text-white/85">{p.title}</span>
-                <span className="ml-auto font-mono text-[11px] capitalize text-white/35">
-                  {p.category}
+                <span className="ml-auto font-mono text-[11px] text-white/35">
+                  {projectCategoryLabel(p.category)}
                 </span>
               </li>
             ))}
