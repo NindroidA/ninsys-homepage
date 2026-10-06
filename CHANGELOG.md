@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.9] - 2026-10-06
+
+### Changed
+
+- **The Docker image builds with Bun 1.3.13**, the version in `packageManager`
+  and `ci.yml`. It used `oven/bun:1-alpine`, which follows the newest Bun 1.x,
+  so production could build with a different Bun than CI tested. Bump all
+  three together. (#96)
+
+### Fixed
+
+- **The PNG and ICO icons from 2.3.1 had no `Cache-Control`.** `favicon.ico`,
+  `apple-touch-icon.png`, `icon-192.png` and `icon-512.png` fell through to
+  `location /`, so they got Cloudflare's 4-hour default instead of the one day
+  nginx gives `favicon.svg`. They now share that rule.
+
 ## [2.3.8] - 2026-10-05
 
 ### Security
