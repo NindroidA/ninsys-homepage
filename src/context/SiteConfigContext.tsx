@@ -15,7 +15,6 @@ export interface SiteConfigValue {
   moveSection: (id: HomeSectionId, direction: -1 | 1) => void;
   toggleHosted: (id: string) => void;
   moveHosted: (id: string, direction: -1 | 1) => void;
-  setEnable3DRack: (value: boolean) => void;
   reset: () => void;
 }
 
@@ -26,7 +25,7 @@ export const SiteConfigContext = createContext<SiteConfigValue | null>(null);
  * keep the stored section order + visibility for known ids, drop unknown ids,
  * append any newly-added default sections, and backfill missing scalar fields.
  */
-function reconcile(raw: unknown): SiteConfig {
+export function reconcile(raw: unknown): SiteConfig {
   const partial = (raw ?? {}) as Partial<SiteConfig>;
   const known = DEFAULT_SITE_CONFIG.sections;
   const stored = Array.isArray(partial.sections) ? partial.sections : [];
@@ -61,10 +60,6 @@ function reconcile(raw: unknown): SiteConfig {
 
   return {
     sections: ordered,
-    enable3DRack:
-      typeof partial.enable3DRack === "boolean"
-        ? partial.enable3DRack
-        : DEFAULT_SITE_CONFIG.enable3DRack,
     hosted,
   };
 }
@@ -130,10 +125,6 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const setEnable3DRack = useCallback((value: boolean) => {
-    setConfig((prev) => ({ ...prev, enable3DRack: value }));
-  }, []);
-
   const reset = useCallback(() => setConfig(DEFAULT_SITE_CONFIG), []);
 
   const value = useMemo<SiteConfigValue>(
@@ -143,10 +134,9 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
       moveSection,
       toggleHosted,
       moveHosted,
-      setEnable3DRack,
       reset,
     }),
-    [config, toggleSection, moveSection, toggleHosted, moveHosted, setEnable3DRack, reset],
+    [config, toggleSection, moveSection, toggleHosted, moveHosted, reset],
   );
 
   return <SiteConfigContext.Provider value={value}>{children}</SiteConfigContext.Provider>;

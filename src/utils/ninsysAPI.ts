@@ -60,7 +60,7 @@ export const UNAUTHORIZED_EVENT = "ninsys:unauthorized";
  * Prefer the server's own error message over a bare status code — the previous
  * `API Error: 401` discarded the body and told the user nothing.
  */
-async function describeError(response: Response): Promise<string> {
+export async function describeError(response: Response): Promise<string> {
   try {
     const body = await response.clone().json();
     const message = body?.error ?? body?.message;

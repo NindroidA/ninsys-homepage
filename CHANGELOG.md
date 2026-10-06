@@ -18,6 +18,104 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - These entrances now respect `prefers-reduced-motion`: with reduced motion
   the content shows in place instead of sliding in.
 
+## [2.3.6] - 2026-10-05
+
+### Changed
+
+- **Loading states use the antenna mark.** A new `BrandLoader` (the mark in
+  its idle pulse over a soft violet glow, with a `// loading` caption and a
+  blinking cursor) replaces the spinners in the route fallbacks and in the
+  Projects and About page loads. Screen readers get a plain "Loading" status.
+  (#88)
+
+### Added
+
+- **A pre-mount splash.** `index.html` shows the antenna, arcs pulsing, while
+  the JavaScript bundle loads. It waits 350ms before fading in, so fast loads
+  never flash it, and React replaces it on its first render.
+
+## [2.3.5] - 2026-10-05
+
+### Changed
+
+- **The Status section's WebGL server rack is now the animated home-lab
+  rack** from the brand kit: the isometric layer cube over a faint isometric
+  floor, with the antenna as a small accent seated in a socket at the back
+  left of the top. Its three LEDs sit flat on the front panel with soft glows
+  (power steady, status breathing, and rose when a service is offline).
+  - **Boot**, when it scrolls into view (about 4s): the layers stack, the LEDs
+    light and the antenna boots with the navbar logo's keyframes. Then comes a
+    power-on pulse. The antenna flashes, the signal runs down through the rack, and the
+    rack hops while its glow blooms and the LEDs flash. The base lets out a
+    flare, three shockwaves, a flash across the floor grid and streaks of
+    light along it.
+  - **Idle**, a 6s cycle: the antenna pings, the signal branches across traces
+    on the top and drops down both sides, fanning into short twigs that light
+    their end nodes and blinking the activity LED on the way. Then it leaves
+    as a ripple across the floor. The rack hovers over its
+    breathing glow, and a sheen crosses the top every few seconds.
+  - The panel is a night sky: a slow aurora and twinkling stars instead of the
+    page's dot texture.
+  - The loop pauses while the rack is off screen, and
+    `prefers-reduced-motion` gets the still picture. (#86)
+
+### Removed
+
+- three.js, `@react-three/fiber` and `@react-three/drei`, with the 963 kB
+  (259 kB gzip) `three` chunk that desktops rendering the 3D rack downloaded,
+  and the admin Site Config "3D server rack" toggle.
+
+### Fixed
+
+- **A failed lighting download crashed the whole homepage.** The 3D rack's
+  drei `<Environment preset="studio" />` fetched an HDRI from raw.githack.com
+  at runtime. When that request failed (an outage, a content blocker, a
+  firewall), the error reached the app's error boundary, and desktops that
+  render the 3D rack showed "Something went wrong" instead of the site. The
+  new rack fetches nothing.
+- **React was bundled inside the `motion` chunk**, so every page preloaded
+  framer-motion's chunk even where nothing used it. Rolldown's deprecated
+  `manualChunks` pulls a group's dependencies into it; `vite.config.ts` now
+  uses `codeSplitting` groups with priorities, so React and Vite's preload
+  helper always land in `react-vendor` and `motion` holds only motion.
+
+## [2.3.4] - 2026-10-05
+
+### Added
+
+- **Unit tests, run with Bun's built-in test runner.** `bun test` (or
+  `bun run test`) covers the pure logic: the `cn` class merger, the icon
+  lookups behind the admin pickers, the API origin switch, API error
+  messages, uptime formatting and the System Status mapping, and the
+  reconciliation that brings a site config saved in `localStorage` by an
+  older build up to date. CI runs it right after installing dependencies.
+  `reconcile`, `describeError`, `formatUptime` and `fetchServices` are now
+  exported for the tests; their behaviour is unchanged. (#85)
+
+### Changed
+
+- **`tsconfig.json` loads Bun's types explicitly.** TypeScript 6 no longer
+  includes every installed `@types` package, so `"types": ["bun"]` is what
+  lets the tests' `bun:test` imports typecheck. `@types/bun` was already a
+  dev dependency; nothing new is installed. (#85)
+- **The docs match the repo again.** `CLAUDE.md` now says what the site is,
+  how it's laid out, how changes are tested and what not to touch. The
+  README lists Vite 8 and the CI steps as they run (`bun test`,
+  `bunx biome ci --error-on-warnings .`, `bun run build`), and `TODO.md`
+  moves the PNG icons from #77 and the tests to Done. (#85)
+
+## [2.3.3] - 2026-10-05
+
+### Security
+
+- **Cleared all 22 `bun audit` findings (12 high, 10 moderate)** with in-range
+  updates: react-router-dom 7.10.1 → 7.18.4, postcss 8.5.6 → 8.5.29, and the
+  transitive fflate copies under drei and `@types/three` → 0.6.11 and 0.8.3.
+  Most of the react-router advisories need server rendering, which this SPA
+  doesn't use, and postcss only runs at build time. GitHub's dependency graph
+  reads only `package.json` here, not `bun.lock`, so Dependabot never raised
+  alerts for these. (#83)
+
 ## [2.3.2] - 2026-10-02
 
 ### Changed
