@@ -17,17 +17,15 @@
 
 ## Worth doing sometime
 
-- [ ] `ServerRackScene` uses drei's `<Environment preset="studio" />`, which
-      fetches an HDRI from `raw.githack.com` at runtime. Consider self-hosting it
-      or replacing with plain lights.
-- [ ] `motion` is eager on the homepage (~42 kB gzip on the critical path)
-      because the hero animates on mount. A CSS-only hero entry animation would
-      let the chunk go lazy.
 - [ ] Prerender/SSG so crawlers get per-route metadata and unknown URLs can
       return a real 404 status instead of a soft 404.
 
 ## Done
 
+- [x] The WebGL rack, and with it drei's runtime HDRI fetch from
+      `raw.githack.com`, replaced by the animated home-lab rack (#87)
+- [x] `motion` off the homepage's critical path: CSS entrance animations, a
+      lazy login dialog, and React out of the `motion` chunk (#87, #91)
 - [x] Tests. `bun test` runs unit tests for the pure logic (`cn`, the icon
       lookups, the API origin and error messages, uptime formatting and the
       service-status mapping, site-config reconciliation), in CI too (#85)
