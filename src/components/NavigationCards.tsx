@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { ArrowRight, ExternalLink, Folder, Server, Settings, Terminal } from "lucide-react";
 import type { JSX } from "react";
 import { Link } from "react-router-dom";
@@ -58,12 +57,7 @@ function NavCard({ card }: { card: NavigationCard }): JSX.Element {
 
 export default function NavigationCards({ cards }: NavigationCardsProps): JSX.Element {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="mx-auto w-full max-w-6xl"
-    >
+    <div className="mx-auto w-full max-w-6xl motion-safe:animate-[rise-in_0.5s_ease-out_both]">
       <div className="mb-8">
         <span className="font-mono text-xs uppercase tracking-[0.18em] text-white/40">
           {"// have a look around"}
@@ -78,6 +72,6 @@ export default function NavigationCards({ cards }: NavigationCardsProps): JSX.El
           <NavCard key={card.id} card={card} />
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }

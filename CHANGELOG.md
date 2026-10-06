@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.7] - 2026-10-05
+
+### Changed
+
+- **The homepage no longer needs framer-motion to render.** The hero, the
+  Status, Hosted and Explore sections, the status cards' stagger and the
+  guest-view banner now use one CSS `rise-in` keyframe with the same offsets,
+  durations and delays. The admin login dialog keeps its motion animations
+  but loads on first open. Together with the chunking fix in 2.3.5, the 41 kB
+  (gzip) `motion` chunk only loads on pages and dialogs that use it. (#90)
+- These entrances now respect `prefers-reduced-motion`: with reduced motion
+  the content shows in place instead of sliding in.
+
 ## [2.3.6] - 2026-10-05
 
 ### Changed

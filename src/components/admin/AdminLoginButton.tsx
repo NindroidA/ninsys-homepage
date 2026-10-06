@@ -1,8 +1,13 @@
 import { Eye, EyeOff, KeyRound, LayoutDashboard, LogOut } from "lucide-react";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import { AdminLoginModal } from "./AdminLoginModal";
+
+// The dialog, and the framer-motion it animates with, loads on first open, so the footer
+// on every public page doesn't pull motion into the critical path.
+const AdminLoginModal = lazy(() =>
+  import("./AdminLoginModal").then((m) => ({ default: m.AdminLoginModal })),
+);
 
 interface AdminLoginButtonProps {
   variant?: "subtle" | "prominent";
@@ -11,11 +16,28 @@ interface AdminLoginButtonProps {
 export function AdminLoginButton({ variant = "subtle" }: AdminLoginButtonProps) {
   const { isAuthenticated, isGuestViewMode, toggleGuestView, logout } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // Stays mounted after the first open so AnimatePresence can play the close animation.
+  const [modalLoaded, setModalLoaded] = useState(false);
   const navigate = useNavigate();
 
   // Logging in from the footer used to leave you authenticated on the public page
   // with no route to /admin anywhere in the UI.
   const goToAdmin = () => navigate("/admin");
+
+  const openModal = () => {
+    setModalLoaded(true);
+    setIsModalOpen(true);
+  };
+
+  const modal = modalLoaded && (
+    <Suspense fallback={null}>
+      <AdminLoginModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={goToAdmin}
+      />
+    </Suspense>
+  );
 
   if (!isAuthenticated) {
     // Not logged in - show login button
@@ -24,17 +46,13 @@ export function AdminLoginButton({ variant = "subtle" }: AdminLoginButtonProps) 
         <>
           <button
             type="button"
-            onClick={() => setIsModalOpen(true)}
+            onClick={openModal}
             className="p-2 text-white/20 hover:text-white/40 hover:bg-white/5 rounded-lg transition-all duration-300"
             title="Admin Login"
           >
             <KeyRound className="w-4 h-4" />
           </button>
-          <AdminLoginModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            onSuccess={goToAdmin}
-          />
+          {modal}
         </>
       );
     }
@@ -43,17 +61,13 @@ export function AdminLoginButton({ variant = "subtle" }: AdminLoginButtonProps) 
       <>
         <button
           type="button"
-          onClick={() => setIsModalOpen(true)}
+          onClick={openModal}
           className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white/70 hover:text-white rounded-xl border border-white/10 hover:border-white/20 transition-all duration-300"
         >
           <KeyRound className="w-4 h-4" />
           <span className="text-sm font-medium">Login</span>
         </button>
-        <AdminLoginModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSuccess={goToAdmin}
-        />
+        {modal}
       </>
     );
   }

@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { navigationCards } from "../assets/navigationCards";
@@ -42,12 +41,7 @@ export default function Homepage() {
       {/* hero */}
       <section className="relative flex min-h-[78svh] items-center justify-center overflow-hidden px-4 sm:min-h-screen sm:px-8">
         <BackgroundNet />
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: "easeOut" }}
-          className="relative z-10 w-full max-w-4xl text-center"
-        >
+        <div className="relative z-10 w-full max-w-4xl text-center motion-safe:animate-[rise-in_0.9s_ease-out_both]">
           <span className="inline-flex items-center gap-1.5 bg-[linear-gradient(135deg,#5eead4,#10b981)] bg-clip-text font-mono text-[10px] uppercase tracking-[0.12em] text-transparent sm:gap-2 sm:text-xs sm:tracking-[0.18em]">
             {"// bots, tools, and one stubborn homelab"}
             <span className="inline-block h-3 w-1.5 translate-y-0.5 bg-emerald-400 motion-safe:animate-[blink_1.1s_steps(1)_infinite] sm:h-3.5 sm:w-2" />
@@ -87,7 +81,7 @@ export default function Homepage() {
               <GithubIcon className="h-4 w-4" /> GitHub
             </a>
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* configurable sections (admin Site Config controls visibility + order) */}
