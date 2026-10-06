@@ -18,12 +18,12 @@ import { Grid } from "../shared/ui";
 import { ProjectCard } from "./ProjectCard";
 
 interface ProjectDragListProps {
-  /** The projects actually rendered — may be a filtered subset of `allProjects`. */
+  /** The projects actually rendered — one section's subset of `allProjects`. */
   projects: Project[];
   /**
-   * Every project, unfiltered. Reordering happens on the visible subset, but both
-   * the query cache and the reorder endpoint expect the complete list — writing
-   * back only the subset would drop the hidden projects.
+   * Every project, from every section. Reordering happens on the visible subset,
+   * but both the query cache and the reorder endpoint expect the complete list —
+   * writing back only the subset would drop the other section's projects.
    */
   allProjects: Project[];
   isEditing: boolean;
@@ -55,9 +55,9 @@ export function ProjectDragList({
 
   /**
    * Fold a reordered *visible* list back into the full list, by refilling the
-   * slots the visible projects occupied. Projects hidden by the active filter
-   * keep their positions, so reordering under a filter no longer drops them
-   * from the cache or from the ids sent to the server.
+   * slots the visible projects occupied. Projects in the other section keep
+   * their positions, so reordering one section doesn't drop them from the
+   * cache or from the ids sent to the server.
    */
   const mergeIntoAll = (reorderedVisible: Project[]): Project[] => {
     const visibleIds = new Set(projects.map((p) => p.id));

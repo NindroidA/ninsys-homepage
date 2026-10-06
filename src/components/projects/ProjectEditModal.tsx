@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useModalA11y } from "../../hooks/useModalA11y";
 import type { CreateProjectInput, Project, UpdateProjectInput } from "../../types/projects";
 import { getLucideIcon, PROJECT_ICONS } from "../../utils/iconUtils";
+import { PROJECT_CATEGORIES } from "../../utils/projectCategories";
 
 // Common technology options for the dropdown
 const COMMON_TECHNOLOGIES = [
@@ -543,12 +544,11 @@ export function ProjectEditModal({
                       onChange={(e) => setCategory(e.target.value as "current" | "completed")}
                       className="w-full px-4 py-3 bg-white/4 border border-purple-300/12 rounded-lg text-white focus:outline-hidden focus:border-purple-400/50 focus:ring-1 focus:ring-purple-400/30 transition-all"
                     >
-                      <option value="current" className="bg-[#0d0a16]">
-                        Current
-                      </option>
-                      <option value="completed" className="bg-[#0d0a16]">
-                        Completed
-                      </option>
+                      {PROJECT_CATEGORIES.map(({ value, label }) => (
+                        <option key={value} value={value} className="bg-[#0d0a16]">
+                          {label}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <div>

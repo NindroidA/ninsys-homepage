@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import type { Project } from "../../types/projects";
 import { getLucideIcon } from "../../utils/iconUtils";
+import { projectCategoryLabel } from "../../utils/projectCategories";
 import { GithubIcon } from "../icons/BrandIcons";
 import { Badge, Button, Card } from "../shared/ui";
 
@@ -150,19 +151,17 @@ export function ProjectCard({
               <ProjectIcon className="w-5 h-5 sm:w-6 sm:h-6 text-purple-100" />
             </div>
             <div className="flex-1">
-              <h3 className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white mb-1.5 sm:mb-2">
+              {/* h4: the Projects page groups cards under Current / Notable h3s */}
+              <h4 className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white mb-1.5 sm:mb-2">
                 {project.title}
-              </h3>
+              </h4>
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm text-white/60">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
                   {formatDate(project.date)}
                 </div>
-                <Badge
-                  variant={project.category === "current" ? "success" : "info"}
-                  className="capitalize"
-                >
-                  {project.category}
+                <Badge variant={project.category === "current" ? "success" : "info"}>
+                  {projectCategoryLabel(project.category)}
                 </Badge>
               </div>
             </div>

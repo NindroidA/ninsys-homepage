@@ -13,7 +13,7 @@ export const navigationCards: NavigationCard[] = [
   {
     id: "projects",
     title: "Projects",
-    description: "Explore my current and completed projects",
+    description: "Explore my current and notable projects",
     url: "/projects",
     external: false,
     icon: "folder",
@@ -29,5 +29,15 @@ export const navigationCards: NavigationCard[] = [
     icon: "settings",
     color: "purple",
     category: "Portfolio",
+  },
+  {
+    id: "github",
+    title: "GitHub",
+    description: "Browse my repositories and recent work",
+    url: "https://github.com/NindroidA",
+    external: true,
+    icon: "github",
+    color: "pink",
+    category: "Code",
   },
 ];

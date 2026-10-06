@@ -6,7 +6,7 @@ interface LiveService {
   id: string;
   name: string;
   description: string;
-  status: "online" | "offline" | "loading" | "coming_soon";
+  status: "online" | "degraded" | "offline" | "loading" | "coming_soon";
   uptime?: string;
   stats?: {
     guilds?: number;
@@ -25,6 +25,17 @@ export const formatUptime = (seconds: number): string => {
   if (days > 0) return `${days}d ${hours}h`;
   if (hours > 0) return `${hours}h ${minutes}m`;
   return `${minutes}m`;
+};
+
+/**
+ * The API's status from the `status` its `/health` reports. ninsys-api answers `degraded`
+ * (still HTTP 200) when it is up but its own database isn't, so that gets its own state
+ * instead of reading as down. Anything else, or no answer at all, is offline.
+ */
+export const statusFromHealth = (health: unknown): "online" | "degraded" | "offline" => {
+  if (health === "healthy") return "online";
+  if (health === "degraded") return "degraded";
+  return "offline";
 };
 
 // Single source of truth for the service registry (statuses are filled in live).
@@ -72,11 +83,11 @@ export async function fetchServices(): Promise<LiveService[]> {
 
   return BASE_SERVICES.map((svc) => {
     if (svc.id === "api") {
-      const healthy =
-        systemHealth.status === "fulfilled" && systemHealth.value.data?.status === "healthy";
       return {
         ...svc,
-        status: healthy ? "online" : "offline",
+        status: statusFromHealth(
+          systemHealth.status === "fulfilled" ? systemHealth.value?.data?.status : undefined,
+        ),
         lastUpdated: now,
       };
     }
