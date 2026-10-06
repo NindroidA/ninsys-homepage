@@ -25,7 +25,7 @@ export const SiteConfigContext = createContext<SiteConfigValue | null>(null);
  * keep the stored section order + visibility for known ids, drop unknown ids,
  * append any newly-added default sections, and backfill missing scalar fields.
  */
-function reconcile(raw: unknown): SiteConfig {
+export function reconcile(raw: unknown): SiteConfig {
   const partial = (raw ?? {}) as Partial<SiteConfig>;
   const known = DEFAULT_SITE_CONFIG.sections;
   const stored = Array.isArray(partial.sections) ? partial.sections : [];

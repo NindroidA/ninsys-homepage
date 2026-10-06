@@ -50,6 +50,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   uses `codeSplitting` groups with priorities, so React and Vite's preload
   helper always land in `react-vendor` and `motion` holds only motion.
 
+## [2.3.4] - 2026-10-05
+
+### Added
+
+- **Unit tests, run with Bun's built-in test runner.** `bun test` (or
+  `bun run test`) covers the pure logic: the `cn` class merger, the icon
+  lookups behind the admin pickers, the API origin switch, API error
+  messages, uptime formatting and the System Status mapping, and the
+  reconciliation that brings a site config saved in `localStorage` by an
+  older build up to date. CI runs it right after installing dependencies.
+  `reconcile`, `describeError`, `formatUptime` and `fetchServices` are now
+  exported for the tests; their behaviour is unchanged. (#85)
+
+### Changed
+
+- **`tsconfig.json` loads Bun's types explicitly.** TypeScript 6 no longer
+  includes every installed `@types` package, so `"types": ["bun"]` is what
+  lets the tests' `bun:test` imports typecheck. `@types/bun` was already a
+  dev dependency; nothing new is installed. (#85)
+- **The docs match the repo again.** `CLAUDE.md` now says what the site is,
+  how it's laid out, how changes are tested and what not to touch. The
+  README lists Vite 8 and the CI steps as they run (`bun test`,
+  `bunx biome ci --error-on-warnings .`, `bun run build`), and `TODO.md`
+  moves the PNG icons from #77 and the tests to Done. (#85)
+
+## [2.3.3] - 2026-10-05
+
+### Security
+
+- **Cleared all 22 `bun audit` findings (12 high, 10 moderate)** with in-range
+  updates: react-router-dom 7.10.1 → 7.18.4, postcss 8.5.6 → 8.5.29, and the
+  transitive fflate copies under drei and `@types/three` → 0.6.11 and 0.8.3.
+  Most of the react-router advisories need server rendering, which this SPA
+  doesn't use, and postcss only runs at build time. GitHub's dependency graph
+  reads only `package.json` here, not `bun.lock`, so Dependabot never raised
+  alerts for these. (#83)
+
 ## [2.3.2] - 2026-10-02
 
 ### Changed

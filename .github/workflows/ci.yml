@@ -24,6 +24,9 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Test
+        run: bun test
+
       - name: Biome (lint + format check)
         # The backlog is at zero, so warnings are now a hard failure —
         # otherwise every rule in biome.json is severity "warn" and the gate
