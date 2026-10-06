@@ -18,7 +18,7 @@ import { useLiveServices } from "../hooks/useLiveServices";
 import { LiveOpsRack } from "./LiveOpsRack";
 import { GlassPanel } from "./ui/GlassPanel";
 
-type StatusKey = "online" | "offline" | "maintenance" | "loading" | "coming_soon";
+type StatusKey = "online" | "degraded" | "offline" | "maintenance" | "loading" | "coming_soon";
 
 interface StatusStyle {
   /** CSS gradient used for the LED dot + clipped label text. */
@@ -39,6 +39,14 @@ const statusStyles: Record<StatusKey, StatusStyle> = {
     tint: "text-emerald-300",
     label: "Online",
     pulse: false,
+  },
+  // Up, but not all there (the API reports this when its database is down).
+  degraded: {
+    gradient: "linear-gradient(135deg,#fcd34d,#f59e0b)",
+    glow: "rgba(245,158,11,0.6)",
+    tint: "text-amber-300",
+    label: "Degraded",
+    pulse: true,
   },
   offline: {
     gradient: "linear-gradient(135deg,#fb7185,#ef4444)",
@@ -132,8 +140,9 @@ export default function ServiceStatus(): JSX.Element {
   }, {});
   const online = summary.online ?? 0;
 
+  // "online" counts only healthy services; a degraded one gets its own amber pill.
   const summaryPills: { key: StatusKey; count: number }[] = (
-    ["online", "offline", "maintenance", "coming_soon"] as StatusKey[]
+    ["online", "degraded", "offline", "maintenance", "coming_soon"] as StatusKey[]
   )
     .map((key) => ({ key, count: summary[key] ?? 0 }))
     .filter((p) => p.count > 0);
@@ -182,7 +191,12 @@ export default function ServiceStatus(): JSX.Element {
 
       {/* live ops visual */}
       <div className="mb-8">
-        <LiveOpsRack online={online} offline={summary.offline ?? 0} total={services.length} />
+        <LiveOpsRack
+          online={online}
+          degraded={summary.degraded ?? 0}
+          offline={summary.offline ?? 0}
+          total={services.length}
+        />
       </div>
 
       {/* service cards */}

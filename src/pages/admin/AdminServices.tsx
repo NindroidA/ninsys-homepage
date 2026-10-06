@@ -9,6 +9,11 @@ const STATUS_META: Record<string, { dot: string; label: string; tint: string }> 
     label: "Online",
     tint: "text-emerald-300",
   },
+  degraded: {
+    dot: "bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.6)]",
+    label: "Degraded",
+    tint: "text-amber-300",
+  },
   offline: {
     dot: "bg-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.5)]",
     label: "Offline",

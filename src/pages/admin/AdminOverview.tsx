@@ -38,6 +38,7 @@ export function AdminOverview(): JSX.Element {
   const { data: about } = useAboutData();
 
   const online = services.filter((s) => s.status === "online").length;
+  const degraded = services.filter((s) => s.status === "degraded").length;
   const featured = projects.filter((p) => p.featured).length;
   const hostedLive = hostedProjects.filter((p) => p.status === "live").length;
   const hostedBuilding = hostedProjects.filter((p) => p.status === "building").length;
@@ -56,7 +57,7 @@ export function AdminOverview(): JSX.Element {
           icon={Activity}
           value={`${online}/${services.length}`}
           label="Services"
-          hint="online / total"
+          hint={degraded > 0 ? `online / total · ${degraded} degraded` : "online / total"}
         />
         <StatCard
           icon={FolderGit2}
@@ -139,6 +140,8 @@ function dotClass(status: string): string {
   switch (status) {
     case "online":
       return "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]";
+    case "degraded":
+      return "bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.6)]";
     case "offline":
       return "bg-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.5)]";
     case "coming_soon":
