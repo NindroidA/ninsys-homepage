@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.10] - 2026-10-06
+
+### Added
+
+- **The API's status has a degraded state.** ninsys-api answers `/health`
+  with `degraded` when it is up but its own database isn't, and the homepage
+  showed that as offline. It now gets an amber dot and a "Degraded" label in
+  System Status and on the admin Overview and Services pages. `healthy` is
+  still online; anything else, or no answer, is still offline. (#99, from #92)
+- Only healthy services count as online: a degraded API reads "3 online,
+  1 degraded" in the status summary, 3/4 on the rack and 3 in the hero. The
+  home-lab rack shows its degraded look when any service is offline or
+  degraded.
+- **A GitHub card in Explore**, after Projects and About Me, opens
+  github.com/NindroidA in a new tab. The cards sit three across from 768px;
+  narrower, GitHub takes its own row under the other two. (#99)
+
+### Changed
+
+- **The Projects page has Current and Notable sections** instead of the
+  All/Current/Completed filter buttons. Each keeps the admin order and only
+  shows up when it has projects; with no projects at all, the page says so
+  and links to GitHub. In the editor, projects reorder within their section.
+  (#99)
+- **"Completed" projects are called "Notable"** wherever the site shows the
+  category: the project cards, the editor's category picker, the admin
+  Overview and Projects pages, and the Projects card in Explore. The API
+  value is still `completed`.
+- External Explore cards say "Visit" instead of "Launch", like the Hosted
+  shelf, and tell screen readers they open in a new tab.
+
 ## [2.3.9] - 2026-10-06
 
 ### Changed
