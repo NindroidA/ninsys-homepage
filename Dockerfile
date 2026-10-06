@@ -1,5 +1,7 @@
 # Stage 1: Build
-FROM oven/bun:1-alpine AS builder
+# Same Bun as packageManager in package.json and bun-version in ci.yml, so the
+# image builds with the Bun that CI tested. Bump all three together.
+FROM oven/bun:1.3.13-alpine AS builder
 
 WORKDIR /app
 
