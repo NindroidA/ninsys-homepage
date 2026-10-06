@@ -477,13 +477,14 @@ input[type='range']::-moz-range-thumb:hover {
    `offscreen` pauses everything while it's scrolled away. Every loop starts and ends at the
    resting values, so a paused or reduced-motion frame is the finished picture.
 
-   Boot timeline: layers and LEDs 0.1-1.15s, socket 1.1s, antenna boot 1.25-3.05s. Power-on
-   pulse: antenna flash 3.1s, signal down the rack 3.25s, the rack hops (glow and LEDs flash) 4.15s, and the base
-   lets go at 4.27s (flare, three shockwaves, grid flash, floor streaks). Loops start at 5.6s
-   and the first signal cycle at 8.4s.
+   Boot timeline: layers and LEDs 0.05-0.67s, socket 0.66s, antenna boot 0.75-1.95s.
+   Power-on pulse: antenna flash 2.0s, signal down the rack 2.12s, the rack hops (glow and
+   LEDs flash) 3.0s, and the base lets go at 3.14s (flare, three shockwaves, grid flash, floor
+   streaks). Loops start at 3.9s and the first signal cycle at 6.4s.
 
    Signal cycle (6s, offsets from the cycle start): ping 0s, pulses leave the socket 0.15s,
-   node 0.31s, activity LED 0.92s, floor ripple 1.17s. */
+   node 0.31s, twigs as the pulses reach them (--twig-d, set per twig from its position),
+   activity LED 0.92s, floor ripple 1.17s. */
 .ns-homelab .layer,
 .ns-homelab .floor,
 .ns-homelab .ambient,
@@ -493,6 +494,7 @@ input[type='range']::-moz-range-thumb:hover {
 .ns-homelab .mglow,
 .ns-homelab .led,
 .ns-homelab .node,
+.ns-homelab .twig-node,
 .ns-homelab .socket,
 .ns-homelab .spill,
 .ns-homelab .tipglow,
@@ -523,13 +525,15 @@ input[type='range']::-moz-range-thumb:hover {
    is painted at rest: an invisible group still gets composited, and some renderers leave a
    faint box at its edges. Their keyframes switch them visible. */
 .ns-homelab .run,
+.ns-homelab .twig,
 .ns-homelab .streak {
   opacity: 0;
   visibility: hidden;
 }
 
 
-.ns-homelab .node {
+.ns-homelab .node,
+.ns-homelab .twig-node {
   opacity: 0.25;
 }
 
@@ -874,6 +878,26 @@ input[type='range']::-moz-range-thumb:hover {
   }
 }
 
+/* A twig is about 8 units: a 0.1s run, so one keyframe set serves them all. */
+@keyframes ns-hl-run-twig {
+  0% {
+    opacity: 1;
+    visibility: visible;
+    stroke-dashoffset: 0;
+  }
+  1.6% {
+    opacity: 1;
+    visibility: visible;
+    stroke-dashoffset: -100;
+  }
+  1.7%,
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    stroke-dashoffset: -100;
+  }
+}
+
 @keyframes ns-hl-node {
   0%,
   100% {
@@ -920,187 +944,198 @@ input[type='range']::-moz-range-thumb:hover {
 /* ── Boot ────────────────────────────────────────────────── */
 .ns-homelab.boot .ambient {
   animation:
-    ns-hl-fade 1.2s ease-out both,
-    ns-hl-breathe 8s 5.6s ease-in-out infinite;
+    ns-hl-fade 0.8s ease-out both,
+    ns-hl-breathe 8s 3.9s ease-in-out infinite;
 }
 
 .ns-homelab.boot .floor {
-  animation: ns-hl-floor 0.9s ease-out both;
+  animation: ns-hl-floor 0.6s ease-out both;
 }
 
 .ns-homelab.boot .glow {
   animation:
-    ns-hl-fade 0.8s 0.05s ease-out both,
-    ns-hl-lift-glow 6s 5.6s ease-in-out infinite;
+    ns-hl-fade 0.55s 0.03s ease-out both,
+    ns-hl-lift-glow 6s 3.9s ease-in-out infinite;
 }
 
 .ns-homelab.boot .layer-b {
-  animation: ns-hl-drop 0.52s 0.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: ns-hl-drop 0.38s 0.05s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .ns-homelab.boot .layer-m {
-  animation: ns-hl-drop 0.52s 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: ns-hl-drop 0.38s 0.18s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .ns-homelab.boot .layer-t {
-  animation: ns-hl-drop 0.52s 0.54s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: ns-hl-drop 0.38s 0.31s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .ns-homelab.boot .mglow {
   animation:
-    ns-hl-fade 0.6s 0.8s ease-out both,
-    ns-hl-glowpop 0.8s 4.15s ease-out,
-    ns-hl-breathe 4.8s 5.6s ease-in-out infinite;
+    ns-hl-fade 0.4s 0.48s ease-out both,
+    ns-hl-glowpop 0.6s 3s ease-out,
+    ns-hl-breathe 4.8s 3.9s ease-in-out infinite;
 }
 
 .ns-homelab.boot .etch {
-  animation: ns-hl-fade 0.5s 1s ease-out both;
+  animation: ns-hl-fade 0.35s 0.6s ease-out both;
 }
 
 .ns-homelab.boot .led-1 {
   animation:
-    ns-hl-pop 0.3s 0.95s ease-out both,
-    ns-hl-pop 0.35s 4.15s ease-out,
-    ns-hl-power 4.8s 5.6s ease-in-out infinite;
+    ns-hl-pop 0.25s 0.55s ease-out both,
+    ns-hl-pop 0.3s 3s ease-out,
+    ns-hl-power 4.8s 3.9s ease-in-out infinite;
 }
 
 .ns-homelab.boot .led-2 {
   animation:
-    ns-hl-pop 0.3s 1.05s ease-out both,
-    ns-hl-blink 6s 4.02s,
-    ns-hl-pop 0.35s 4.15s ease-out,
-    ns-hl-blink 6s 9.32s infinite;
+    ns-hl-pop 0.25s 0.61s ease-out both,
+    ns-hl-blink 6s 2.89s,
+    ns-hl-pop 0.3s 3s ease-out,
+    ns-hl-blink 6s 7.32s infinite;
 }
 
 .ns-homelab.boot .led-3 {
   animation:
-    ns-hl-pop 0.3s 1.15s ease-out both,
-    ns-hl-pop 0.35s 4.15s ease-out,
-    ns-hl-led 2.4s 5.6s ease-in-out infinite;
+    ns-hl-pop 0.25s 0.67s ease-out both,
+    ns-hl-pop 0.3s 3s ease-out,
+    ns-hl-led 2.4s 3.9s ease-in-out infinite;
 }
 
 .ns-homelab.boot.degraded .led-3 {
   animation:
-    ns-hl-pop 0.3s 1.15s ease-out both,
-    ns-hl-pop 0.35s 4.15s ease-out,
-    ns-hl-alert 1.2s 5.6s ease-in-out infinite;
+    ns-hl-pop 0.25s 0.67s ease-out both,
+    ns-hl-pop 0.3s 3s ease-out,
+    ns-hl-alert 1.2s 3.9s ease-in-out infinite;
 }
 
 .ns-homelab.boot .edge {
-  animation: ns-hl-edge 0.5s 1s ease-out both;
+  animation: ns-hl-edge 0.35s 0.58s ease-out both;
 }
 
 .ns-homelab.boot .socket {
-  animation: ns-hl-pop 0.35s 1.1s ease-out both;
+  animation: ns-hl-pop 0.28s 0.66s ease-out both;
 }
 
 .ns-homelab.boot .ns-antenna .pole {
-  animation: ns-pole 0.45s 1.25s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: ns-pole 0.32s 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .ns-homelab.boot .ns-antenna .tip {
-  animation: ns-tip 0.38s 1.6s both;
+  animation: ns-tip 0.28s 0.98s both;
 }
 
 .ns-homelab.boot .ns-antenna .rim {
-  animation: ns-rim 0.45s 1.85s ease-out both;
+  animation: ns-rim 0.3s 1.15s ease-out both;
 }
 
 .ns-homelab.boot .ns-antenna .hl {
   animation:
-    ns-flash 0.5s 2.2s both,
-    ns-flash 0.5s 3.1s,
-    ns-breathe 2.4s 5.6s ease-in-out infinite;
+    ns-flash 0.35s 1.38s both,
+    ns-flash 0.4s 2s,
+    ns-breathe 2.4s 3.9s ease-in-out infinite;
 }
 
 .ns-homelab.boot .ns-antenna .burst {
   animation:
-    ns-burst 0.6s 2.25s ease-out forwards,
-    ns-hl-bigping 1.2s 3.1s ease-out,
-    ns-hl-ping 6s 8.4s ease-out infinite;
+    ns-burst 0.45s 1.42s ease-out forwards,
+    ns-hl-bigping 0.9s 2s ease-out,
+    ns-hl-ping 6s 6.4s ease-out infinite;
 }
 
 .ns-homelab.boot .ns-antenna .a1 {
   animation:
-    ns-arc 0.5s 2.3s cubic-bezier(0.2, 0.8, 0.2, 1) both,
-    ns-pulse 2.4s 5.6s ease-in-out infinite;
+    ns-arc 0.35s 1.45s cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    ns-pulse 2.4s 3.9s ease-in-out infinite;
 }
 
 .ns-homelab.boot .ns-antenna .a2 {
   animation:
-    ns-arc 0.5s 2.55s cubic-bezier(0.2, 0.8, 0.2, 1) both,
-    ns-pulse 2.4s 5.9s ease-in-out infinite;
+    ns-arc 0.35s 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    ns-pulse 2.4s 4.2s ease-in-out infinite;
 }
 
 .ns-homelab.boot .tipglow,
 .ns-homelab.boot .spill {
   animation:
-    ns-hl-fade 0.6s 2.2s ease-out both,
-    ns-hl-bloom 6s 3.1s ease-out,
-    ns-hl-bloom 6s 8.4s ease-out infinite;
+    ns-hl-fade 0.4s 1.38s ease-out both,
+    ns-hl-bloom 6s 2s ease-out,
+    ns-hl-bloom 6s 6.4s ease-out infinite;
 }
 
 .ns-homelab.boot .run-r {
   animation:
-    ns-hl-run-r 6s 3.25s linear,
-    ns-hl-run-r 6s 8.55s linear infinite;
+    ns-hl-run-r 6s 2.12s linear,
+    ns-hl-run-r 6s 6.55s linear infinite;
 }
 
 .ns-homelab.boot .run-l {
   animation:
-    ns-hl-run-l 6s 3.25s linear,
-    ns-hl-run-l 6s 8.55s linear infinite;
+    ns-hl-run-l 6s 2.12s linear,
+    ns-hl-run-l 6s 6.55s linear infinite;
 }
 
 .ns-homelab.boot .run-s {
   animation:
-    ns-hl-run-s 6s 3.25s linear,
-    ns-hl-run-s 6s 8.55s linear infinite;
+    ns-hl-run-s 6s 2.12s linear,
+    ns-hl-run-s 6s 6.55s linear infinite;
 }
 
 .ns-homelab.boot .node {
   animation:
-    ns-hl-node 6s 3.41s ease-out,
-    ns-hl-node 6s 8.71s ease-out infinite;
+    ns-hl-node 6s 2.28s ease-out,
+    ns-hl-node 6s 6.71s ease-out infinite;
+}
+
+.ns-homelab.boot .twig {
+  animation:
+    ns-hl-run-twig 6s calc(var(--twig-d) + 2.12s) linear,
+    ns-hl-run-twig 6s calc(var(--twig-d) + 6.55s) linear infinite;
+}
+
+.ns-homelab.boot .twig-node {
+  animation:
+    ns-hl-node 6s calc(var(--twig-d) + 2.12s) ease-out,
+    ns-hl-node 6s calc(var(--twig-d) + 6.55s) ease-out infinite;
 }
 
 .ns-homelab.boot .hl-rack {
   animation:
-    ns-hl-hop 0.7s 4.15s ease-out,
-    ns-hl-hover 6s 5.6s ease-in-out infinite;
+    ns-hl-hop 0.6s 3s ease-out,
+    ns-hl-hover 6s 3.9s ease-in-out infinite;
 }
 
-
 .ns-homelab.boot .flare {
-  animation: ns-hl-flare 1.3s 4.27s ease-out;
+  animation: ns-hl-flare 1.1s 3.14s ease-out;
 }
 
 .ns-homelab.boot .gridflash {
-  animation: ns-hl-gridflash 1.6s 4.27s ease-out;
+  animation: ns-hl-gridflash 1.3s 3.14s ease-out;
 }
 
 .ns-homelab.boot .boom-1 {
-  animation: ns-hl-boom 1.8s 4.27s ease-out;
+  animation: ns-hl-boom 1.5s 3.14s ease-out;
 }
 
 .ns-homelab.boot .boom-2 {
-  animation: ns-hl-boom 1.8s 4.45s ease-out;
+  animation: ns-hl-boom 1.5s 3.29s ease-out;
 }
 
 .ns-homelab.boot .boom-3 {
-  animation: ns-hl-boom 1.8s 4.63s ease-out;
+  animation: ns-hl-boom 1.5s 3.44s ease-out;
 }
 
 .ns-homelab.boot .streak {
-  animation: ns-hl-streak 1s 4.27s ease-out;
+  animation: ns-hl-streak 0.8s 3.14s ease-out;
 }
 
 .ns-homelab.boot .ripple {
-  animation: ns-hl-ripple 6s 9.57s ease-out infinite;
+  animation: ns-hl-ripple 6s 7.57s ease-out infinite;
 }
 
 .ns-homelab.boot .sheen {
-  animation: ns-hl-sheen 7.2s 6s ease-in-out infinite;
+  animation: ns-hl-sheen 7.2s 4.4s ease-in-out infinite;
 }
 
 /* ── Idle (later visits): the same loops, cycle starting at 0.6s ── */
@@ -1167,6 +1202,14 @@ input[type='range']::-moz-range-thumb:hover {
 
 .ns-homelab.idle .node {
   animation: ns-hl-node 6s 0.91s ease-out infinite;
+}
+
+.ns-homelab.idle .twig {
+  animation: ns-hl-run-twig 6s calc(var(--twig-d) + 0.75s) linear infinite;
+}
+
+.ns-homelab.idle .twig-node {
+  animation: ns-hl-node 6s calc(var(--twig-d) + 0.75s) ease-out infinite;
 }
 
 .ns-homelab.idle .ripple {

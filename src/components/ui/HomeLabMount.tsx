@@ -104,23 +104,63 @@ function route(points: Pt[]) {
 
 const TRUNK_START = top(0.42, 0.77); // just in front of the socket
 const JUNCTION = top(0.42, 0.5);
+const RIGHT_TURN = top(0.652, 0.5);
 const RIGHT_EDGE = top(0.652, 0); // directly above the activity LED (x 25.98)
 const LEFT_EDGE = top(0, 0.5);
+const R_DROP = (dy: number): Pt => ({ x: RIGHT_EDGE.x, y: RIGHT_EDGE.y + dy });
+const L_DROP = (dy: number): Pt => ({ x: LEFT_EDGE.x, y: LEFT_EDGE.y + dy });
+const RIGHT_POINTS = [TRUNK_START, JUNCTION, RIGHT_TURN, RIGHT_EDGE, R_DROP(46)];
+const LEFT_POINTS = [TRUNK_START, JUNCTION, LEFT_EDGE, L_DROP(46)];
 const ROUTES = {
   // 92.1 units → 1.02s; reaches the activity LED after 69.1 units (0.77s)
-  r: route([
-    TRUNK_START,
-    JUNCTION,
-    top(0.652, 0.5),
-    RIGHT_EDGE,
-    { x: RIGHT_EDGE.x, y: RIGHT_EDGE.y + 46 },
-  ]),
+  r: route(RIGHT_POINTS),
   // 77.7 units → 0.86s
-  l: route([TRUNK_START, JUNCTION, LEFT_EDGE, { x: LEFT_EDGE.x, y: LEFT_EDGE.y + 46 }]),
+  l: route(LEFT_POINTS),
   // 14.3 units → 0.16s, ending at a node that flashes
   s: route([TRUNK_START, top(0.42, 0.64), top(0.6, 0.64)]),
 };
 const NODE = top(0.6, 0.64);
+
+/** How far along a route (in cube units) a point on it lies. */
+function along(points: Pt[], p: Pt): number {
+  let walked = 0;
+  for (let i = 1; i < points.length; i++) {
+    const a = points[i - 1] as Pt;
+    const b = points[i] as Pt;
+    const segment = Math.hypot(b.x - a.x, b.y - a.y);
+    const toP = Math.hypot(p.x - a.x, p.y - a.y);
+    if (Math.abs(toP + Math.hypot(b.x - p.x, b.y - p.y) - segment) < 0.01) return walked + toP;
+    walked += segment;
+  }
+  throw new Error("HomeLabMount: twig does not start on its route");
+}
+
+// Twigs: short branches off the routes, each ending in a node, so the signal visibly fans out.
+// A twig's pulse leaves when the main pulse reaches its branch point and arrives at the node
+// at the same 90 units/s; `leave` and `arrive` are seconds after the pulses leave the socket,
+// handed to the CSS as --twig-d.
+function twig(points: Pt[], from: Pt, to: Pt) {
+  const start = along(points, from);
+  const length = Math.hypot(to.x - from.x, to.y - from.y);
+  return {
+    d: `M${from.x.toFixed(2)} ${from.y.toFixed(2)}L${to.x.toFixed(2)} ${to.y.toFixed(2)}`,
+    dash: `${((5 / length) * 100).toFixed(2)} 300`,
+    to,
+    leave: start / 90,
+    arrive: (start + length) / 90,
+  };
+}
+// Along a side face, towards one of its corners: (±0.866, ±0.5) is the face's horizontal.
+const onFace = (p: Pt, dx: number, dy: number): Pt => ({ x: p.x + dx * 8, y: p.y + dy * 8 });
+const TWIGS = [
+  twig(RIGHT_POINTS, RIGHT_TURN, top(0.84, 0.5)), // top: on past the right turn
+  twig(RIGHT_POINTS, top(0.652, 0.25), top(0.47, 0.25)), // top: into the front
+  twig(LEFT_POINTS, top(0.2, 0.5), top(0.2, 0.7)), // top: back towards the left corner
+  twig(LEFT_POINTS, L_DROP(23), onFace(L_DROP(23), -0.866, -0.5)), // left face, middle layer
+  twig(LEFT_POINTS, L_DROP(39), onFace(L_DROP(39), 0.866, 0.5)), // left face, bottom layer
+  twig(RIGHT_POINTS, R_DROP(39), onFace(R_DROP(39), 0.866, -0.5)), // right face, bottom layer
+];
+const delay = (seconds: number) => ({ "--twig-d": `${seconds.toFixed(3)}s` }) as CSSProperties;
 
 // Boot finale: light streaks along the floor grid, out from the base's three visible corners.
 const STREAKS = (() => {
@@ -192,14 +232,16 @@ function Led({
  * hooks drive the `.ns-homelab` keyframes in index.css; under `prefers-reduced-motion` it
  * renders the static frame.
  *
- * Boot (about 5.6s): the floor fades up, the layers drop in bottom to top, the LEDs and the
+ * Boot (about 3.9s): the floor fades up, the layers drop in bottom to top, the LEDs and the
  * top edge light, the socket pops in and the antenna runs AntennaMark's boot. Then a
  * power-on pulse: the antenna flashes, the signal runs down through the rack, the rack hops
  * as its glow blooms and all three LEDs flash, and the base lets out a flare, three
- * shockwaves, a grid flash and streaks of light along the floor. Idle (a 6s cycle): the antenna pings, the signal branches across the top
- * and down the sides (blinking the activity LED on the way), then leaves as a ripple across
- * the floor. Meanwhile the rack hovers over its breathing glow, the power LED holds, the
- * status LED breathes, and a sheen crosses the top now and then.
+ * shockwaves, a grid flash and streaks of light along the floor.
+ *
+ * Idle (a 6s cycle): the antenna pings, the signal branches across the top and down the
+ * sides, fanning out into twigs that light their nodes and blinking the activity LED on the
+ * way, then leaves as a ripple across the floor. Meanwhile the rack hovers over its breathing
+ * glow, the power LED holds, the status LED breathes, and a sheen crosses the top now and then.
  */
 export function HomeLabMount({
   size,
@@ -551,11 +593,13 @@ export function HomeLabMount({
         {/* The signal's paths, etched faintly into the rack, and the pulses that run them. */}
         <g className="etch">
           <g fill="none" stroke="#a78bfa" strokeWidth=".6" strokeOpacity=".16">
-            {Object.values(ROUTES).map((r) => (
+            {[...Object.values(ROUTES), ...TWIGS].map((r) => (
               <path key={r.d} d={r.d} strokeLinejoin="round" />
             ))}
           </g>
-          <circle cx={NODE.x} cy={NODE.y} r="1" fill="#a78bfa" fillOpacity=".4" />
+          {[NODE, ...TWIGS.map((t) => t.to)].map((p) => (
+            <circle key={`${p.x}-${p.y}`} cx={p.x} cy={p.y} r="1" fill="#a78bfa" fillOpacity=".4" />
+          ))}
           <circle
             className="node"
             cx={NODE.x}
@@ -564,7 +608,38 @@ export function HomeLabMount({
             fill="#fdf4ff"
             filter={`url(#${uid}-ledblur)`}
           />
+          {TWIGS.map((t) => (
+            <circle
+              key={t.d}
+              className="twig-node"
+              cx={t.to.x}
+              cy={t.to.y}
+              r="1.2"
+              fill="#fdf4ff"
+              filter={`url(#${uid}-ledblur)`}
+              style={delay(t.arrive)}
+            />
+          ))}
         </g>
+        {TWIGS.map((t) => (
+          <g key={t.d} className="twig" fill="none" strokeLinecap="round" style={delay(t.leave)}>
+            <path
+              d={t.d}
+              pathLength={100}
+              strokeDasharray={t.dash}
+              stroke="#d946ef"
+              strokeWidth="2.2"
+              filter={`url(#${uid}-ledblur)`}
+            />
+            <path
+              d={t.d}
+              pathLength={100}
+              strokeDasharray={t.dash}
+              stroke="#ffffff"
+              strokeWidth=".8"
+            />
+          </g>
+        ))}
         {(["r", "l", "s"] as const).map((k) => (
           <g
             key={k}
