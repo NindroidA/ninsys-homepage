@@ -188,7 +188,7 @@ export default function ServiceStatus(): JSX.Element {
 
       {/* live ops visual */}
       <div className="mb-8">
-        <LiveOpsRack online={online} total={services.length} />
+        <LiveOpsRack online={online} offline={summary.offline ?? 0} total={services.length} />
       </div>
 
       {/* service cards */}

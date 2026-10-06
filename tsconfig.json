@@ -2,6 +2,9 @@
   "compilerOptions": {
     // Environment setup & latest features
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    // TypeScript 6 no longer loads every installed @types package; the *.test.ts
+    // files need Bun's types for their `bun:test` imports.
+    "types": ["bun"],
     "target": "ESNext",
     "module": "Preserve",
     "moduleDetection": "force",
