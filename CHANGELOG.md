@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.11] - 2026-10-06
+
+### Changed
+
+- **The site config is saved in the API, for every visitor.** Section order
+  and visibility and the Hosted shelf come from ninsys-api's `GET /v2/config`
+  and save with `PUT /v2/config` (ninsys-api 2.20.7), instead of living in one
+  browser's localStorage. The homepage waits for the config before it shows
+  those sections, so a hidden section never flashes in: a returning visitor's
+  cached copy shows at once, and anyone else waits at most 1.5s. With no saved
+  config, or no answer, it shows the defaults. Admin says whether each change
+  saved, with a Retry. (#98)
+- Reset on the Site Config page resets only the sections. "Reset site config"
+  in Utilities resets the sections and the Hosted shelf, and takes a second
+  click.
+- `src/assets/hostedProjects.ts` now only holds the defaults: the first save
+  copies them into the API, and the shelf is managed from admin after that.
+
 ## [2.3.9] - 2026-10-06
 
 ### Changed

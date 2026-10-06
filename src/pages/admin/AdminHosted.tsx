@@ -1,11 +1,9 @@
 import { ChevronDown, ChevronUp, Eye, EyeOff } from "lucide-react";
 import type { JSX } from "react";
 import { Link } from "react-router-dom";
-import { type HostedProject, hostedProjects } from "../../assets/hostedProjects";
+import { SaveStatus } from "../../components/admin/SaveStatus";
 import { GlassPanel } from "../../components/ui/GlassPanel";
 import { useSiteConfig } from "../../hooks/useSiteConfig";
-
-const byId = new Map<string, HostedProject>(hostedProjects.map((p) => [p.id, p]));
 
 export function AdminHosted(): JSX.Element {
   const { config, toggleHosted, moveHosted } = useSiteConfig();
@@ -20,10 +18,7 @@ export function AdminHosted(): JSX.Element {
         <h1 className="mt-1 font-display text-3xl font-bold text-white sm:text-4xl">Hosted</h1>
       </header>
 
-      <div className="mb-6 rounded-xl border border-amber-500/20 bg-amber-500/6 px-4 py-3 font-mono text-xs text-amber-200/80">
-        Show, hide, and reorder the Hosted shelf. To add or edit an entry's details, edit{" "}
-        <span className="text-amber-100">src/assets/hostedProjects.ts</span>.
-      </div>
+      <SaveStatus />
 
       <GlassPanel className="rounded-2xl p-5">
         <div className="mb-4 flex items-center justify-between">
@@ -42,15 +37,13 @@ export function AdminHosted(): JSX.Element {
         </div>
 
         <ul className="space-y-2">
-          {config.hosted.map((override, index) => {
-            const project = byId.get(override.id);
-            if (!project) return null;
+          {config.hosted.map((project, index) => {
             const isLive = project.status === "live";
             return (
               <li
-                key={override.id}
+                key={project.id}
                 className={`flex items-center gap-3 rounded-xl border border-white/5 px-3 py-2.5 transition-opacity ${
-                  override.visible ? "bg-white/3" : "bg-white/1 opacity-50"
+                  project.visible ? "bg-white/3" : "bg-white/1 opacity-50"
                 }`}
               >
                 <span className="font-mono text-[11px] text-white/30">{index + 1}</span>
@@ -70,7 +63,7 @@ export function AdminHosted(): JSX.Element {
                 <div className="flex items-center gap-1">
                   <button
                     type="button"
-                    onClick={() => moveHosted(override.id, -1)}
+                    onClick={() => moveHosted(project.id, -1)}
                     disabled={index === 0}
                     className="rounded p-1.5 text-white/50 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-25"
                     aria-label={`Move ${project.name} up`}
@@ -79,7 +72,7 @@ export function AdminHosted(): JSX.Element {
                   </button>
                   <button
                     type="button"
-                    onClick={() => moveHosted(override.id, 1)}
+                    onClick={() => moveHosted(project.id, 1)}
                     disabled={index === config.hosted.length - 1}
                     className="rounded p-1.5 text-white/50 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-25"
                     aria-label={`Move ${project.name} down`}
@@ -90,11 +83,11 @@ export function AdminHosted(): JSX.Element {
 
                 <button
                   type="button"
-                  onClick={() => toggleHosted(override.id)}
+                  onClick={() => toggleHosted(project.id)}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-purple-300/12 bg-white/4 px-2.5 py-1.5 font-mono text-[11px] text-white/70 transition-colors hover:bg-white/8"
-                  aria-label={`${override.visible ? "Hide" : "Show"} ${project.name}`}
+                  aria-label={`${project.visible ? "Hide" : "Show"} ${project.name}`}
                 >
-                  {override.visible ? (
+                  {project.visible ? (
                     <>
                       <Eye className="h-3.5 w-3.5" /> shown
                     </>

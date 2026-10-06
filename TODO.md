@@ -2,26 +2,24 @@
 
 ## Next up
 
-- [ ] **Server-side SiteConfig.** `GET`/`PUT /v2/config` in ninsys-api. Homepage
-      section order/visibility and the Hosted shelf overrides currently live in
-      `localStorage`, so admin changes only affect the browser that made them —
-      the admin Site Config page says as much in an amber notice. The client type
-      in `src/types/siteConfig.ts` is already shaped for the endpoint.
-- [ ] **Make the Hosted shelf admin-editable.** `src/assets/hostedProjects.ts` is
-      a static array; the admin page can only reorder and hide what's already in
-      it, not add or edit entries.
-- [ ] 'current projects' / 'notable projects' split on the Projects page
-- [ ] Decide what the nav cards should be — there are only two today
-      (Projects, About). Candidates: GitHub, Resume.
-- [ ] devbass — music dev app idea
+- [ ] **Make the Hosted shelf entries editable in admin** (add, edit, delete).
+      The entries already live in the site config (#98); the editor is next.
+- devbass (the music dev app idea) moved to repo-ops `PRIORITIES.md`: it isn't
+  homepage work.
 
 ## Worth doing sometime
 
 - [ ] Prerender/SSG so crawlers get per-route metadata and unknown URLs can
-      return a real 404 status instead of a soft 404.
+      return a real 404 status instead of a soft 404. (2026-10-06: not now.
+      Worth it once link previews for `/projects` and `/about` matter.)
 
 ## Done
 
+- [x] Server-side site config: section order and visibility and the Hosted
+      shelf live in ninsys-api (`GET`/`PUT /v2/config`), so admin changes reach
+      every visitor (#98)
+- [x] Projects page split into Current and Notable sections (#99)
+- [x] Nav cards: a GitHub card; no Resume card for now (#99)
 - [x] The WebGL rack, and with it drei's runtime HDRI fetch from
       `raw.githack.com`, replaced by the animated home-lab rack (#87)
 - [x] `motion` off the homepage's critical path: CSS entrance animations, a

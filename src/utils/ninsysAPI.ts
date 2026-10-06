@@ -8,6 +8,7 @@ import type {
   ProjectsResponse,
   UpdateProjectInput,
 } from "../types/projects";
+import type { SiteConfigWire } from "../types/siteConfig";
 import { API_BASE } from "./apiBase";
 
 export interface CogworksStats {
@@ -121,6 +122,27 @@ class NinSysAPI {
         Authorization: `Bearer ${token}`,
       },
     });
+  }
+
+  // Site config: homepage layout and the Hosted shelf. `data` is null until admin saves one.
+  async getSiteConfig(): Promise<unknown> {
+    try {
+      const response = await this.request<{ data?: unknown }>("/v2/config");
+      return response?.data ?? null;
+    } catch (err) {
+      // An API from before /v2/config existed has nothing saved either.
+      if (err instanceof Error && err.message.endsWith("(404)")) return null;
+      if (err instanceof Error && err.message === "API Error: 404") return null;
+      throw err;
+    }
+  }
+
+  async updateSiteConfig(config: SiteConfigWire): Promise<unknown> {
+    const response = await this.authRequest<{ data?: unknown }>("/v2/config", {
+      method: "PUT",
+      body: JSON.stringify(config),
+    });
+    return response?.data ?? config;
   }
 
   // Cogworks endpoints
