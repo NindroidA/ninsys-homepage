@@ -5,7 +5,7 @@ Personal portfolio and homepage for [nindroidsystems.com](https://nindroidsystem
 ## Features
 
 - **Hero constellation** — interactive canvas background with cursor reach and a silver binary drizzle
-- **Live Service Status** — real-time monitoring of backend services, with a 3D server rack on capable devices
+- **Live Service Status** — real-time monitoring of backend services, with the animated home-lab rack from the brand kit
 - **Hosted shelf** — self-hosted and in-progress projects
 - **Admin panel** — TOTP-gated control panel at `/admin` (overview, services, site config, hosted, projects, utilities)
 - **Admin-Editable Projects** — drag-and-drop ordering with GitHub repository import
@@ -22,7 +22,6 @@ Personal portfolio and homepage for [nindroidsystems.com](https://nindroidsystem
 | Styling | Tailwind CSS 4 (CSS-first config) |
 | Data layer | TanStack Query 5 |
 | Animation | Framer Motion |
-| 3D Graphics | Three.js + React Three Fiber |
 | Drag & Drop | @dnd-kit |
 | Icons | Lucide React |
 | Routing | React Router DOM 7 |

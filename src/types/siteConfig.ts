@@ -24,8 +24,6 @@ export interface HostedOverride {
 export interface SiteConfig {
   /** Ordered homepage sections. The hero and footer are fixed and not listed here. */
   sections: HomeSection[];
-  /** Attempt the WebGL 3D rack on capable devices; false = always the 2D poster. */
-  enable3DRack: boolean;
   /** Order + visibility for the Hosted shelf cards (ids reference hostedProjects). */
   hosted: HostedOverride[];
 }
@@ -36,6 +34,5 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
     { id: "hosted", label: "Hosted projects", visible: true },
     { id: "nav", label: "Explore (quick access)", visible: true },
   ],
-  enable3DRack: true,
   hosted: hostedProjects.map((p) => ({ id: p.id, visible: true })),
 };

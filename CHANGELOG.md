@@ -5,6 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.5] - 2026-10-05
+
+### Changed
+
+- **The Status section's WebGL server rack is now the animated home-lab
+  rack** from the brand kit: the isometric layer cube over a faint isometric
+  floor, with the antenna as a small accent seated in a socket at the back
+  left of the top. Its three LEDs sit flat on the front panel with soft glows
+  (power steady, status breathing, and rose when a service is offline).
+  - **Boot**, when it scrolls into view (about 4s): the layers stack, the LEDs
+    light and the antenna boots with the navbar logo's keyframes. Then comes a
+    power-on pulse. The antenna flashes, the signal runs down through the rack, and the
+    rack hops while its glow blooms and the LEDs flash. The base lets out a
+    flare, three shockwaves, a flash across the floor grid and streaks of
+    light along it.
+  - **Idle**, a 6s cycle: the antenna pings, the signal branches across traces
+    on the top and drops down both sides, fanning into short twigs that light
+    their end nodes and blinking the activity LED on the way. Then it leaves
+    as a ripple across the floor. The rack hovers over its
+    breathing glow, and a sheen crosses the top every few seconds.
+  - The panel is a night sky: a slow aurora and twinkling stars instead of the
+    page's dot texture.
+  - The loop pauses while the rack is off screen, and
+    `prefers-reduced-motion` gets the still picture. (#86)
+
+### Removed
+
+- three.js, `@react-three/fiber` and `@react-three/drei`, with the 963 kB
+  (259 kB gzip) `three` chunk that desktops rendering the 3D rack downloaded,
+  and the admin Site Config "3D server rack" toggle.
+
+### Fixed
+
+- **A failed lighting download crashed the whole homepage.** The 3D rack's
+  drei `<Environment preset="studio" />` fetched an HDRI from raw.githack.com
+  at runtime. When that request failed (an outage, a content blocker, a
+  firewall), the error reached the app's error boundary, and desktops that
+  render the 3D rack showed "Something went wrong" instead of the site. The
+  new rack fetches nothing.
+- **React was bundled inside the `motion` chunk**, so every page preloaded
+  framer-motion's chunk even where nothing used it. Rolldown's deprecated
+  `manualChunks` pulls a group's dependencies into it; `vite.config.ts` now
+  uses `codeSplitting` groups with priorities, so React and Vite's preload
+  helper always land in `react-vendor` and `motion` holds only motion.
+
 ## [2.3.4] - 2026-10-05
 
 ### Added

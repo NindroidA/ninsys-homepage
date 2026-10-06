@@ -25,11 +25,6 @@
       "description": "React and its types move together (dependabot.yml's react group). After the dev group so @types/react lands here",
       "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
       "groupName": "react"
-    },
-    {
-      "description": "three, its types and react-three move together (dependabot.yml's three group). After the dev group so @types/three lands here",
-      "matchPackageNames": ["three", "@types/three", "@react-three/*"],
-      "groupName": "three"
     }
   ]
 }

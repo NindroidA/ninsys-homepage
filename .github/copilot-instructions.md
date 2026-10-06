@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**NinSys Homepage** is a modern personal portfolio site built with React 19 and TypeScript. It features an admin panel for content management, 3D visualizations, and real-time service monitoring.
+**NinSys Homepage** is a modern personal portfolio site built with React 19 and TypeScript. It features an admin panel for content management, animated brand visuals, and real-time service monitoring.
 
 **Purpose**: Personal portfolio website for [nindroidsystems.com](https://nindroidsystems.com) with editable projects, about page, and custom interactive features.
 
@@ -13,7 +13,6 @@
 - **Styling**: Tailwind CSS 4 (CSS-first config — tokens live in `src/index.css`, there is no `tailwind.config.js`), Tailwind Merge, Tailwind Animate
 - **Data layer**: TanStack Query 5
 - **Animation**: Framer Motion
-- **3D Graphics**: Three.js, React Three Fiber, Drei
 - **Drag & Drop**: @dnd-kit/core, @dnd-kit/sortable
 - **Icons**: Lucide React 1
 - **Routing**: React Router DOM 7
@@ -68,7 +67,7 @@ src/
 
 ### Routes
 
-- `/` - Homepage: hero, live service status (3D server rack), hosted shelf, nav cards
+- `/` - Homepage: hero, live service status (animated home-lab rack), hosted shelf, nav cards
 - `/projects` - Portfolio projects (admin editable inline)
 - `/about` - Personal bio with skill vials (admin editable inline)
 - `/admin/*` - Admin panel (TOTP-gated): Overview, Services, Site Config, Hosted, Projects, Utilities
@@ -505,7 +504,7 @@ if (repo.full_name === existingProject.repoPath)
 - `src/pages/Projects.tsx` - Projects page with admin controls
 - `src/pages/AboutMe.tsx` - About page with editable sections
 - `src/pages/admin/AdminApp.tsx` - Admin panel router
-- `src/pages/Homepage.tsx` - Landing page with 3D server rack
+- `src/pages/Homepage.tsx` - Landing page (the home-lab rack lives in `components/LiveOpsRack.tsx`)
 
 ### Reusable Components
 - `src/components/shared/ui/Button.tsx` - Button component

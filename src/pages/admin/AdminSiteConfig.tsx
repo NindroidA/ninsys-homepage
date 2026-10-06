@@ -4,37 +4,8 @@ import { Link } from "react-router-dom";
 import { GlassPanel } from "../../components/ui/GlassPanel";
 import { useSiteConfig } from "../../hooks/useSiteConfig";
 
-function Toggle({
-  checked,
-  onChange,
-  label,
-}: {
-  checked: boolean;
-  onChange: (value: boolean) => void;
-  label: string;
-}): JSX.Element {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      aria-label={label}
-      onClick={() => onChange(!checked)}
-      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-        checked ? "bg-linear-to-r from-violet-500 to-pink-500" : "bg-white/10"
-      }`}
-    >
-      <span
-        className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
-          checked ? "translate-x-[22px]" : "translate-x-0.5"
-        }`}
-      />
-    </button>
-  );
-}
-
 export function AdminSiteConfig(): JSX.Element {
-  const { config, toggleSection, moveSection, setEnable3DRack, reset } = useSiteConfig();
+  const { config, toggleSection, moveSection, reset } = useSiteConfig();
 
   return (
     <div>
@@ -125,24 +96,6 @@ export function AdminSiteConfig(): JSX.Element {
             </li>
           ))}
         </ul>
-      </GlassPanel>
-
-      {/* behavior */}
-      <GlassPanel className="rounded-2xl p-5">
-        <h2 className="mb-4 font-display text-lg font-semibold text-white">Behavior</h2>
-        <div className="flex items-center justify-between gap-4 rounded-xl border border-white/5 bg-white/3 px-4 py-3">
-          <div>
-            <div className="text-sm text-white/85">3D server rack</div>
-            <div className="text-xs text-white/45">
-              Render the WebGL rack on capable devices. Off = always the lightweight 2D poster.
-            </div>
-          </div>
-          <Toggle
-            checked={config.enable3DRack}
-            onChange={setEnable3DRack}
-            label="Enable 3D server rack"
-          />
-        </div>
       </GlassPanel>
     </div>
   );
