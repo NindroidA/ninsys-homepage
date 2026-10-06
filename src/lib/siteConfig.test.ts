@@ -1,6 +1,15 @@
 import { describe, expect, test } from "bun:test";
 import { DEFAULT_SITE_CONFIG, type HostedEntry } from "../types/siteConfig";
-import { HOSTED_LIMITS, reconcile, safeUrl, toWire } from "./siteConfig";
+import {
+  fromDraft,
+  HOSTED_LIMITS,
+  newHostedId,
+  reconcile,
+  safeUrl,
+  toDraft,
+  toWire,
+  validateDraft,
+} from "./siteConfig";
 
 // reconcile() turns whatever the API, the cache or an older build's localStorage
 // holds into a config with the current sections and usable Hosted entries.
@@ -199,5 +208,70 @@ describe("toWire", () => {
   test("round-trips through reconcile", () => {
     const config = reconcile({ hosted: [entry(), entry({ id: "two", visible: false })] });
     expect(reconcile(JSON.parse(JSON.stringify(toWire(config))))).toEqual(config);
+  });
+});
+
+describe("newHostedId", () => {
+  test("slugs the name", () => {
+    expect(newHostedId("Respool — Filament Tracker!", [])).toBe("respool-filament-tracker");
+  });
+
+  test("suffixes until the id is unused", () => {
+    expect(newHostedId("Lab Tool", ["lab-tool", "lab-tool-2"])).toBe("lab-tool-3");
+  });
+
+  test("falls back to 'entry' for a name with no letters or digits", () => {
+    expect(newHostedId("!!!", [])).toBe("entry");
+  });
+});
+
+describe("Hosted entry drafts", () => {
+  const valid = { ...toDraft(), name: "Lab Tool" };
+
+  test("a named draft is valid", () => {
+    expect(validateDraft(valid)).toEqual({});
+  });
+
+  test("flags a missing name, bad links and too many or too long tags", () => {
+    expect(validateDraft({ ...valid, name: " " }).name).toBeDefined();
+    expect(validateDraft({ ...valid, url: "lab.example.com" }).url).toBeDefined();
+    expect(validateDraft({ ...valid, repoUrl: "javascript:alert(1)" }).repoUrl).toBeDefined();
+    expect(validateDraft({ ...valid, stack: "a, b, c, d, e, f, g" }).stack).toBeDefined();
+    expect(
+      validateDraft({ ...valid, stack: "x".repeat(HOSTED_LIMITS.tag + 1) }).stack,
+    ).toBeDefined();
+    expect(
+      validateDraft({ ...valid, description: "x".repeat(HOSTED_LIMITS.description + 1) })
+        .description,
+    ).toBeDefined();
+  });
+
+  test("fromDraft trims, splits tags and leaves out empty links", () => {
+    expect(
+      fromDraft("lab-tool", {
+        ...valid,
+        name: "  Lab Tool ",
+        description: " Does lab things. ",
+        url: " ",
+        repoUrl: "https://github.com/NindroidA/lab",
+        stack: " Go,  , Bun ",
+        icon: "wrench",
+      }),
+    ).toEqual({
+      id: "lab-tool",
+      name: "Lab Tool",
+      description: "Does lab things.",
+      status: "live",
+      repoUrl: "https://github.com/NindroidA/lab",
+      icon: "wrench",
+      stack: ["Go", "Bun"],
+      visible: true,
+    });
+  });
+
+  test("every built-in entry survives toDraft → fromDraft unchanged", () => {
+    for (const builtIn of DEFAULT_SITE_CONFIG.hosted) {
+      expect(fromDraft(builtIn.id, toDraft(builtIn))).toEqual(builtIn);
+    }
   });
 });

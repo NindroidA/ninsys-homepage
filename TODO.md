@@ -2,8 +2,7 @@
 
 ## Next up
 
-- [ ] **Make the Hosted shelf entries editable in admin** (add, edit, delete).
-      The entries already live in the site config (#98); the editor is next.
+- Nothing queued. The 2026-10-06 product calls are under Done.
 - devbass (the music dev app idea) moved to repo-ops `PRIORITIES.md`: it isn't
   homepage work.
 
@@ -18,6 +17,8 @@
 - [x] Server-side site config: section order and visibility and the Hosted
       shelf live in ninsys-api (`GET`/`PUT /v2/config`), so admin changes reach
       every visitor (#98)
+- [x] Hosted shelf editable in admin: add, edit, delete, reorder and hide
+      entries (#98)
 - [x] Projects page split into Current and Notable sections (#99)
 - [x] Nav cards: a GitHub card; no Resume card for now (#99)
 - [x] The WebGL rack, and with it drei's runtime HDRI fetch from

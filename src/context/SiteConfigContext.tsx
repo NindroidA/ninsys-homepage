@@ -10,7 +10,12 @@ import {
 } from "react";
 import { queryKeys } from "../lib/queryClient";
 import { reconcile, toWire } from "../lib/siteConfig";
-import { DEFAULT_SITE_CONFIG, type HomeSectionId, type SiteConfig } from "../types/siteConfig";
+import {
+  DEFAULT_SITE_CONFIG,
+  type HomeSectionId,
+  type HostedEntry,
+  type SiteConfig,
+} from "../types/siteConfig";
 import { ninsysAPI } from "../utils/ninsysAPI";
 
 /** The last config the API returned, so a returning visitor's first paint has the right layout. */
@@ -45,6 +50,9 @@ export interface SiteConfigValue {
   resetSections: () => void;
   toggleHosted: (id: string) => void;
   moveHosted: (id: string, direction: -1 | 1) => void;
+  /** Add an entry, or replace the one with the same id. Rejects with the API's error. */
+  saveHosted: (entry: HostedEntry) => Promise<void>;
+  removeHosted: (id: string) => Promise<void>;
   /** Sections and the Hosted shelf back to the built-in defaults. */
   reset: () => void;
 }
@@ -209,6 +217,28 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
     [apply],
   );
 
+  const saveHosted = useCallback(
+    (entry: HostedEntry) => {
+      const prev = current();
+      const exists = prev.hosted.some((h) => h.id === entry.id);
+      return save({
+        ...prev,
+        hosted: exists
+          ? prev.hosted.map((h) => (h.id === entry.id ? entry : h))
+          : [...prev.hosted, entry],
+      });
+    },
+    [save, current],
+  );
+
+  const removeHosted = useCallback(
+    (id: string) => {
+      const prev = current();
+      return save({ ...prev, hosted: prev.hosted.filter((h) => h.id !== id) });
+    },
+    [save, current],
+  );
+
   // reconcile(null) is a fresh copy of the defaults.
   const reset = useCallback(() => apply(() => reconcile(null)), [apply]);
 
@@ -225,6 +255,8 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
       resetSections,
       toggleHosted,
       moveHosted,
+      saveHosted,
+      removeHosted,
       reset,
     }),
     [
@@ -239,6 +271,8 @@ export function SiteConfigProvider({ children }: { children: ReactNode }) {
       resetSections,
       toggleHosted,
       moveHosted,
+      saveHosted,
+      removeHosted,
       reset,
     ],
   );

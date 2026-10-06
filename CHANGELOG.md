@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.12] - 2026-10-06
+
+### Added
+
+- **Admin edits the Hosted shelf.** `/admin/hosted` adds, edits and deletes
+  entries (name, description, live or building, links, icon, stack tags,
+  visibility), on top of reordering and hiding them. Links must be full
+  http(s) URLs; deleting takes a second click. Changes save to the API like
+  the rest of the site config. (#98)
+
 ## [2.3.11] - 2026-10-06
 
 ### Changed

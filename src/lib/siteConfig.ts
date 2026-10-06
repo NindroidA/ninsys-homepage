@@ -153,3 +153,94 @@ export function toWire(config: SiteConfig): SiteConfigWire {
     hosted: config.hosted.map((h) => ({ ...h })),
   };
 }
+
+/** A new entry's id: the name as a slug, suffixed until it's unused. */
+export function newHostedId(name: string, taken: Iterable<string>): string {
+  const used = new Set(taken);
+  const base =
+    name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 56) || "entry";
+  let id = base;
+  for (let n = 2; used.has(id); n++) id = `${base}-${n}`;
+  return id;
+}
+
+/** The Hosted entry form's fields, all as typed. */
+export interface HostedDraft {
+  name: string;
+  description: string;
+  status: HostedStatus;
+  url: string;
+  repoUrl: string;
+  icon: string;
+  /** Comma-separated. */
+  stack: string;
+  visible: boolean;
+}
+
+export function toDraft(entry?: HostedEntry): HostedDraft {
+  return {
+    name: entry?.name ?? "",
+    description: entry?.description ?? "",
+    status: entry?.status ?? "live",
+    url: entry?.url ?? "",
+    repoUrl: entry?.repoUrl ?? "",
+    icon: entry?.icon ?? FALLBACK_ICON,
+    stack: entry?.stack?.join(", ") ?? "",
+    visible: entry?.visible ?? true,
+  };
+}
+
+const splitTags = (stack: string) =>
+  stack
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+
+export type HostedDraftErrors = Partial<
+  Record<"name" | "description" | "url" | "repoUrl" | "stack", string>
+>;
+
+/** Problems with a draft, by field. Empty when it can be saved. */
+export function validateDraft(draft: HostedDraft): HostedDraftErrors {
+  const errors: HostedDraftErrors = {};
+  const name = draft.name.trim();
+  if (!name) errors.name = "Give it a name.";
+  else if (name.length > HOSTED_LIMITS.name)
+    errors.name = `Keep it to ${HOSTED_LIMITS.name} characters.`;
+  if (draft.description.trim().length > HOSTED_LIMITS.description) {
+    errors.description = `Keep it to ${HOSTED_LIMITS.description} characters.`;
+  }
+  for (const field of ["url", "repoUrl"] as const) {
+    if (draft[field].trim() && !safeUrl(draft[field])) {
+      errors[field] = "Use a full http:// or https:// address.";
+    }
+  }
+  const tags = splitTags(draft.stack);
+  if (tags.length > HOSTED_LIMITS.tags) errors.stack = `Up to ${HOSTED_LIMITS.tags} tags.`;
+  else if (tags.some((t) => t.length > HOSTED_LIMITS.tag)) {
+    errors.stack = `Keep each tag to ${HOSTED_LIMITS.tag} characters.`;
+  }
+  return errors;
+}
+
+/** A valid draft as an entry with the given id. */
+export function fromDraft(id: string, draft: HostedDraft): HostedEntry {
+  const url = safeUrl(draft.url);
+  const repoUrl = safeUrl(draft.repoUrl);
+  const stack = splitTags(draft.stack);
+  return {
+    id,
+    name: draft.name.trim(),
+    description: draft.description.trim(),
+    status: draft.status,
+    ...(url ? { url } : {}),
+    ...(repoUrl ? { repoUrl } : {}),
+    icon: draft.icon,
+    ...(stack.length > 0 ? { stack } : {}),
+    visible: draft.visible,
+  };
+}
