@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and `ci.yml`. It used `oven/bun:1-alpine`, which follows the newest Bun 1.x,
   so production could build with a different Bun than CI tested. Bump all
   three together. (#96)
+- **Renovate keeps those three in step.** A `bun` group in `renovate.json`
+  updates them in one PR; patch and minor bumps automerge on green CI, since
+  that PR's CI already runs the new Bun.
 
 ### Fixed
 

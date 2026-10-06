@@ -25,6 +25,18 @@
       "description": "React and its types move together (dependabot.yml's react group). After the dev group so @types/react lands here",
       "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
       "groupName": "react"
+    },
+    {
+      "description": "Bun moves as one PR: packageManager, setup-bun's bun-version in ci.yml and the Dockerfile's oven/bun image. After the preset's GitHub Actions group so bun-version lands here",
+      "matchPackageNames": ["bun", "oven/bun"],
+      "groupName": "bun"
+    },
+    {
+      "description": "Bun minor and patch automerge on green CI: the same PR updates ci.yml, so CI runs the new Bun. Every member automerges, so the group does (majors stay with the preset's triage rule)",
+      "matchPackageNames": ["bun", "oven/bun"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "addLabels": ["deps:auto"]
     }
   ]
 }
