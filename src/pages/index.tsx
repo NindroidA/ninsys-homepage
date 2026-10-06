@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "../components/Layout";
+import { BrandLoader } from "../components/ui/BrandLoader";
 import Homepage from "./Homepage";
 
 // Homepage is the landing route, so it stays in the main bundle. Secondary routes
@@ -11,11 +12,8 @@ const NotFound = lazy(() => import("./404NotFound"));
 // The whole admin area is one lazy chunk — never shipped to public visitors.
 const AdminApp = lazy(() => import("./admin/AdminApp"));
 
-const RouteFallback = (
-  <div className="flex min-h-screen items-center justify-center bg-[#09060f]">
-    <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-white/80 motion-reduce:animate-none" />
-  </div>
-);
+// The admin area sits outside Layout, so its fallback paints the page colour itself.
+const RouteFallback = <BrandLoader fullscreen className="bg-[#09060f]" />;
 
 export default function Pages() {
   return (

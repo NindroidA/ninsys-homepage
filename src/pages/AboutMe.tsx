@@ -14,7 +14,7 @@ import {
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
 import { motion } from "framer-motion";
-import { Edit2, Loader2, Mail, MapPin, Plus, X } from "lucide-react";
+import { Edit2, Mail, MapPin, Plus, X } from "lucide-react";
 import { useCallback, useState } from "react";
 import { ProfileEditModal, SectionCard, SectionEditModal } from "../components/about";
 import FooterComponent from "../components/Footer";
@@ -23,6 +23,7 @@ import Navbar from "../components/Navbar";
 import { DeleteConfirmModal } from "../components/projects";
 import { Seo } from "../components/Seo";
 import { Button, Card, FloatingElements, GradientText } from "../components/shared/ui";
+import { BrandLoader } from "../components/ui/BrandLoader";
 import { useAboutData } from "../hooks/useAboutData";
 import { useAdminVisible } from "../hooks/useAuth";
 import type { AboutProfile, AboutSection } from "../types/about";
@@ -164,10 +165,7 @@ export default function AboutMe() {
     return (
       <div className="min-h-screen relative overflow-hidden flex items-center justify-center">
         <Navbar />
-        <div className="flex flex-col items-center">
-          <Loader2 className="w-8 h-8 text-purple-400 animate-spin mb-4" />
-          <p className="text-white/70">Loading...</p>
-        </div>
+        <BrandLoader label="loading about" />
       </div>
     );
   }
