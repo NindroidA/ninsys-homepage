@@ -81,13 +81,75 @@ const ANTENNA_TRANSFORM = `translate(${P.x} ${POLE_BOTTOM - ANTENNA_SCALE}) scal
 const SOCKET_CLIP = `M-300 -400H300V${CAP.y}H${CAP.x + HOLE.rx}A${HOLE.rx} ${HOLE.ry} 0 0 1 ${CAP.x - HOLE.rx} ${CAP.y}H-300Z`;
 const COLLAR_BODY = `M${CAP.x - COLLAR.rx} ${CAP.y}V${P.y}A${COLLAR.rx} ${COLLAR.ry} 0 0 0 ${CAP.x + COLLAR.rx} ${P.y}V${CAP.y}A${COLLAR.rx} ${COLLAR.ry} 0 0 1 ${CAP.x - COLLAR.rx} ${CAP.y}Z`;
 
+// ── Signal routes ──────────────────────────────────────────────────────────────
+// Each cycle the antenna pings, then the signal runs from the socket along traces on the top,
+// splits, drops down the side faces (the right branch passes straight through the activity
+// LED) and leaves through the base as the floor ripple. A pulse is a short dash moved along a
+// route (pathLength 100). Every route runs at 90 cube units per second, so its duration is its
+// length / 90; the pulses stay together on the shared trunk and split at the junction. Those
+// durations are written into the ns-hl-run-* keyframes in index.css (noted per route below).
+type Pt = { x: number; y: number };
+const top = (a: number, b: number): Pt => ({ x: (a - b) * 39.84, y: -(a + b) * 23 });
+function route(points: Pt[]) {
+  let length = 0;
+  for (let i = 1; i < points.length; i++) {
+    const p = points[i] as Pt;
+    const q = points[i - 1] as Pt;
+    length += Math.hypot(p.x - q.x, p.y - q.y);
+  }
+  const d = points.map((p, i) => `${i ? "L" : "M"}${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join("");
+  // About 9 units of light, whatever the route's length.
+  return { d, dash: `${((9 / length) * 100).toFixed(2)} 300` };
+}
+
+const TRUNK_START = top(0.42, 0.77); // just in front of the socket
+const JUNCTION = top(0.42, 0.5);
+const RIGHT_EDGE = top(0.652, 0); // directly above the activity LED (x 25.98)
+const LEFT_EDGE = top(0, 0.5);
+const ROUTES = {
+  // 92.1 units → 1.02s; reaches the activity LED after 69.1 units (0.77s)
+  r: route([
+    TRUNK_START,
+    JUNCTION,
+    top(0.652, 0.5),
+    RIGHT_EDGE,
+    { x: RIGHT_EDGE.x, y: RIGHT_EDGE.y + 46 },
+  ]),
+  // 77.7 units → 0.86s
+  l: route([TRUNK_START, JUNCTION, LEFT_EDGE, { x: LEFT_EDGE.x, y: LEFT_EDGE.y + 46 }]),
+  // 14.3 units → 0.16s, ending at a node that flashes
+  s: route([TRUNK_START, top(0.42, 0.64), top(0.6, 0.64)]),
+};
+const NODE = top(0.6, 0.64);
+
+// Boot finale: light streaks along the floor grid, out from the base's three visible corners.
+const STREAKS = (() => {
+  const corners: Pt[] = [
+    { x: 39.84, y: 23 },
+    { x: 0, y: 46 },
+    { x: -39.84, y: 23 },
+  ];
+  const dirs = [
+    [0, 0.866, -0.5],
+    [0, 0.866, 0.5],
+    [1, 0.866, 0.5],
+    [1, -0.866, 0.5],
+    [2, -0.866, 0.5],
+    [2, -0.866, -0.5],
+  ] as const;
+  return dirs.map(([c, dx, dy]) => {
+    const from = corners[c] as Pt;
+    return `M${from.x} ${from.y}L${(from.x + dx * 64).toFixed(2)} ${(from.y + dy * 64).toFixed(2)}`;
+  });
+})();
+
 // ── LEDs ───────────────────────────────────────────────────────────────────────
 // Three LEDs on the middle layer's front-right face, at the handoff art's positions. The
 // matrix lays each one flat on that face (isometric), so they read as lights set into the
 // panel rather than stickers on top of it.
 const LEDS = [
   { cls: "led-1", x: 32.04, y: 4.5, halo: "#e9d5ff" }, // power: steady
-  { cls: "led-2", x: 25.98, y: 8, halo: "#f0abfc" }, // activity: flickers
+  { cls: "led-2", x: 25.98, y: 8, halo: "#f0abfc" }, // activity: blinks as the signal passes
   { cls: "led-3", x: 19.92, y: 11.5, halo: "#e9d5ff" }, // status: rose when a service is down
 ] as const;
 
@@ -130,11 +192,14 @@ function Led({
  * hooks drive the `.ns-homelab` keyframes in index.css; under `prefers-reduced-motion` it
  * renders the static frame.
  *
- * Boot (about 3.4s): the floor fades up, the layers drop in bottom to top, the LEDs and the
- * top edge light, the socket pops in, then the antenna runs AntennaMark's boot. Idle: the
- * rack hovers while the ground glow breathes under it, the LEDs run (power steady, activity
- * flickering, status breathing), the antenna pulses and pings in time with a ripple across
- * the floor, and a sheen crosses the top now and then.
+ * Boot (about 5.6s): the floor fades up, the layers drop in bottom to top, the LEDs and the
+ * top edge light, the socket pops in and the antenna runs AntennaMark's boot. Then a
+ * power-on pulse: the antenna flashes, the signal runs down through the rack, the rack hops
+ * as its glow blooms and all three LEDs flash, and the base lets out a flare, three
+ * shockwaves, a grid flash and streaks of light along the floor. Idle (a 6s cycle): the antenna pings, the signal branches across the top
+ * and down the sides (blinking the activity LED on the way), then leaves as a ripple across
+ * the floor. Meanwhile the rack hovers over its breathing glow, the power LED holds, the
+ * status LED breathes, and a sheen crosses the top now and then.
  */
 export function HomeLabMount({
   size,
@@ -205,6 +270,9 @@ export function HomeLabMount({
           <filter id={`${uid}-soft`} x="-50%" y="-150%" width="200%" height="400%">
             <feGaussianBlur stdDeviation="6" />
           </filter>
+          <filter id={`${uid}-streakblur`} x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="1.2" />
+          </filter>
           <radialGradient id={`${uid}-ambient`}>
             <stop offset="0" stopColor="#8b5cf6" stopOpacity=".2" />
             <stop offset="1" stopColor="#8b5cf6" stopOpacity="0" />
@@ -250,6 +318,15 @@ export function HomeLabMount({
               mask={`url(#${uid}-mask)`}
             />
             <path
+              className="gridflash"
+              d={FLOOR_D}
+              fill="none"
+              stroke="#e9d5ff"
+              strokeWidth=".55"
+              strokeOpacity=".5"
+              mask={`url(#${uid}-mask)`}
+            />
+            <path
               className="ripple"
               d={BASE_DIAMOND}
               fill="none"
@@ -257,6 +334,40 @@ export function HomeLabMount({
               strokeWidth="1"
               strokeLinejoin="round"
             />
+            {[1, 2, 3].map((n) => (
+              <path
+                key={n}
+                className={`boom boom-${n}`}
+                d={BASE_DIAMOND}
+                fill="none"
+                stroke="#f0abfc"
+                strokeWidth="1.6"
+                strokeLinejoin="round"
+              />
+            ))}
+            {STREAKS.map((d) => (
+              <g key={d} className="streak">
+                <path
+                  d={d}
+                  pathLength={100}
+                  strokeDasharray="18 300"
+                  fill="none"
+                  stroke="#d946ef"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  filter={`url(#${uid}-streakblur)`}
+                />
+                <path
+                  d={d}
+                  pathLength={100}
+                  strokeDasharray="18 300"
+                  fill="none"
+                  stroke="#fdf4ff"
+                  strokeWidth=".8"
+                  strokeLinecap="round"
+                />
+              </g>
+            ))}
           </g>
         )}
         {/* The light pooled under the rack, from the art. It dims a little as the rack rises. */}
@@ -266,6 +377,14 @@ export function HomeLabMount({
           fill="#c026d3"
           filter={`url(#${uid}-soft)`}
           fillOpacity=".42"
+        />
+        {/* The boot finale's flash of light out of the base. Hidden at rest. */}
+        <path
+          className="flare"
+          d="M0 -2L46.77 25L0 52L-46.77 25Z"
+          fill="#f0abfc"
+          filter={`url(#${uid}-soft)`}
+          fillOpacity=".75"
         />
       </svg>
 
@@ -342,7 +461,6 @@ export function HomeLabMount({
             <path d={SOCKET_CLIP} />
           </clipPath>
         </defs>
-
         {/* The cube: geometry, paint and draw order as in mounts/home-lab.svg. */}
         <g className="layer layer-b">
           <path d="M0 -14L39.84 9L0 32L-39.84 9Z" fill="#09060f" {...EDGE} />
@@ -429,6 +547,49 @@ export function HomeLabMount({
             </g>
           </g>
         </g>
+
+        {/* The signal's paths, etched faintly into the rack, and the pulses that run them. */}
+        <g className="etch">
+          <g fill="none" stroke="#a78bfa" strokeWidth=".6" strokeOpacity=".16">
+            {Object.values(ROUTES).map((r) => (
+              <path key={r.d} d={r.d} strokeLinejoin="round" />
+            ))}
+          </g>
+          <circle cx={NODE.x} cy={NODE.y} r="1" fill="#a78bfa" fillOpacity=".4" />
+          <circle
+            className="node"
+            cx={NODE.x}
+            cy={NODE.y}
+            r="1.3"
+            fill="#fdf4ff"
+            filter={`url(#${uid}-ledblur)`}
+          />
+        </g>
+        {(["r", "l", "s"] as const).map((k) => (
+          <g
+            key={k}
+            className={`run run-${k}`}
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path
+              d={ROUTES[k].d}
+              pathLength={100}
+              strokeDasharray={ROUTES[k].dash}
+              stroke="#d946ef"
+              strokeWidth="2.6"
+              filter={`url(#${uid}-ledblur)`}
+            />
+            <path
+              d={ROUTES[k].d}
+              pathLength={100}
+              strokeDasharray={ROUTES[k].dash}
+              stroke="#ffffff"
+              strokeWidth=".9"
+            />
+          </g>
+        ))}
       </svg>
     </span>
   );

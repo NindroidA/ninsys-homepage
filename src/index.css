@@ -473,33 +473,64 @@ input[type='range']::-moz-range-thumb:hover {
 
 /* Home-lab rack (src/components/ui/HomeLabMount.tsx): the isometric layer cube from the brand
    handoff (mounts/home-lab.svg), with the antenna as a small accent in a socket at the back
-   left. Boot (~3.4s) stacks and lights the rack, pops the socket, then boots the antenna with
-   the AntennaMark keyframes above shifted by 1.25s, and flows into the idle loop. `standby`
-   holds the boot at its first frame until the rack is on screen, and `offscreen` pauses
-   everything while it's scrolled away. Every loop starts and ends at the resting values, so
-   a paused or reduced-motion frame is the finished picture. */
+   left. `standby` holds the boot at its first frame until the rack is on screen, and
+   `offscreen` pauses everything while it's scrolled away. Every loop starts and ends at the
+   resting values, so a paused or reduced-motion frame is the finished picture.
+
+   Boot timeline: layers and LEDs 0.1-1.15s, socket 1.1s, antenna boot 1.25-3.05s. Power-on
+   pulse: antenna flash 3.1s, signal down the rack 3.25s, the rack hops (glow and LEDs flash) 4.15s, and the base
+   lets go at 4.27s (flare, three shockwaves, grid flash, floor streaks). Loops start at 5.6s
+   and the first signal cycle at 8.4s.
+
+   Signal cycle (6s, offsets from the cycle start): ping 0s, pulses leave the socket 0.15s,
+   node 0.31s, activity LED 0.92s, floor ripple 1.17s. */
 .ns-homelab .layer,
 .ns-homelab .floor,
 .ns-homelab .ambient,
 .ns-homelab .glow,
+.ns-homelab .flare,
+.ns-homelab .gridflash,
 .ns-homelab .mglow,
 .ns-homelab .led,
+.ns-homelab .node,
 .ns-homelab .socket,
 .ns-homelab .spill,
 .ns-homelab .tipglow,
-.ns-homelab .ripple {
+.ns-homelab .ripple,
+.ns-homelab .boom {
   transform-box: fill-box;
   transform-origin: 50% 50%;
 }
+
 
 .ns-homelab .edge {
   stroke-dasharray: 92px;
   stroke-dashoffset: 0;
 }
 
-.ns-homelab .ripple {
+.ns-homelab .ripple,
+.ns-homelab .boom {
   opacity: 0;
   vector-effect: non-scaling-stroke;
+}
+
+.ns-homelab .flare,
+.ns-homelab .gridflash {
+  opacity: 0;
+}
+
+/* Effects that only exist while they play. `visibility` rather than opacity alone, so nothing
+   is painted at rest: an invisible group still gets composited, and some renderers leave a
+   faint box at its edges. Their keyframes switch them visible. */
+.ns-homelab .run,
+.ns-homelab .streak {
+  opacity: 0;
+  visibility: hidden;
+}
+
+
+.ns-homelab .node {
+  opacity: 0.25;
 }
 
 /* Parked off the top face; the idle loop sweeps it across now and then. */
@@ -520,9 +551,17 @@ input[type='range']::-moz-range-thumb:hover {
   animation-play-state: paused !important;
 }
 
+/* While it waits to boot, paint nothing at all (see the visibility note above). */
+@media (prefers-reduced-motion: no-preference) {
+  .ns-homelab.standby > svg {
+    visibility: hidden;
+  }
+}
+
 @keyframes ns-hl-fade {
   from {
     opacity: 0;
+    visibility: hidden;
   }
   to {
     opacity: 1;
@@ -532,6 +571,7 @@ input[type='range']::-moz-range-thumb:hover {
 @keyframes ns-hl-floor {
   from {
     opacity: 0;
+    visibility: hidden;
     transform: scale(0.82);
   }
   to {
@@ -543,6 +583,7 @@ input[type='range']::-moz-range-thumb:hover {
 @keyframes ns-hl-drop {
   0% {
     opacity: 0;
+    visibility: hidden;
     transform: translateY(-22px);
   }
   30% {
@@ -560,6 +601,7 @@ input[type='range']::-moz-range-thumb:hover {
 @keyframes ns-hl-pop {
   0% {
     opacity: 0;
+    visibility: hidden;
     transform: scale(0.4);
   }
   60% {
@@ -581,6 +623,100 @@ input[type='range']::-moz-range-thumb:hover {
   }
 }
 
+/* ── Boot finale ─────────────────────────────────────────── */
+@keyframes ns-hl-bigping {
+  0% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(4);
+  }
+}
+
+/* The power-on hop: the rack jumps a little and settles as the base lets go. A translate of
+   the rack layer, like the hover, so it stays on the compositor. */
+@keyframes ns-hl-hop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-3.5%);
+  }
+  62% {
+    transform: translateY(0.6%);
+  }
+}
+
+@keyframes ns-hl-glowpop {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.18);
+  }
+}
+
+@keyframes ns-hl-flare {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  18% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+@keyframes ns-hl-gridflash {
+  0% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.25);
+  }
+}
+
+@keyframes ns-hl-boom {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(3.8);
+  }
+}
+
+@keyframes ns-hl-streak {
+  0% {
+    opacity: 1;
+    visibility: visible;
+    stroke-dashoffset: 0;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: visible;
+    stroke-dashoffset: -100;
+  }
+}
+
+/* ── Loops ───────────────────────────────────────────────── */
 /* The rack floats: a percentage of the rack layer's own height, so it scales with the size. */
 @keyframes ns-hl-hover {
   0%,
@@ -625,28 +761,6 @@ input[type='range']::-moz-range-thumb:hover {
   }
 }
 
-@keyframes ns-hl-flicker {
-  0%,
-  6%,
-  12%,
-  40%,
-  46%,
-  74%,
-  80%,
-  100% {
-    opacity: 1;
-  }
-  9% {
-    opacity: 0.3;
-  }
-  43% {
-    opacity: 0.4;
-  }
-  77% {
-    opacity: 0.3;
-  }
-}
-
 @keyframes ns-hl-led {
   0%,
   100% {
@@ -667,33 +781,6 @@ input[type='range']::-moz-range-thumb:hover {
   }
 }
 
-@keyframes ns-hl-ripple {
-  0% {
-    opacity: 0;
-    transform: scale(1);
-  }
-  6% {
-    opacity: 0.55;
-  }
-  50%,
-  100% {
-    opacity: 0;
-    transform: scale(3.2);
-  }
-}
-
-@keyframes ns-hl-ping {
-  0% {
-    opacity: 0.75;
-    transform: scale(1);
-  }
-  30%,
-  100% {
-    opacity: 0;
-    transform: scale(2.6);
-  }
-}
-
 @keyframes ns-hl-sheen {
   0% {
     transform: translateX(-80px);
@@ -704,10 +791,137 @@ input[type='range']::-moz-range-thumb:hover {
   }
 }
 
+/* ── Signal cycle: 6s keyframes, each placed in the cycle by its animation-delay ── */
+@keyframes ns-hl-ping {
+  0% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+  23%,
+  100% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+
+/* The antenna's glow and its light on the top bloom as it pings. */
+@keyframes ns-hl-bloom {
+  0%,
+  22%,
+  100% {
+    transform: scale(1);
+  }
+  6% {
+    transform: scale(1.7);
+  }
+}
+
+/* One pulse along a route; the active share is that route's run time out of 6s. */
+@keyframes ns-hl-run-r {
+  0% {
+    opacity: 1;
+    visibility: visible;
+    stroke-dashoffset: 0;
+  }
+  17% {
+    opacity: 1;
+    visibility: visible;
+    stroke-dashoffset: -100;
+  }
+  17.1%,
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    stroke-dashoffset: -100;
+  }
+}
+
+@keyframes ns-hl-run-l {
+  0% {
+    opacity: 1;
+    visibility: visible;
+    stroke-dashoffset: 0;
+  }
+  14.4% {
+    opacity: 1;
+    visibility: visible;
+    stroke-dashoffset: -100;
+  }
+  14.5%,
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    stroke-dashoffset: -100;
+  }
+}
+
+@keyframes ns-hl-run-s {
+  0% {
+    opacity: 1;
+    visibility: visible;
+    stroke-dashoffset: 0;
+  }
+  2.6% {
+    opacity: 1;
+    visibility: visible;
+    stroke-dashoffset: -100;
+  }
+  2.7%,
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    stroke-dashoffset: -100;
+  }
+}
+
+@keyframes ns-hl-node {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(1);
+  }
+  1.5% {
+    opacity: 1;
+    transform: scale(1.8);
+  }
+  8% {
+    opacity: 0.25;
+    transform: scale(1);
+  }
+}
+
+/* The activity LED: one quick blink as the signal passes. */
+@keyframes ns-hl-blink {
+  0%,
+  4%,
+  100% {
+    opacity: 1;
+  }
+  1.5% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes ns-hl-ripple {
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  2.5% {
+    opacity: 0.55;
+  }
+  40%,
+  100% {
+    opacity: 0;
+    transform: scale(3.2);
+  }
+}
+
+/* ── Boot ────────────────────────────────────────────────── */
 .ns-homelab.boot .ambient {
   animation:
     ns-hl-fade 1.2s ease-out both,
-    ns-hl-breathe 8s 3.4s ease-in-out infinite;
+    ns-hl-breathe 8s 5.6s ease-in-out infinite;
 }
 
 .ns-homelab.boot .floor {
@@ -717,7 +931,7 @@ input[type='range']::-moz-range-thumb:hover {
 .ns-homelab.boot .glow {
   animation:
     ns-hl-fade 0.8s 0.05s ease-out both,
-    ns-hl-lift-glow 6s 3.4s ease-in-out infinite;
+    ns-hl-lift-glow 6s 5.6s ease-in-out infinite;
 }
 
 .ns-homelab.boot .layer-b {
@@ -735,31 +949,41 @@ input[type='range']::-moz-range-thumb:hover {
 .ns-homelab.boot .mglow {
   animation:
     ns-hl-fade 0.6s 0.8s ease-out both,
-    ns-hl-breathe 4.8s 3.4s ease-in-out infinite;
+    ns-hl-glowpop 0.8s 4.15s ease-out,
+    ns-hl-breathe 4.8s 5.6s ease-in-out infinite;
+}
+
+.ns-homelab.boot .etch {
+  animation: ns-hl-fade 0.5s 1s ease-out both;
 }
 
 .ns-homelab.boot .led-1 {
   animation:
     ns-hl-pop 0.3s 0.95s ease-out both,
-    ns-hl-power 4.8s 3.4s ease-in-out infinite;
+    ns-hl-pop 0.35s 4.15s ease-out,
+    ns-hl-power 4.8s 5.6s ease-in-out infinite;
 }
 
 .ns-homelab.boot .led-2 {
   animation:
     ns-hl-pop 0.3s 1.05s ease-out both,
-    ns-hl-flicker 3.2s 3.4s linear infinite;
+    ns-hl-blink 6s 4.02s,
+    ns-hl-pop 0.35s 4.15s ease-out,
+    ns-hl-blink 6s 9.32s infinite;
 }
 
 .ns-homelab.boot .led-3 {
   animation:
     ns-hl-pop 0.3s 1.15s ease-out both,
-    ns-hl-led 2.4s 3.4s ease-in-out infinite;
+    ns-hl-pop 0.35s 4.15s ease-out,
+    ns-hl-led 2.4s 5.6s ease-in-out infinite;
 }
 
 .ns-homelab.boot.degraded .led-3 {
   animation:
     ns-hl-pop 0.3s 1.15s ease-out both,
-    ns-hl-alert 1.2s 3.4s ease-in-out infinite;
+    ns-hl-pop 0.35s 4.15s ease-out,
+    ns-hl-alert 1.2s 5.6s ease-in-out infinite;
 }
 
 .ns-homelab.boot .edge {
@@ -785,46 +1009,101 @@ input[type='range']::-moz-range-thumb:hover {
 .ns-homelab.boot .ns-antenna .hl {
   animation:
     ns-flash 0.5s 2.2s both,
-    ns-breathe 2.4s 3.4s ease-in-out infinite;
+    ns-flash 0.5s 3.1s,
+    ns-breathe 2.4s 5.6s ease-in-out infinite;
 }
 
 .ns-homelab.boot .ns-antenna .burst {
   animation:
     ns-burst 0.6s 2.25s ease-out forwards,
-    ns-hl-ping 4.8s 3.4s ease-out infinite;
+    ns-hl-bigping 1.2s 3.1s ease-out,
+    ns-hl-ping 6s 8.4s ease-out infinite;
 }
 
 .ns-homelab.boot .ns-antenna .a1 {
   animation:
     ns-arc 0.5s 2.3s cubic-bezier(0.2, 0.8, 0.2, 1) both,
-    ns-pulse 2.4s 3.4s ease-in-out infinite;
+    ns-pulse 2.4s 5.6s ease-in-out infinite;
 }
 
 .ns-homelab.boot .ns-antenna .a2 {
   animation:
     ns-arc 0.5s 2.55s cubic-bezier(0.2, 0.8, 0.2, 1) both,
-    ns-pulse 2.4s 3.7s ease-in-out infinite;
+    ns-pulse 2.4s 5.9s ease-in-out infinite;
 }
 
 .ns-homelab.boot .tipglow,
 .ns-homelab.boot .spill {
   animation:
     ns-hl-fade 0.6s 2.2s ease-out both,
-    ns-hl-breathe 2.4s 3.4s ease-in-out infinite;
+    ns-hl-bloom 6s 3.1s ease-out,
+    ns-hl-bloom 6s 8.4s ease-out infinite;
 }
 
-.ns-homelab.boot .ripple {
-  animation: ns-hl-ripple 4.8s 3.4s ease-out infinite;
+.ns-homelab.boot .run-r {
+  animation:
+    ns-hl-run-r 6s 3.25s linear,
+    ns-hl-run-r 6s 8.55s linear infinite;
 }
 
-.ns-homelab.boot .sheen {
-  animation: ns-hl-sheen 7.2s 4.4s ease-in-out infinite;
+.ns-homelab.boot .run-l {
+  animation:
+    ns-hl-run-l 6s 3.25s linear,
+    ns-hl-run-l 6s 8.55s linear infinite;
+}
+
+.ns-homelab.boot .run-s {
+  animation:
+    ns-hl-run-s 6s 3.25s linear,
+    ns-hl-run-s 6s 8.55s linear infinite;
+}
+
+.ns-homelab.boot .node {
+  animation:
+    ns-hl-node 6s 3.41s ease-out,
+    ns-hl-node 6s 8.71s ease-out infinite;
 }
 
 .ns-homelab.boot .hl-rack {
-  animation: ns-hl-hover 6s 3.4s ease-in-out infinite;
+  animation:
+    ns-hl-hop 0.7s 4.15s ease-out,
+    ns-hl-hover 6s 5.6s ease-in-out infinite;
 }
 
+
+.ns-homelab.boot .flare {
+  animation: ns-hl-flare 1.3s 4.27s ease-out;
+}
+
+.ns-homelab.boot .gridflash {
+  animation: ns-hl-gridflash 1.6s 4.27s ease-out;
+}
+
+.ns-homelab.boot .boom-1 {
+  animation: ns-hl-boom 1.8s 4.27s ease-out;
+}
+
+.ns-homelab.boot .boom-2 {
+  animation: ns-hl-boom 1.8s 4.45s ease-out;
+}
+
+.ns-homelab.boot .boom-3 {
+  animation: ns-hl-boom 1.8s 4.63s ease-out;
+}
+
+.ns-homelab.boot .streak {
+  animation: ns-hl-streak 1s 4.27s ease-out;
+}
+
+.ns-homelab.boot .ripple {
+  animation: ns-hl-ripple 6s 9.57s ease-out infinite;
+}
+
+.ns-homelab.boot .sheen {
+  animation: ns-hl-sheen 7.2s 6s ease-in-out infinite;
+}
+
+/* ── Idle (later visits): the same loops, cycle starting at 0.6s ── */
 .ns-homelab.idle .ambient {
   animation: ns-hl-breathe 8s ease-in-out infinite;
 }
@@ -842,7 +1121,7 @@ input[type='range']::-moz-range-thumb:hover {
 }
 
 .ns-homelab.idle .led-2 {
-  animation: ns-hl-flicker 3.2s linear infinite;
+  animation: ns-hl-blink 6s 1.52s infinite;
 }
 
 .ns-homelab.idle .led-3 {
@@ -858,7 +1137,7 @@ input[type='range']::-moz-range-thumb:hover {
 }
 
 .ns-homelab.idle .ns-antenna .burst {
-  animation: ns-hl-ping 4.8s ease-out infinite;
+  animation: ns-hl-ping 6s 0.6s ease-out infinite;
 }
 
 .ns-homelab.idle .ns-antenna .a1 {
@@ -871,11 +1150,27 @@ input[type='range']::-moz-range-thumb:hover {
 
 .ns-homelab.idle .tipglow,
 .ns-homelab.idle .spill {
-  animation: ns-hl-breathe 2.4s ease-in-out infinite;
+  animation: ns-hl-bloom 6s 0.6s ease-out infinite;
+}
+
+.ns-homelab.idle .run-r {
+  animation: ns-hl-run-r 6s 0.75s linear infinite;
+}
+
+.ns-homelab.idle .run-l {
+  animation: ns-hl-run-l 6s 0.75s linear infinite;
+}
+
+.ns-homelab.idle .run-s {
+  animation: ns-hl-run-s 6s 0.75s linear infinite;
+}
+
+.ns-homelab.idle .node {
+  animation: ns-hl-node 6s 0.91s ease-out infinite;
 }
 
 .ns-homelab.idle .ripple {
-  animation: ns-hl-ripple 4.8s ease-out infinite;
+  animation: ns-hl-ripple 6s 1.77s ease-out infinite;
 }
 
 .ns-homelab.idle .sheen {
@@ -888,6 +1183,83 @@ input[type='range']::-moz-range-thumb:hover {
 
 @media (prefers-reduced-motion: reduce) {
   .ns-homelab * {
+    animation: none !important;
+  }
+}
+
+/* The rack panel's night sky (RackSky in src/components/LiveOpsRack.tsx): three soft aurora
+   bands drifting slowly across the top, and three star groups twinkling out of step. Only
+   opacity and transforms animate, so it all stays on the compositor. */
+@keyframes ns-aurora-a {
+  0% {
+    transform: translateX(-4%) scaleY(0.9);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(8%) scaleY(1.1);
+    opacity: 1;
+  }
+}
+
+@keyframes ns-aurora-b {
+  0% {
+    transform: translateX(5%) scaleY(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-7%) scaleY(0.9);
+    opacity: 0.75;
+  }
+}
+
+@keyframes ns-aurora-c {
+  0% {
+    transform: translateX(-10%) skewY(-6deg);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(10%) skewY(-3deg);
+    opacity: 1;
+  }
+}
+
+@keyframes ns-twinkle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.ns-aurora-a {
+  animation: ns-aurora-a 19s ease-in-out infinite alternate;
+}
+
+.ns-aurora-b {
+  animation: ns-aurora-b 23s ease-in-out infinite alternate;
+}
+
+.ns-aurora-c {
+  animation: ns-aurora-c 29s ease-in-out infinite alternate;
+}
+
+.ns-stars-0 {
+  animation: ns-twinkle 3.1s ease-in-out infinite;
+}
+
+.ns-stars-1 {
+  animation: ns-twinkle 4.3s 1.2s ease-in-out infinite;
+}
+
+.ns-stars-2 {
+  animation: ns-twinkle 5.7s 2.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ns-aurora,
+  .ns-stars {
     animation: none !important;
   }
 }

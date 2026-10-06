@@ -13,13 +13,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   rack** from the brand kit: the isometric layer cube over a faint isometric
   floor, with the antenna as a small accent seated in a socket at the back
   left of the top. Its three LEDs sit flat on the front panel with soft glows
-  (power steady, activity flickering, status breathing; an offline service
-  turns the status LED rose). When it scrolls into view the layers stack, the
-  LEDs light, the socket pops in and the antenna boots with the navbar logo's
-  keyframes. Then the rack hovers while the light under it breathes, the
-  antenna pings in time with a ripple across the floor, and a sheen crosses
-  the top every few seconds. The loop pauses while the rack is off screen, and
-  `prefers-reduced-motion` gets the still picture. (#86)
+  (power steady, status breathing, and rose when a service is offline).
+  - **Boot**, when it scrolls into view: the layers stack, the LEDs light and
+    the antenna boots with the navbar logo's keyframes. Then comes a power-on
+    pulse. The antenna flashes, the signal runs down through the rack, and the
+    rack hops while its glow blooms and the LEDs flash. The base lets out a
+    flare, three shockwaves, a flash across the floor grid and streaks of
+    light along it.
+  - **Idle**, a 6s cycle: the antenna pings, the signal branches across traces
+    on the top and drops down both sides, blinking the activity LED on the
+    way, then leaves as a ripple across the floor. The rack hovers over its
+    breathing glow, and a sheen crosses the top every few seconds.
+  - The panel is a night sky: a slow aurora and twinkling stars instead of the
+    page's dot texture.
+  - The loop pauses while the rack is off screen, and
+    `prefers-reduced-motion` gets the still picture. (#86)
 
 ### Removed
 
