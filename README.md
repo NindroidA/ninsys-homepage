@@ -17,7 +17,7 @@ Personal portfolio and homepage for [nindroidsystems.com](https://nindroidsystem
 | Category | Technology |
 |----------|------------|
 | Framework | React 19 + TypeScript 6 |
-| Build Tool | Vite 7 |
+| Build Tool | Vite 8 |
 | Package Manager | Bun |
 | Styling | Tailwind CSS 4 (CSS-first config) |
 | Data layer | TanStack Query 5 |
@@ -27,6 +27,7 @@ Personal portfolio and homepage for [nindroidsystems.com](https://nindroidsystem
 | Icons | Lucide React |
 | Routing | React Router DOM 7 |
 | Lint + format | Biome |
+| Tests | Bun's built-in test runner (`bun test`) |
 
 Tailwind 4 is configured CSS-first — design tokens live in `src/index.css` and there is
 no `tailwind.config.js`.
@@ -39,6 +40,7 @@ bun run dev        # http://localhost:3000 (bound to all interfaces)
 bun run build      # typecheck + production bundle
 bun run typecheck
 bun run lint       # biome check
+bun test           # unit tests (*.test.ts next to the code)
 ```
 
 The frontend expects the backend API at `http://localhost:3001` in development.
@@ -91,8 +93,9 @@ API URLs are automatically detected based on environment (localhost for dev, pro
 ## Contributing
 
 Work happens on `feat/*` or `chore/*` branches that PR into `main`. CI runs
-`bunx biome ci .` and `bun run build` on every pull request; merging to `main`
-builds a Docker image and deploys it to the homelab.
+`bun test`, `bunx biome ci --error-on-warnings .` and `bun run build` on every
+pull request; merging to `main` builds a Docker image and deploys it to the
+homelab.
 
 ## Recent Changes
 

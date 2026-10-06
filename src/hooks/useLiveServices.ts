@@ -18,7 +18,7 @@ interface LiveService {
   icon?: string;
 }
 
-const formatUptime = (seconds: number): string => {
+export const formatUptime = (seconds: number): string => {
   const days = Math.floor(seconds / 86400);
   const hours = Math.floor((seconds % 86400) / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -63,7 +63,7 @@ const BASE_SERVICES: LiveService[] = [
   },
 ];
 
-async function fetchServices(): Promise<LiveService[]> {
+export async function fetchServices(): Promise<LiveService[]> {
   const [cogworksStatus, systemHealth] = await Promise.allSettled([
     ninsysAPI.getCogworksStatus(),
     ninsysAPI.getSystemHealth(),

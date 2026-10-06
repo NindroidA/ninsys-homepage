@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.4] - 2026-10-05
+
+### Added
+
+- **Unit tests, run with Bun's built-in test runner.** `bun test` (or
+  `bun run test`) covers the pure logic: the `cn` class merger, the icon
+  lookups behind the admin pickers, the API origin switch, API error
+  messages, uptime formatting and the System Status mapping, and the
+  reconciliation that brings a site config saved in `localStorage` by an
+  older build up to date. CI runs it right after installing dependencies.
+  `reconcile`, `describeError`, `formatUptime` and `fetchServices` are now
+  exported for the tests; their behaviour is unchanged. (#85)
+
+### Changed
+
+- **`tsconfig.json` loads Bun's types explicitly.** TypeScript 6 no longer
+  includes every installed `@types` package, so `"types": ["bun"]` is what
+  lets the tests' `bun:test` imports typecheck. `@types/bun` was already a
+  dev dependency; nothing new is installed. (#85)
+- **The docs match the repo again.** `CLAUDE.md` now says what the site is,
+  how it's laid out, how changes are tested and what not to touch. The
+  README lists Vite 8 and the CI steps as they run (`bun test`,
+  `bunx biome ci --error-on-warnings .`, `bun run build`), and `TODO.md`
+  moves the PNG icons from #77 and the tests to Done. (#85)
+
 ## [2.3.3] - 2026-10-05
 
 ### Security
