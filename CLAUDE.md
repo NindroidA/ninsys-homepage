@@ -6,7 +6,7 @@
 Andrew's personal portfolio and homelab front door, live at https://nindroidsystems.com. A
 React 19 + TypeScript single-page app (Vite 8, Tailwind 4, TanStack Query) with a homepage (hero,
 live service status, Hosted shelf, nav cards), `/projects`, `/about` and a TOTP-gated admin panel
-at `/admin`. Content and service status come from the ninsys-api backend:
+at `/admin`. Content, the site config and service status come from the ninsys-api backend:
 `https://api.nindroidsystems.com`, or `http://localhost:3001` when the page is served from
 `localhost`. Every merge to `main` builds a Docker image (nginx serving `dist/`) and deploys it to
 the homelab, behind Cloudflare.
@@ -27,7 +27,7 @@ the homelab, behind Cloudflare.
 | `src/components/` | Page parts (navbar, footer, service status, Hosted shelf) plus feature folders (`about/`, `admin/`, `projects/`, `background/`); current primitives in `ui/`, older ones in `shared/ui/` |
 | `src/hooks/`, `src/context/`, `src/lib/` | Hooks (data fetching via TanStack Query), the auth and site-config providers, the shared query client |
 | `src/utils/` | API client and API origin, `cn`, icon lookups |
-| `src/types/`, `src/assets/` | Shared types; static data (Hosted shelf, nav cards) and the self-hosted fonts |
+| `src/types/`, `src/assets/` | Shared types; static data (the default Hosted shelf, nav cards) and the self-hosted fonts |
 | `src/index.css` | Tailwind 4 theme and design tokens (there is no `tailwind.config.js`) |
 | `src/_archive/` | Retired pages (terminal, railways), excluded from typecheck, lint and build |
 | `public/` | Favicons and app icons, `site.webmanifest`, `og-image.png`, `robots.txt`, `sitemap.xml` |

@@ -1,11 +1,12 @@
 import { ChevronDown, ChevronUp, Eye, EyeOff, RotateCcw } from "lucide-react";
 import type { JSX } from "react";
 import { Link } from "react-router-dom";
+import { SaveStatus } from "../../components/admin/SaveStatus";
 import { GlassPanel } from "../../components/ui/GlassPanel";
 import { useSiteConfig } from "../../hooks/useSiteConfig";
 
 export function AdminSiteConfig(): JSX.Element {
-  const { config, toggleSection, moveSection, reset } = useSiteConfig();
+  const { config, toggleSection, moveSection, resetSections } = useSiteConfig();
 
   return (
     <div>
@@ -20,16 +21,14 @@ export function AdminSiteConfig(): JSX.Element {
         </div>
         <button
           type="button"
-          onClick={reset}
+          onClick={resetSections}
           className="inline-flex items-center gap-2 rounded-lg border border-purple-300/12 bg-white/4 px-3 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/8"
         >
-          <RotateCcw className="h-3.5 w-3.5" /> Reset
+          <RotateCcw className="h-3.5 w-3.5" /> Reset sections
         </button>
       </header>
 
-      <div className="mb-6 rounded-xl border border-amber-500/20 bg-amber-500/6 px-4 py-3 font-mono text-xs text-amber-200/80">
-        Saved in your browser for now — this becomes server-side once the config API ships.
-      </div>
+      <SaveStatus />
 
       {/* homepage sections */}
       <GlassPanel className="mb-5 rounded-2xl p-5">

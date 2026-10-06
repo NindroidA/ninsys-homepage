@@ -20,4 +20,5 @@ export const queryKeys = {
   about: ["about"] as const,
   githubRepos: ["github-repos"] as const,
   liveServices: ["live-services"] as const,
+  siteConfig: ["site-config"] as const,
 };

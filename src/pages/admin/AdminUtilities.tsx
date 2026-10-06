@@ -30,6 +30,7 @@ export function AdminUtilities(): JSX.Element {
   const { repos, loading, error, refresh } = useGitHubRepos();
   const { reset } = useSiteConfig();
   const [cleared, setCleared] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
 
   const clearCache = () => {
     queryClient.clear();
@@ -67,8 +68,8 @@ export function AdminUtilities(): JSX.Element {
             <h2 className="font-display text-lg font-semibold text-white">Maintenance</h2>
           </div>
           <p className="mb-4 text-sm text-white/45">
-            Clear the in-memory data cache (forces a fresh fetch) or reset the local site config to
-            its defaults.
+            Clear the in-memory data cache (forces a fresh fetch) or reset the site config, sections
+            and Hosted shelf, to the built-in defaults for every visitor.
           </p>
           <div className="flex flex-wrap gap-3">
             <button
@@ -78,12 +79,26 @@ export function AdminUtilities(): JSX.Element {
             >
               <RefreshCw className="h-4 w-4" /> {cleared ? "Cleared!" : "Clear data cache"}
             </button>
+            {/* Two steps: this replaces the saved Hosted entries too. */}
             <button
               type="button"
-              onClick={reset}
-              className="inline-flex items-center gap-2 rounded-lg border border-purple-300/12 bg-white/4 px-3 py-2 text-sm text-white/80 transition-colors hover:bg-white/8"
+              onClick={() => {
+                if (!confirmReset) {
+                  setConfirmReset(true);
+                  setTimeout(() => setConfirmReset(false), 4000);
+                  return;
+                }
+                setConfirmReset(false);
+                reset();
+              }}
+              className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${
+                confirmReset
+                  ? "border-rose-400/40 bg-rose-500/15 text-rose-100 hover:bg-rose-500/25"
+                  : "border-purple-300/12 bg-white/4 text-white/80 hover:bg-white/8"
+              }`}
             >
-              <Trash2 className="h-4 w-4" /> Reset site config
+              <Trash2 className="h-4 w-4" />{" "}
+              {confirmReset ? "Click again to reset" : "Reset site config"}
             </button>
           </div>
         </GlassPanel>

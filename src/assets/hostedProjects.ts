@@ -1,15 +1,15 @@
 /**
- * The "Hosted" shelf on the homepage — the self-hosted projects that actually run
- * on the homelab, plus the ones currently in the works.
+ * The Hosted shelf's built-in entries: the self-hosted projects that run on the
+ * homelab, plus the ones in the works. The homepage shows these until admin saves
+ * a site config, and "Reset site config" returns to them. After that the shelf
+ * comes from the API (`GET /v2/config`) and is edited at /admin/hosted, so
+ * changes here no longer reach the live site.
  *
- * Adding a project is a one-object edit:
  *   - `status: "live"`     → shows a green "live" pill and links to `url` + `repoUrl`.
  *   - `status: "building"` → shows a "building" pill; no live link needed (omit `url`).
  *
- * `icon` is a key in the iconMap inside HostedShelf.tsx — add the lucide icon there
- * if you use a new one. Keep `stack` to ~3 short tags.
- *
- * (A future /admin control panel will manage this list in-app; for now it's static.)
+ * `icon` is a key in HOSTED_ICONS (src/components/hostedIcons.ts). Keep `stack`
+ * to ~3 short tags.
  */
 
 export type HostedStatus = "live" | "building";
