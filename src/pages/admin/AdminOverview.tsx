@@ -6,6 +6,7 @@ import { GlassPanel } from "../../components/ui/GlassPanel";
 import { useAboutData } from "../../hooks/useAboutData";
 import { useLiveServices } from "../../hooks/useLiveServices";
 import { useProjects } from "../../hooks/useProjects";
+import { projectCategoryLabel } from "../../utils/projectCategories";
 
 function StatCard({
   icon: Icon,
@@ -38,6 +39,7 @@ export function AdminOverview(): JSX.Element {
   const { data: about } = useAboutData();
 
   const online = services.filter((s) => s.status === "online").length;
+  const degraded = services.filter((s) => s.status === "degraded").length;
   const featured = projects.filter((p) => p.featured).length;
   const hostedLive = hostedProjects.filter((p) => p.status === "live").length;
   const hostedBuilding = hostedProjects.filter((p) => p.status === "building").length;
@@ -56,7 +58,7 @@ export function AdminOverview(): JSX.Element {
           icon={Activity}
           value={`${online}/${services.length}`}
           label="Services"
-          hint="online / total"
+          hint={degraded > 0 ? `online / total · ${degraded} degraded` : "online / total"}
         />
         <StatCard
           icon={FolderGit2}
@@ -122,8 +124,8 @@ export function AdminOverview(): JSX.Element {
                   >
                     <Star className="h-3.5 w-3.5 fill-current text-amber-300" />
                     <span className="truncate">{p.title}</span>
-                    <span className="ml-auto font-mono text-[11px] capitalize text-white/35">
-                      {p.category}
+                    <span className="ml-auto font-mono text-[11px] text-white/35">
+                      {projectCategoryLabel(p.category)}
                     </span>
                   </li>
                 ))}
@@ -139,6 +141,8 @@ function dotClass(status: string): string {
   switch (status) {
     case "online":
       return "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]";
+    case "degraded":
+      return "bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.6)]";
     case "offline":
       return "bg-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.5)]";
     case "coming_soon":

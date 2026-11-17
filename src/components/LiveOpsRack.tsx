@@ -3,8 +3,10 @@ import { GlassPanel } from "./ui/GlassPanel";
 import { HomeLabMount } from "./ui/HomeLabMount";
 
 interface LiveOpsRackProps {
-  /** Services currently reporting online. */
+  /** Services currently reporting online (healthy). */
   online: number;
+  /** Services that are up but degraded. */
+  degraded: number;
   /** Services currently reporting offline. */
   offline: number;
   /** Total services in the registry. */
@@ -72,10 +74,11 @@ function RackSky(): JSX.Element {
 /**
  * The live ops visual for the Status section: the home-lab rack (the isometric layer cube with
  * the brand antenna in a socket on top) on its floor grid, under a night sky. It boots when it
- * scrolls into view and then idles; an offline service turns its status LED rose. A small
- * overlay ties it to the real online/total service count.
+ * scrolls into view and then idles; an offline or degraded service turns its status LED rose.
+ * A small overlay ties it to the real online/total service count (degraded doesn't count as
+ * online).
  */
-export function LiveOpsRack({ online, offline, total }: LiveOpsRackProps): JSX.Element {
+export function LiveOpsRack({ online, degraded, offline, total }: LiveOpsRackProps): JSX.Element {
   const allOnline = total > 0 && online === total;
 
   return (
@@ -85,7 +88,7 @@ export function LiveOpsRack({ online, offline, total }: LiveOpsRackProps): JSX.E
         <HomeLabMount
           animate="boot"
           floor
-          status={offline > 0 ? "degraded" : "ok"}
+          status={offline > 0 || degraded > 0 ? "degraded" : "ok"}
           className="h-[188px] w-[188px] sm:h-[330px] sm:w-[330px]"
         />
       </div>
