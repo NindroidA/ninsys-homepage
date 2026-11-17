@@ -23,6 +23,7 @@ import type {
   Project,
   UpdateProjectInput,
 } from "../types/projects";
+import { projectSections } from "../utils/projectCategories";
 
 export default function Projects() {
   const isAdminVisible = useAdminVisible();
@@ -45,7 +46,6 @@ export default function Projects() {
   } = useGitHubRepos();
 
   // UI State
-  const [filter, setFilter] = useState<"all" | "current" | "completed">("all");
   const [isEditing, setIsEditing] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -56,10 +56,8 @@ export default function Projects() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  // Filter projects
-  const filteredProjects = projects.filter((project) =>
-    filter === "all" ? true : project.category === filter,
-  );
+  // Current, then Notable (the API's "completed"), each in admin order; empty ones are left out
+  const sections = projectSections(projects);
 
   // Handlers
   const handleToggleEdit = () => {
@@ -183,26 +181,6 @@ export default function Projects() {
           </motion.div>
         )}
 
-        {/* Filter buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.15 }}
-          className="flex gap-2 sm:gap-4 justify-center flex-wrap mb-6 sm:mb-12"
-        >
-          {(["all", "current", "completed"] as const).map((category) => (
-            <Button
-              key={category}
-              onClick={() => setFilter(category)}
-              variant={filter === category ? "primary" : "secondary"}
-              size="sm"
-              className="sm:px-6 sm:py-3 sm:text-base"
-            >
-              {category.charAt(0).toUpperCase() + category.slice(1)}
-            </Button>
-          ))}
-        </motion.div>
-
         {/* Loading state */}
         {loading ? (
           <Card padding="xl">
@@ -217,27 +195,62 @@ export default function Projects() {
               </p>
             </div>
           </Card>
-        ) : filteredProjects.length === 0 ? (
+        ) : sections.length === 0 ? (
           <Card padding="xl">
-            <div className="text-center">
-              <p className="text-white/70 text-lg">No projects found in this category</p>
-              {isEditing && (
-                <Button onClick={handleNewProject} variant="glass" size="sm" className="mt-4">
-                  Add your first project
+            <div className="flex flex-col items-center text-center">
+              <p className="text-white/70 text-lg">No projects to show yet</p>
+              <p className="mt-2 text-sm text-white/45">
+                In the meantime, everything I'm building is on GitHub.
+              </p>
+              <div className="mt-5 flex flex-wrap justify-center gap-2 sm:gap-3">
+                <Button
+                  href="https://github.com/NindroidA"
+                  target="_blank"
+                  variant="secondary"
+                  size="sm"
+                  icon={<GithubIcon className="w-4 h-4" />}
+                >
+                  GitHub
                 </Button>
-              )}
+                {isEditing && (
+                  <Button onClick={handleNewProject} variant="glass" size="sm">
+                    Add your first project
+                  </Button>
+                )}
+              </div>
             </div>
           </Card>
         ) : (
-          <ProjectDragList
-            projects={filteredProjects}
-            allProjects={projects}
-            isEditing={isEditing}
-            onReorder={reorderProjects}
-            onEdit={handleEditProject}
-            onDelete={handleDeleteClick}
-            setLocalProjects={setLocalProjects}
-          />
+          <div className="space-y-10 sm:space-y-14">
+            {sections.map((section) => (
+              <section key={section.category} aria-labelledby={`projects-${section.category}`}>
+                <div className="mb-4 flex items-center gap-3 sm:mb-6">
+                  <h3
+                    id={`projects-${section.category}`}
+                    className="font-display text-xl font-bold text-white sm:text-2xl"
+                  >
+                    {section.label}
+                  </h3>
+                  <span className="rounded-full border border-purple-300/15 bg-white/4 px-2 py-0.5 font-mono text-[11px] text-white/50">
+                    {section.projects.length}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="h-px flex-1 bg-linear-to-r from-purple-300/25 to-transparent"
+                  />
+                </div>
+                <ProjectDragList
+                  projects={section.projects}
+                  allProjects={projects}
+                  isEditing={isEditing}
+                  onReorder={reorderProjects}
+                  onEdit={handleEditProject}
+                  onDelete={handleDeleteClick}
+                  setLocalProjects={setLocalProjects}
+                />
+              </section>
+            ))}
+          </div>
         )}
       </Section>
 

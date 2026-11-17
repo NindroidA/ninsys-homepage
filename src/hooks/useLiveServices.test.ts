@@ -11,7 +11,7 @@ afterAll(() => {
 });
 
 const { ninsysAPI } = await import("../utils/ninsysAPI");
-const { fetchServices, formatUptime } = await import("./useLiveServices");
+const { fetchServices, formatUptime, statusFromHealth } = await import("./useLiveServices");
 
 describe("formatUptime", () => {
   const cases: [seconds: number, expected: string][] = [
@@ -28,6 +28,23 @@ describe("formatUptime", () => {
 
   test.each(cases)("%p seconds reads %p", (seconds, expected) => {
     expect(formatUptime(seconds)).toBe(expected);
+  });
+});
+
+describe("statusFromHealth", () => {
+  const cases: [health: unknown, expected: ReturnType<typeof statusFromHealth>][] = [
+    ["healthy", "online"],
+    ["degraded", "degraded"],
+    ["unhealthy", "offline"],
+    ["Healthy", "offline"],
+    ["", "offline"],
+    [undefined, "offline"],
+    [null, "offline"],
+    [{ status: "healthy" }, "offline"],
+  ];
+
+  test.each(cases)("%p reads %p", (health, expected) => {
+    expect(statusFromHealth(health)).toBe(expected);
   });
 });
 
@@ -76,8 +93,26 @@ describe("fetchServices", () => {
     expect(Number.isNaN(Date.parse(bot?.lastUpdated ?? ""))).toBe(false);
   });
 
-  test("shows the API offline when its health is degraded", async () => {
+  test("shows the API degraded, not offline, when its health is degraded", async () => {
     spyOn(ninsysAPI, "getSystemHealth").mockResolvedValue(health("degraded"));
+    spyOn(ninsysAPI, "getCogworksStatus").mockResolvedValue(cogworks(true, 60));
+
+    const services = await servicesById();
+    expect(services.get("api")?.status).toBe("degraded");
+    expect(Number.isNaN(Date.parse(services.get("api")?.lastUpdated ?? ""))).toBe(false);
+    expect(services.get("cogworks")?.status).toBe("online");
+  });
+
+  test("shows the API offline when its health is unhealthy", async () => {
+    spyOn(ninsysAPI, "getSystemHealth").mockResolvedValue(health("unhealthy"));
+    spyOn(ninsysAPI, "getCogworksStatus").mockResolvedValue(cogworks(true, 60));
+
+    expect((await servicesById()).get("api")?.status).toBe("offline");
+  });
+
+  test("shows the API offline when /health answers without a status", async () => {
+    const noData = { success: false, timestamp: "2026-10-05T12:00:00.000Z" };
+    spyOn(ninsysAPI, "getSystemHealth").mockResolvedValue(noData as unknown as SystemHealth);
     spyOn(ninsysAPI, "getCogworksStatus").mockResolvedValue(cogworks(true, 60));
 
     expect((await servicesById()).get("api")?.status).toBe("offline");

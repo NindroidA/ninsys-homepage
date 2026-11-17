@@ -2,6 +2,7 @@ import { ArrowRight, ExternalLink, Folder, Server, Settings, Terminal } from "lu
 import type { JSX } from "react";
 import { Link } from "react-router-dom";
 import type { NavigationCard } from "../assets/navigationCards";
+import { GithubIcon } from "./icons/BrandIcons";
 import { GlassPanel } from "./ui/GlassPanel";
 
 interface NavigationCardsProps {
@@ -12,9 +13,17 @@ const iconMap = {
   settings: Settings,
   terminal: Terminal,
   folder: Folder,
+  // lucide v1 has no brand icons, so GitHub's mark comes from BrandIcons
+  github: GithubIcon,
 };
 
-function NavCard({ card }: { card: NavigationCard }): JSX.Element {
+function NavCard({
+  card,
+  className = "",
+}: {
+  card: NavigationCard;
+  className?: string;
+}): JSX.Element {
   const CardIcon = iconMap[card.icon as keyof typeof iconMap] ?? Server;
   const ActionIcon = card.external ? ExternalLink : ArrowRight;
 
@@ -38,18 +47,19 @@ function NavCard({ card }: { card: NavigationCard }): JSX.Element {
       </p>
 
       <span className="mt-3 inline-flex items-center gap-1.5 font-mono text-xs text-purple-200 transition-colors group-hover:text-white sm:mt-5 sm:gap-2 sm:text-sm">
-        {card.external ? "Launch" : "Open"}
+        {card.external ? "Visit" : "Open"}
+        {card.external && <span className="sr-only"> (opens in a new tab)</span>}
         <ActionIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
       </span>
     </GlassPanel>
   );
 
   return card.external ? (
-    <a href={card.url} target="_blank" rel="noopener noreferrer" className="block">
+    <a href={card.url} target="_blank" rel="noopener noreferrer" className={`block ${className}`}>
       {body}
     </a>
   ) : (
-    <Link to={card.url} className="block">
+    <Link to={card.url} className={`block ${className}`}>
       {body}
     </Link>
   );
@@ -67,9 +77,16 @@ export default function NavigationCards({ cards }: NavigationCardsProps): JSX.El
         </h2>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:gap-5">
-        {cards.map((card) => (
-          <NavCard key={card.id} card={card} />
+      {/* Two columns below md, where an odd last card spans the row; three from md up. */}
+      <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3">
+        {cards.map((card, i) => (
+          <NavCard
+            key={card.id}
+            card={card}
+            className={
+              cards.length % 2 === 1 && i === cards.length - 1 ? "col-span-2 md:col-span-1" : ""
+            }
+          />
         ))}
       </div>
     </div>
