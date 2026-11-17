@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.10] - 2026-10-20
+
+### Security
+
+- **vite 8.2.2 → 8.3.4** (rolldown 1.2.6 → 1.2.14 with it), a lockfile-only
+  bump inside the existing `^8` range. It clears three launch-editor advisories
+  in vite 8.2.0–8.2.3: GHSA-587h-7wmj-h5pm (high), GHSA-698v-4r3x-3vcv and
+  GHSA-r825-w8mm-5pxw (moderate). They affect the dev server's
+  open-in-editor endpoint, not the built site. `bun audit` is clean again. (#103)
+
 ## [2.3.9] - 2026-10-06
 
 ### Changed
