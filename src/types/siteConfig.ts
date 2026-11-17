@@ -1,31 +1,38 @@
 /**
- * Site-wide configuration controlled from the admin panel. Currently persisted
- * client-side (localStorage); the shape is intentionally API-ready so it can move
- * to `GET/PUT /v2/config` later with no consumer changes.
+ * Site-wide configuration controlled from the admin panel and stored by
+ * ninsys-api (`GET`/`PUT /v2/config`). Until admin saves one, the homepage
+ * uses DEFAULT_SITE_CONFIG.
  */
 
-import { hostedProjects } from "../assets/hostedProjects";
+import { type HostedProject, hostedProjects } from "../assets/hostedProjects";
+
+export type { HostedStatus } from "../assets/hostedProjects";
 
 export type HomeSectionId = "status" | "hosted" | "nav";
 
 export interface HomeSection {
   id: HomeSectionId;
-  /** Human label shown in the admin. */
+  /** Human label shown in the admin. Comes from the defaults, never from storage. */
   label: string;
   visible: boolean;
 }
 
-/** Ordered visibility overlay over the static `hostedProjects` entries. */
-export interface HostedOverride {
-  id: string;
+/** One Hosted shelf card, as admin edits it and the API stores it. */
+export interface HostedEntry extends HostedProject {
   visible: boolean;
 }
 
 export interface SiteConfig {
   /** Ordered homepage sections. The hero and footer are fixed and not listed here. */
   sections: HomeSection[];
-  /** Order + visibility for the Hosted shelf cards (ids reference hostedProjects). */
-  hosted: HostedOverride[];
+  /** The Hosted shelf cards, in display order. */
+  hosted: HostedEntry[];
+}
+
+/** What `/v2/config` carries: section labels stay in code. */
+export interface SiteConfigWire {
+  sections: { id: HomeSectionId; visible: boolean }[];
+  hosted: HostedEntry[];
 }
 
 export const DEFAULT_SITE_CONFIG: SiteConfig = {
@@ -34,5 +41,5 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
     { id: "hosted", label: "Hosted projects", visible: true },
     { id: "nav", label: "Explore (quick access)", visible: true },
   ],
-  hosted: hostedProjects.map((p) => ({ id: p.id, visible: true })),
+  hosted: hostedProjects.map((p) => ({ ...p, visible: true })),
 };

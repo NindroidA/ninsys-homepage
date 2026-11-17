@@ -1,31 +1,10 @@
-import {
-  Blocks,
-  Bot,
-  Boxes,
-  ExternalLink,
-  Globe,
-  LayoutDashboard,
-  type LucideIcon,
-  Network,
-  Server,
-  Shield,
-} from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import type { JSX } from "react";
-import { type HostedProject, type HostedStatus, hostedProjects } from "../assets/hostedProjects";
 import { useSiteConfig } from "../hooks/useSiteConfig";
+import type { HostedEntry, HostedStatus } from "../types/siteConfig";
+import { hostedIcon } from "./hostedIcons";
 import { GithubIcon } from "./icons/BrandIcons";
 import { GlassPanel } from "./ui/GlassPanel";
-
-const iconMap: Record<string, LucideIcon> = {
-  blocks: Blocks,
-  bot: Bot,
-  boxes: Boxes,
-  server: Server,
-  globe: Globe,
-  dashboard: LayoutDashboard,
-  network: Network,
-  shield: Shield,
-};
 
 // Locked v2 status palette (mirrors ServiceStatus): live = mint→emerald,
 // building reuses the "coming soon" gold→rose.
@@ -56,8 +35,8 @@ function StatusPill({ status }: { status: HostedStatus }): JSX.Element {
   );
 }
 
-function HostedCard({ project }: { project: HostedProject }): JSX.Element {
-  const Icon = iconMap[project.icon] ?? Server;
+function HostedCard({ project }: { project: HostedEntry }): JSX.Element {
+  const Icon = hostedIcon(project.icon);
 
   return (
     <GlassPanel className="flex h-full flex-col rounded-xl p-3.5 sm:rounded-2xl sm:p-5">
@@ -120,12 +99,8 @@ function HostedCard({ project }: { project: HostedProject }): JSX.Element {
 
 export default function HostedShelf(): JSX.Element | null {
   const { config } = useSiteConfig();
-  const byId = new Map(hostedProjects.map((p) => [p.id, p]));
-  // Render in the admin-configured order, hiding any toggled off.
-  const visible = config.hosted
-    .filter((h) => h.visible)
-    .map((h) => byId.get(h.id))
-    .filter((p): p is HostedProject => Boolean(p));
+  // In the admin-configured order, hiding any toggled off.
+  const visible = config.hosted.filter((h) => h.visible);
 
   if (visible.length === 0) return null;
 

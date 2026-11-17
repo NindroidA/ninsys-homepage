@@ -1,11 +1,11 @@
 import { Activity, FolderGit2, Server, Star, UserSquare } from "lucide-react";
 import type { JSX } from "react";
 import { Link } from "react-router-dom";
-import { hostedProjects } from "../../assets/hostedProjects";
 import { GlassPanel } from "../../components/ui/GlassPanel";
 import { useAboutData } from "../../hooks/useAboutData";
 import { useLiveServices } from "../../hooks/useLiveServices";
 import { useProjects } from "../../hooks/useProjects";
+import { useSiteConfig } from "../../hooks/useSiteConfig";
 import { projectCategoryLabel } from "../../utils/projectCategories";
 
 function StatCard({
@@ -41,8 +41,9 @@ export function AdminOverview(): JSX.Element {
   const online = services.filter((s) => s.status === "online").length;
   const degraded = services.filter((s) => s.status === "degraded").length;
   const featured = projects.filter((p) => p.featured).length;
-  const hostedLive = hostedProjects.filter((p) => p.status === "live").length;
-  const hostedBuilding = hostedProjects.filter((p) => p.status === "building").length;
+  const { config } = useSiteConfig();
+  const hostedLive = config.hosted.filter((p) => p.status === "live").length;
+  const hostedBuilding = config.hosted.filter((p) => p.status === "building").length;
 
   return (
     <div>
@@ -68,7 +69,7 @@ export function AdminOverview(): JSX.Element {
         />
         <StatCard
           icon={Server}
-          value={hostedProjects.length}
+          value={config.hosted.length}
           label="Hosted"
           hint={`${hostedLive} live · ${hostedBuilding} building`}
         />

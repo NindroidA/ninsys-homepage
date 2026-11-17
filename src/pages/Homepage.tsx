@@ -34,7 +34,7 @@ const SECTIONS: Record<HomeSectionId, () => React.ReactElement> = {
 export default function Homepage() {
   const { services } = useLiveServices();
   const online = services.filter((s) => s.status === "online").length;
-  const { config } = useSiteConfig();
+  const { config, ready } = useSiteConfig();
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -84,12 +84,12 @@ export default function Homepage() {
         </div>
       </section>
 
-      {/* configurable sections (admin Site Config controls visibility + order) */}
-      {config.sections
-        .filter((s) => s.visible)
-        .map((s) => (
-          <Fragment key={s.id}>{SECTIONS[s.id]()}</Fragment>
-        ))}
+      {/* configurable sections (admin Site Config controls visibility + order). They wait
+          for the config, so a hidden section never flashes in first. */}
+      {ready &&
+        config.sections
+          .filter((s) => s.visible)
+          .map((s) => <Fragment key={s.id}>{SECTIONS[s.id]()}</Fragment>)}
 
       <FooterComponent />
     </div>
